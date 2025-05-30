@@ -1,3 +1,3 @@
 export default function Home() {
-  return <>Trang Chủ</>;
+  return <div>Trang Chủ</div>;
 }

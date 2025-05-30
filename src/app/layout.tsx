@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Quicksand } from "next/font/google";
+import { Quicksand } from "next/font/google";
 import "./globals.css";
 import Header from "@/layouts/Header";
 import Footer from "@/layouts/Footer";
@@ -25,7 +25,7 @@ export default function RootLayout({
       <body className={`${fontSans.className}`} suppressHydrationWarning>
         <div className="min-h-screen flex flex-col justify-between">
           <Header />
-          <main>{children}</main>
+          <main className="mt-24">{children}</main>
           <Footer />
         </div>
       </body>
