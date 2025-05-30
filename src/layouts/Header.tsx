@@ -7,7 +7,7 @@ function Header(): React.JSX.Element {
   return (
     <Fragment>
       <header className="fixed w-full top-0 z-50 bg-white shadow">
-        <div className="container flex items-center justify-between gap-5 h-20">
+        <div className="container mx-auto flex items-center justify-between gap-5 h-20">
           <Link href={"/"} className="text-red-800 text-4xl font-bold italic">
             LALALY-CHEEE
           </Link>
