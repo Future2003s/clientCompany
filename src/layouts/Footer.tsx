@@ -8,7 +8,7 @@ import { SiGooglestreetview, SiOpenstreetmap } from "react-icons/si";
 function Footer() {
   return (
     <footer
-      className={`bg-[#f9f9f9] pt-14 pb-32 bg-[url("/images/footer.png")] bg-left-bottom bg-repeat-x`}
+      className={` bg-[#f9f9f9] pt-14 pb-32 bg-[url("/images/footer.png")] bg-left-bottom bg-repeat-x`}
     >
       <div className="relative z-10 container grid lg:grid-cols-4 gap-8 justify-between">
         <div className="flex flex-col gap-6 lg:col-span-2">
@@ -44,7 +44,7 @@ function Footer() {
           </Link>
         </div>
 
-        <div>
+        <div className="flex flex-col gap-6">
           {/* footer right */}
           <h4 className="font-bold text-2xl">Mạng xã hội</h4>
           <div className="container flex flex-wrap gap-3">
@@ -66,6 +66,12 @@ function Footer() {
               <span>lalalycheee1@gmail.com</span>
             </Link>
           </div>
+        </div>
+
+        {/* Privacy */}
+        <div className="flex flex-col gap-6">
+          <div className="text-2xl font-bold">Chính sách</div>
+          <p>Chính Sách Của Công Ty</p>
         </div>
       </div>
     </footer>
