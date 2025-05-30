@@ -23,9 +23,9 @@ export default function RootLayout({
   return (
     <html lang="vi" suppressHydrationWarning>
       <body className={`${fontSans.className}`} suppressHydrationWarning>
-        <div className="min-h-screen flex flex-col justify-between">
+        <div className="flex flex-col justify-between">
           <Header />
-          <main className="mt-24">{children}</main>
+          <main className="mt-15">{children}</main>
           <Footer />
         </div>
       </body>

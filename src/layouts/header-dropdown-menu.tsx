@@ -17,7 +17,7 @@ function HeaderDropDownMenu() {
         <DropdownMenuTrigger>
           <RxHamburgerMenu className="h-8 w-8 cursor-pointer" />
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="-translate-x-1/3 shadow">
+        <DropdownMenuContent className="-translate-x-1/2 shadow">
           <DropdownMenuLabel className="font-bold italic">
             Sản Phẩm
           </DropdownMenuLabel>
