@@ -24,7 +24,7 @@ const features = [
 
 export default function HomeIntroduceProducts() {
   return (
-    <div className="mx-auto grid max-w-2xl grid-cols-1 items-center gap-x-8 gap-y-16 px-4 py-10 sm:px-6 sm:py-32 lg:max-w-7xl lg:grid-cols-2 lg:px-8 border-b">
+    <div className="mx-auto grid max-w-2xl grid-cols-1 items-center gap-x-8 px-4 py-5 sm:px-6 sm:py-32 lg:max-w-7xl lg:grid-cols-2 lg:px-8">
       <div className="grid grid-cols-2 grid-rows-2 gap-4 sm:gap-6 lg:gap-8">
         <Image
           src={HomeImg2}
@@ -44,12 +44,12 @@ export default function HomeIntroduceProducts() {
         <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
           Mật Ong Nguyên Chất
         </h2>
-        <p className="text-gray-500">
+        <p className="">
           Lorem, ipsum dolor sit amet consectetur adipisicing elit. Excepturi,
           porro.
         </p>
 
-        <dl className="mt-8 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 sm:gap-y-16 lg:gap-x-8">
+        <dl className="mt-8 grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 sm:gap-y-10 lg:gap-x-8">
           {features.map((feature) => (
             <div key={feature.name} className="border-t border-gray-200 pt-4">
               <dt className="font-medium text-gray-900">{feature.name}</dt>

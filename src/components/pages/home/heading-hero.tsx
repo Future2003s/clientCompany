@@ -1,5 +1,8 @@
+import { cn } from "@/lib/utils";
 import React from "react";
 
-export default function HeadingHero() {
-  return <h1 className="text-center text-2xl font-bold">Heading Hero</h1>;
+export default function HeadingHero({ className }: { className: string }) {
+  return (
+    <h1 className={cn(className)}>Hương Vị Mùa Hè - Vải Thiều Chính Vụ</h1>
+  );
 }

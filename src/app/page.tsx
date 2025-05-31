@@ -7,8 +7,12 @@ export default function Home() {
   return (
     <div className="container mx-auto">
       <HomeIntroduceProducts />
-      <HeadingHero />
-      <HomeHero />
+      <section className="flex flex-col items-center justify-center">
+        <div className="lg:-my-20 my-10 flex flex-col gap-5 lg:border-t-2 lg:pt-5">
+          <HeadingHero className="text-2xl text-center font-bold" />
+          <HomeHero />
+        </div>
+      </section>
     </div>
   );
 }
