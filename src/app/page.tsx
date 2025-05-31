@@ -1,3 +1,10 @@
+"use client";
+import Image from "next/image";
+import HomeImg3 from "../../public/images/AQ0P4307.jpg";
+import HomeImg4 from "../../public/images/AQ0P4410.jpg";
+import HomeImg2 from "../../public/images/AQ0P4348.jpg";
+import HomeImg1 from "../../public/images/AQ0P4406.jpg";
+
 const features = [
   { name: "Origin", description: "Designed by Good Goods, Inc." },
   {
@@ -19,36 +26,28 @@ export default function Home() {
     <div className="bg-white">
       <div className="mx-auto grid max-w-2xl grid-cols-1 items-center gap-x-8 gap-y-16 px-4 py-24 sm:px-6 sm:py-32 lg:max-w-7xl lg:grid-cols-2 lg:px-8">
         <div className="grid grid-cols-2 grid-rows-2 gap-4 sm:gap-6 lg:gap-8">
-          <img
-            alt="Walnut card tray with white powder coated steel divider and 3 punchout holes."
-            src="https://tailwindcss.com/plus-assets/img/ecommerce-images/product-feature-03-detail-01.jpg"
-            className="rounded-lg bg-gray-100"
+          <Image
+            src={HomeImg2}
+            className="h-[90%] w-[100%] rounded-lg bg-gray-200"
+            alt="Img"
           />
-          <img
-            alt="Top down view of walnut card tray with embedded magnets and card groove."
-            src="https://tailwindcss.com/plus-assets/img/ecommerce-images/product-feature-03-detail-02.jpg"
-            className="rounded-lg bg-gray-100"
+          <Image
+            src={HomeImg3}
+            className="w-full h-full rounded-lg bg-gray-200"
+            alt="Img"
           />
-          <img
-            alt="Side of walnut card tray with card groove and recessed card area."
-            src="https://tailwindcss.com/plus-assets/img/ecommerce-images/product-feature-03-detail-03.jpg"
-            className="rounded-lg bg-gray-100"
-          />
-          <img
-            alt="Walnut card tray filled with cards and card angled in dedicated groove."
-            src="https://tailwindcss.com/plus-assets/img/ecommerce-images/product-feature-03-detail-04.jpg"
-            className="rounded-lg bg-gray-100"
-          />
+          <Image src={HomeImg1} className="rounded-lg bg-gray-200" alt="Img" />
+
+          <Image src={HomeImg4} className="rounded-lg bg-gray-100" alt="Img" />
         </div>
+
         <div>
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            Technical Specifications
+            Mật Ong Nguyên Chất
           </h2>
           <p className="mt-4 text-gray-500">
-            The walnut wood card tray is precision milled to perfectly fit a
-            stack of Focus cards. The powder coated steel divider separates
-            active cards from new ones, or can be used to archive important task
-            lists.
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Excepturi,
+            porro.
           </p>
 
           <dl className="mt-16 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 sm:gap-y-16 lg:gap-x-8">
