@@ -25,7 +25,7 @@ export default function RootLayout({
       <body className={`${fontSans.className}`} suppressHydrationWarning>
         <div className="flex flex-col justify-between">
           <Header />
-          <main className="mt-15">{children}</main>
+          <main>{children}</main>
           <Footer />
         </div>
       </body>
