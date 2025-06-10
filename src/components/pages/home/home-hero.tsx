@@ -132,7 +132,7 @@ export default function HomeHero(): React.JSX.Element {
                       <CardContent className="flex items-center justify-center p-2">
                         <Image
                           alt="img"
-                          loading="lazy"
+                          loading="eager"
                           src={Image2}
                           className="aspect-3/2 w-full rounded-lg object-cover"
                         />
