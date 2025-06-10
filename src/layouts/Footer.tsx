@@ -58,7 +58,9 @@ function Footer() {
             </Link>
 
             <Link
-              href={"#instagram"}
+              href={
+                "https://www.instagram.com/lala_lycheee?igsh=M2x5cmgwdmZrcDh1&utm_source=qr"
+              }
               target="_self"
               className="flex items-center text-gray-700g gap-3"
             >

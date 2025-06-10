@@ -42,12 +42,9 @@ export default function HomeIntroduceProducts() {
 
       <div className="flex flex-col gap-5">
         <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-          Mật Ong Nguyên Chất
+          Mật Ong Hoa Vải Nguyên Chất
         </h2>
-        <p className="">
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Excepturi,
-          porro.
-        </p>
+        <p className="">100% tự nhiên không qua thuỷ phân</p>
 
         <dl className="mt-8 grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 sm:gap-y-10 lg:gap-x-8">
           {features.map((feature) => (

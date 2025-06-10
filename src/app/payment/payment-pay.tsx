@@ -55,7 +55,7 @@ function PaymentPage() {
     try {
       const response = await fetch(
         // URL phải khớp với backend của bạn
-        "http://localhost:4000/create-payment-link",
+        "https://api.lalalycheee.vn/create-payment-link",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -130,7 +130,7 @@ function PaymentPage() {
           </div>
           <div className="flex justify-between items-center">
             <p>
-              Mật Ong Hoa Vải 435g ({bigProductQuantity} x{" "}
+              ({productInfo.big.name} {bigProductQuantity} x{" "}
               {productInfo.big.price.toLocaleString("vi-VN")}đ)
             </p>
             <p className="font-semibold">
