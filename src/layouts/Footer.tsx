@@ -49,15 +49,6 @@ function Footer() {
           <h4 className="font-bold text-2xl">Mạng xã hội</h4>
           <div className="container flex flex-wrap gap-3">
             <Link
-              href={"#youtube"}
-              target="_self"
-              className="flex items-center text-gray-700g gap-3"
-            >
-              <PiYoutubeLogo className="h-10 w-10" />
-              <span>LALALY-CHEEE</span>
-            </Link>
-
-            <Link
               href={
                 "https://www.instagram.com/lala_lycheee?igsh=M2x5cmgwdmZrcDh1&utm_source=qr"
               }
