@@ -1,10 +1,8 @@
 "use client";
 import { useState } from "react";
-// Giả sử các component và ảnh của bạn đã được import đúng
 import ProductItem from "./product-item";
 import ProductSmall from "../../../public/products/IMG_0404.png";
 import ProductBig from "../../../public/products/IMG_0405.png";
-// import { redirect } from "next/navigation"; // Không cần thiết ở client component
 
 function PaymentPage() {
   const [loading, setLoading] = useState(false);
@@ -12,8 +10,8 @@ function PaymentPage() {
   // Không cần state `data` nếu chúng ta chuyển hướng ngay lập tức
 
   const productInfo = {
-    small: { name: "Sản Phẩm Nhỏ", price: 144000, weight: 435 },
-    big: { name: "Sản Phẩm Lớn", price: 342000, weight: 165 },
+    small: { name: "Mật Ong Hoa Vải 435g", price: 342000, weight: 435 },
+    big: { name: "Mật Ong Hoa Vải 165g", price: 144000, weight: 165 },
   };
 
   const [smallProductQuantity, setSmallProductQuantity] = useState(0);
@@ -24,7 +22,6 @@ function PaymentPage() {
   const totalQuantity = smallProductQuantity + bigProductQuantity;
   const totalPrice = smallProductTotal + bigProductTotal;
 
-  // Hàm gọi API backend để tạo link thanh toán
   const handleCreatePaymentLink = async () => {
     if (totalPrice === 0) {
       setError("Vui lòng chọn ít nhất một sản phẩm.");
@@ -100,14 +97,14 @@ function PaymentPage() {
       <div className="container mx-auto flex flex-col md:flex-row justify-center items-center md:items-start gap-8">
         <ProductItem
           {...productInfo.small}
-          imageSrc={ProductSmall}
+          imageSrc={ProductBig}
           altText="Mật Ong KLT 136g"
           quantity={smallProductQuantity}
           onQuantityChange={setSmallProductQuantity}
         />
         <ProductItem
           {...productInfo.big}
-          imageSrc={ProductBig}
+          imageSrc={ProductSmall}
           altText="Sản phẩm lớn"
           quantity={bigProductQuantity}
           onQuantityChange={setBigProductQuantity}
@@ -121,7 +118,7 @@ function PaymentPage() {
         <div className="space-y-3 text-gray-700">
           <div className="flex justify-between items-center">
             <p>
-              Sản phẩm nhỏ ({smallProductQuantity} x{" "}
+              Mật Ong Hoa Vải 165g ({smallProductQuantity} x{" "}
               {productInfo.small.price.toLocaleString("vi-VN")}đ)
             </p>
             <p className="font-semibold">
@@ -133,7 +130,7 @@ function PaymentPage() {
           </div>
           <div className="flex justify-between items-center">
             <p>
-              Sản phẩm lớn ({bigProductQuantity} x{" "}
+              Mật Ong Hoa Vải 435g ({bigProductQuantity} x{" "}
               {productInfo.big.price.toLocaleString("vi-VN")}đ)
             </p>
             <p className="font-semibold">
