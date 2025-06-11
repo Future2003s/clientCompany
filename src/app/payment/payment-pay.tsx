@@ -12,14 +12,14 @@ function PaymentPage() {
   const productInfo = {
     small: {
       name: "Mật Ong Hoa Vải 435g",
-      nameJp: "ライチ蜂蜜 435g", // Thêm tên tiếng Nhật
+      nameJp: "ライチ蜂蜜 435g",
       price: 342000,
       weight: 435,
       priceOrigin: 380000,
     },
     big: {
       name: "Mật Ong Hoa Vải 165g",
-      nameJp: "ライチ蜂蜜 165g", // Thêm tên tiếng Nhật
+      nameJp: "ライチ蜂蜜 165g",
       price: 144000,
       weight: 165,
       priceOrigin: 160000,
@@ -127,7 +127,7 @@ function PaymentPage() {
 
         <div className="space-y-3 text-gray-700">
           {/* Item 1: Mật Ong Hoa Vải 165g */}
-          {bigProductQuantity > 0 && ( // Chỉ hiển thị nếu số lượng > 0
+          {bigProductQuantity > 0 && (
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
               <p className="mb-1 sm:mb-0">
                 {productInfo.big.name} ({productInfo.big.nameJp})
@@ -146,7 +146,7 @@ function PaymentPage() {
           )}
 
           {/* Item 2: Mật Ong Hoa Vải 435g */}
-          {smallProductQuantity > 0 && ( // Chỉ hiển thị nếu số lượng > 0
+          {smallProductQuantity > 0 && (
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
               <p className="mb-1 sm:mb-0">
                 {productInfo.small.name} ({productInfo.small.nameJp})
@@ -185,29 +185,33 @@ function PaymentPage() {
           disabled={loading || totalQuantity === 0}
           className="w-full mt-6 bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-700 transition-colors duration-300 shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
         >
-          {loading && (
-            <svg
-              className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              ></circle>
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              ></path>
-            </svg>
+          {loading ? (
+            <>
+              <svg
+                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              <span>Đang xử lý... (処理中...)</span>
+            </>
+          ) : (
+            <span>Tiến hành Thanh toán (支払いへ進む)</span>
           )}
-          {loading ? "Đang xử lý..." : "Tiến hành Thanh toán"}
         </button>
       </div>
     </div>
