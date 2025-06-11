@@ -102,14 +102,14 @@ function PaymentPage() {
     <div className="bg-gray-100 min-h-screen p-4 sm:p-6 lg:p-8">
       <div className="container mx-auto flex flex-col md:flex-row justify-center items-center md:items-start gap-8">
         <ProductItem
-          {...productInfo.small} // Đảm bảo nameJp cũng được truyền vào
+          {...productInfo.small}
           imageSrc={ProductSmall}
           altText="Mật Ong KLT 136g"
           quantity={smallProductQuantity}
           onQuantityChange={setSmallProductQuantity}
         />
         <ProductItem
-          {...productInfo.big} // Đảm bảo nameJp cũng được truyền vào
+          {...productInfo.big}
           imageSrc={ProductBig}
           altText="Mật Ong KLT 435g"
           quantity={bigProductQuantity}
@@ -118,39 +118,61 @@ function PaymentPage() {
       </div>
 
       <div className="container mx-auto mt-10 bg-white p-6 rounded-lg shadow-lg max-w-2xl">
-        <h2 className="text-2xl font-bold text-gray-800 mb-5 text-center border-b pb-3">
+        <h2 className="text-2xl font-bold text-gray-800 mb-2 text-center">
           Tóm tắt đơn hàng
         </h2>
+        <p className="text-sm text-gray-600 text-center mb-5 border-b pb-3">
+          (注文概要)
+        </p>
+
         <div className="space-y-3 text-gray-700">
-          <div className="flex justify-between items-center">
-            <p>
-              {productInfo.big.name} ({bigProductQuantity} x{" "}
-              {productInfo.big.price.toLocaleString("vi-VN")}đ)
-            </p>
-            <p className="font-semibold">
-              {bigProductTotal.toLocaleString("vi-VN", {
-                style: "currency",
-                currency: "VND",
-              })}
-            </p>
-          </div>
-          <div className="flex justify-between items-center">
-            <p>
-              {productInfo.small.name} ({smallProductQuantity} x{" "}
-              {productInfo.small.price.toLocaleString("vi-VN")}đ)
-            </p>
-            <p className="font-semibold">
-              {smallProductTotal.toLocaleString("vi-VN", {
-                style: "currency",
-                currency: "VND",
-              })}
-            </p>
-          </div>
+          {/* Item 1: Mật Ong Hoa Vải 165g */}
+          {bigProductQuantity > 0 && ( // Chỉ hiển thị nếu số lượng > 0
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+              <p className="mb-1 sm:mb-0">
+                {productInfo.big.name} ({productInfo.big.nameJp})
+                <span className="block sm:inline-block sm:ml-2 text-gray-500 text-sm">
+                  ({bigProductQuantity} x{" "}
+                  {productInfo.big.price.toLocaleString("vi-VN")}đ)
+                </span>
+              </p>
+              <p className="font-semibold text-right sm:text-left">
+                {bigProductTotal.toLocaleString("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                })}
+              </p>
+            </div>
+          )}
+
+          {/* Item 2: Mật Ong Hoa Vải 435g */}
+          {smallProductQuantity > 0 && ( // Chỉ hiển thị nếu số lượng > 0
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+              <p className="mb-1 sm:mb-0">
+                {productInfo.small.name} ({productInfo.small.nameJp})
+                <span className="block sm:inline-block sm:ml-2 text-gray-500 text-sm">
+                  ({smallProductQuantity} x{" "}
+                  {productInfo.small.price.toLocaleString("vi-VN")}đ)
+                </span>
+              </p>
+              <p className="font-semibold text-right sm:text-left">
+                {smallProductTotal.toLocaleString("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                })}
+              </p>
+            </div>
+          )}
         </div>
         <hr className="my-4" />
-        <div className="flex justify-between items-center text-xl font-bold">
-          <p>Tổng cộng {totalQuantity} sản phẩm</p>
-          <p className="text-indigo-600">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-xl font-bold">
+          <p className="mb-1 sm:mb-0">
+            Tổng cộng ({totalQuantity} sản phẩm)
+            <span className="block sm:inline-block sm:ml-2 text-gray-600 text-base font-normal">
+              (合計 {totalQuantity}点)
+            </span>
+          </p>
+          <p className="text-indigo-600 text-right sm:text-left">
             {totalPrice.toLocaleString("vi-VN", {
               style: "currency",
               currency: "VND",
