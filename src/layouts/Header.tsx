@@ -9,7 +9,7 @@ function Header(): React.JSX.Element {
       <header className="fixed w-full top-0 z-50 bg-white shadow">
         <div className="container mx-auto flex items-center justify-between gap-5 h-20">
           <Link href={"/"} className="text-red-800 text-4xl font-bold italic">
-            LALALY-CHEEE
+            LALA-LYCHEEE
           </Link>
           <div className="hidden lg:flex justify-center gap-12">
             <Link href={"/"}>Trang Chủ</Link>

@@ -11,8 +11,8 @@ const fontSans: NextFont = Quicksand({
 });
 
 export const metadata: Metadata = {
-  title: "LALALY-CHEEE",
-  description: "CTY TNHH LALALY-CHEEE",
+  title: "LALA-LYCHEEE",
+  description: "CÔNG TY TNHH LALA-LYCHEEE",
 };
 
 export default function RootLayout({
