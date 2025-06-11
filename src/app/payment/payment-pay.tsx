@@ -85,29 +85,26 @@ function PaymentPage() {
         setError("Đã có một lỗi không xác định xảy ra.");
       }
       console.error(err);
-      // Dừng loading khi có lỗi để người dùng có thể thử lại
       setLoading(false);
     }
-    // Không cần 'finally' ở đây vì chúng ta muốn loading chỉ dừng khi có lỗi
-    // Nếu thành công, trang sẽ được chuyển hướng đi
   };
 
   return (
     <div className="bg-gray-100 min-h-screen p-4 sm:p-6 lg:p-8">
       <div className="container mx-auto flex flex-col md:flex-row justify-center items-center md:items-start gap-8">
         <ProductItem
-          {...productInfo.small}
+          {...productInfo.big}
           imageSrc={ProductBig}
+          altText="Mật Ong KLT 435g"
+          quantity={bigProductQuantity}
+          onQuantityChange={setBigProductQuantity}
+        />
+        <ProductItem
+          {...productInfo.small}
+          imageSrc={ProductSmall}
           altText="Mật Ong KLT 136g"
           quantity={smallProductQuantity}
           onQuantityChange={setSmallProductQuantity}
-        />
-        <ProductItem
-          {...productInfo.big}
-          imageSrc={ProductSmall}
-          altText="Sản phẩm lớn"
-          quantity={bigProductQuantity}
-          onQuantityChange={setBigProductQuantity}
         />
       </div>
 

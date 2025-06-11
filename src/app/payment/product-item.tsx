@@ -17,9 +17,32 @@ function ProductItem({
   price: any;
   weight: any;
 }) {
+  const handleIncreaseQuantity = () => {
+    onQuantityChange(quantity + 1);
+  };
+
+  const handleDecreaseQuantity = () => {
+    onQuantityChange(quantity > 0 ? quantity - 1 : 0);
+  };
+
   const handleInputChange = (e: any) => {
     const value = parseInt(e.target.value, 10);
+    // Đảm bảo không đặt giá trị NaN hoặc âm, mặc định là 0
     onQuantityChange(isNaN(value) || value < 0 ? 0 : value);
+  };
+
+  const handleInputFocus = (e: any) => {
+    // Khi focus, nếu giá trị là 0, thì đặt nó thành rỗng để người dùng dễ nhập hơn
+    if (parseInt(e.target.value, 10) === 0) {
+      e.target.value = "";
+    }
+  };
+
+  const handleInputBlur = (e: any) => {
+    // Khi rời khỏi focus, nếu ô trống, thì đặt lại là 0
+    if (e.target.value === "") {
+      onQuantityChange(0);
+    }
   };
 
   return (
@@ -41,21 +64,63 @@ function ProductItem({
         </p>
         <p className="text-sm text-gray-500 mt-1">{weight}g</p>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3">
         <label
           htmlFor={`quantity-${altText}`}
           className="text-sm font-medium text-gray-700"
         >
           Số lượng:
         </label>
-        <input
-          type="number"
-          id={`quantity-${altText}`}
-          value={quantity}
-          onChange={handleInputChange}
-          className="h-10 w-24 rounded-md border-2 border-gray-300 text-center focus:border-indigo-500 focus:ring-indigo-500"
-          min="0"
-        />
+        <div className="flex items-center border border-gray-300 rounded-md">
+          <button
+            type="button"
+            onClick={handleDecreaseQuantity}
+            className="p-2 rounded-l-md bg-gray-200 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+            aria-label="Decrease quantity"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
+          <input
+            type="number"
+            id={`quantity-${altText}`}
+            value={quantity}
+            onChange={handleInputChange}
+            onFocus={handleInputFocus} // Thêm sự kiện onFocus
+            onBlur={handleInputBlur} // Thêm sự kiện onBlur để xử lý khi người dùng rời khỏi ô input
+            className="w-12 sm:w-16 text-center appearance-none [-moz-appearance:textfield] [&::-webkit-outer-spin-button]:hidden [&::-webkit-inner-spin-button]:hidden border-l border-r border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-indigo-500"
+            min="0"
+          />
+          <button
+            type="button"
+            onClick={handleIncreaseQuantity}
+            className="p-2 rounded-r-md bg-gray-200 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+            aria-label="Increase quantity"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   );

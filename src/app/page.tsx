@@ -13,6 +13,18 @@ export default function Home() {
           <HomeHero />
         </div>
       </section>
+      <article className="flex justify-between items-center">
+        <iframe
+          width="560"
+          height="315"
+          src="https://www.youtube.com/embed/zZaav6omxko?si=ripNjVylKCrxDxm-&amp;start=337"
+          title="YouTube video player"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerPolicy="strict-origin-when-cross-origin"
+          allowFullScreen={false}
+        ></iframe>
+      </article>
     </div>
   );
 }

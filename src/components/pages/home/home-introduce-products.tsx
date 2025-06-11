@@ -44,7 +44,7 @@ export default function HomeIntroduceProducts() {
         <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
           Mật Ong Hoa Vải Nguyên Chất
         </h2>
-        <p className="">100% tự nhiên không qua thuỷ phân</p>
+        <p className="">100% tự nhiên nguyên chất</p>
 
         <dl className="mt-8 grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 sm:gap-y-10 lg:gap-x-8">
           {features.map((feature) => (
