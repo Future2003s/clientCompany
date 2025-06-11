@@ -56,7 +56,7 @@ function Footer() {
               className="flex items-center text-gray-700g gap-3"
             >
               <LuInstagram className="h-10 w-10" />
-              <span>lalalycheee1@gmail.com</span>
+              <span>LALA-LYCHEEE</span>
             </Link>
           </div>
         </div>
