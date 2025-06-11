@@ -48,7 +48,7 @@ function PaymentPage() {
 
     const orderPayload = {
       amount: totalPrice,
-      description: `Thanh toán đơn hàng ${totalQuantity} sản phẩm`,
+      description: `${totalQuantity} sản phẩm`,
       items: orderItems,
     };
 
