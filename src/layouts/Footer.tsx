@@ -52,7 +52,7 @@ function Footer() {
               href={
                 "https://www.instagram.com/lala_lycheee?igsh=M2x5cmgwdmZrcDh1&utm_source=qr"
               }
-              target="_self"
+              target="_blank"
               className="flex items-center text-gray-700g gap-3"
             >
               <LuInstagram className="h-10 w-10" />

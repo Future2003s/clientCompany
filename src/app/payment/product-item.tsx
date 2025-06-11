@@ -1,3 +1,4 @@
+// components/ProductItem.tsx (hoặc file ProductItem của bạn)
 import Image from "next/image";
 
 function ProductItem({
@@ -6,16 +7,20 @@ function ProductItem({
   quantity,
   onQuantityChange,
   name,
+  nameJp, // Thêm nameJp vào props
   price,
   weight,
+  priceOrigin,
 }: {
   imageSrc: any;
   altText: any;
   quantity: any;
   onQuantityChange: any;
   name: any;
+  nameJp?: string; // Khai báo kiểu cho nameJp (có thể là optional)
   price: any;
   weight: any;
+  priceOrigin?: number;
 }) {
   const handleIncreaseQuantity = () => {
     onQuantityChange(quantity + 1);
@@ -27,27 +32,34 @@ function ProductItem({
 
   const handleInputChange = (e: any) => {
     const value = parseInt(e.target.value, 10);
-    // Đảm bảo không đặt giá trị NaN hoặc âm, mặc định là 0
     onQuantityChange(isNaN(value) || value < 0 ? 0 : value);
   };
 
   const handleInputFocus = (e: any) => {
-    // Khi focus, nếu giá trị là 0, thì đặt nó thành rỗng để người dùng dễ nhập hơn
     if (parseInt(e.target.value, 10) === 0) {
       e.target.value = "";
     }
   };
 
   const handleInputBlur = (e: any) => {
-    // Khi rời khỏi focus, nếu ô trống, thì đặt lại là 0
     if (e.target.value === "") {
       onQuantityChange(0);
     }
   };
 
+  const hasDiscount = priceOrigin && priceOrigin > price;
+  const discountPercentage = hasDiscount
+    ? Math.round(((priceOrigin - price) / priceOrigin) * 100)
+    : 0;
+
   return (
     <div className="flex flex-col items-center bg-white p-6 rounded-lg shadow-lg border border-gray-200 w-full max-w-xs transition-transform duration-300 hover:scale-105">
-      <h3 className="text-xl font-semibold text-gray-800 mb-3">{name}</h3>
+      <h3 className="text-xl font-semibold text-gray-800 text-center mb-1">
+        {name}
+      </h3>
+      {nameJp && ( // Chỉ hiển thị nếu nameJp tồn tại
+        <p className="text-sm text-gray-600 text-center mb-3">({nameJp})</p>
+      )}
       <div className="w-48 h-48 mb-4 rounded-lg overflow-hidden shadow-inner">
         <Image
           src={imageSrc}
@@ -56,12 +68,27 @@ function ProductItem({
         />
       </div>
       <div className="text-center mb-4">
-        <p className="text-2xl font-bold text-indigo-600">
-          {price.toLocaleString("vi-VN", {
-            style: "currency",
-            currency: "VND",
-          })}
-        </p>
+        {hasDiscount && (
+          <p className="text-base text-gray-500 line-through">
+            {priceOrigin.toLocaleString("vi-VN", {
+              style: "currency",
+              currency: "VND",
+            })}
+          </p>
+        )}
+        <div className="flex items-center justify-center gap-2">
+          <p className="text-2xl font-bold text-indigo-600">
+            {price.toLocaleString("vi-VN", {
+              style: "currency",
+              currency: "VND",
+            })}
+          </p>
+          {hasDiscount && (
+            <span className="bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
+              -{discountPercentage}%
+            </span>
+          )}
+        </div>
         <p className="text-sm text-gray-500 mt-1">{weight}g</p>
       </div>
       <div className="flex items-center gap-2 sm:gap-3">
@@ -96,8 +123,8 @@ function ProductItem({
             id={`quantity-${altText}`}
             value={quantity}
             onChange={handleInputChange}
-            onFocus={handleInputFocus} // Thêm sự kiện onFocus
-            onBlur={handleInputBlur} // Thêm sự kiện onBlur để xử lý khi người dùng rời khỏi ô input
+            onFocus={handleInputFocus}
+            onBlur={handleInputBlur}
             className="w-12 sm:w-16 text-center appearance-none [-moz-appearance:textfield] [&::-webkit-outer-spin-button]:hidden [&::-webkit-inner-spin-button]:hidden border-l border-r border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-indigo-500"
             min="0"
           />

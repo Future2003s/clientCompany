@@ -1,3 +1,4 @@
+// app/payment/page.tsx (hoặc file PaymentPage của bạn)
 "use client";
 import { useState } from "react";
 import ProductItem from "./product-item";
@@ -7,11 +8,22 @@ import ProductBig from "../../../public/products/IMG_0405.png";
 function PaymentPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>();
-  // Không cần state `data` nếu chúng ta chuyển hướng ngay lập tức
 
   const productInfo = {
-    small: { name: "Mật Ong Hoa Vải 435g", price: 342000, weight: 435 },
-    big: { name: "Mật Ong Hoa Vải 165g", price: 144000, weight: 165 },
+    small: {
+      name: "Mật Ong Hoa Vải 435g",
+      nameJp: "ライチ蜂蜜 435g", // Thêm tên tiếng Nhật
+      price: 342000,
+      weight: 435,
+      priceOrigin: 380000,
+    },
+    big: {
+      name: "Mật Ong Hoa Vải 165g",
+      nameJp: "ライチ蜂蜜 165g", // Thêm tên tiếng Nhật
+      price: 144000,
+      weight: 165,
+      priceOrigin: 160000,
+    },
   };
 
   const [smallProductQuantity, setSmallProductQuantity] = useState(0);
@@ -54,7 +66,6 @@ function PaymentPage() {
 
     try {
       const response = await fetch(
-        // URL phải khớp với backend của bạn
         "https://api.lalalycheee.vn/create-payment-link",
         {
           method: "POST",
@@ -71,14 +82,12 @@ function PaymentPage() {
       const result = await response.json();
       console.log("Response từ server:", result);
 
-      // FIX: Tự động chuyển hướng người dùng đến trang thanh toán
       if (result && result.checkoutUrl) {
         window.location.href = result.checkoutUrl;
       } else {
         throw new Error("Không nhận được checkoutUrl từ phản hồi của server.");
       }
     } catch (err) {
-      // Xử lý lỗi một cách an toàn
       if (err instanceof Error) {
         setError(err.message);
       } else {
@@ -93,18 +102,18 @@ function PaymentPage() {
     <div className="bg-gray-100 min-h-screen p-4 sm:p-6 lg:p-8">
       <div className="container mx-auto flex flex-col md:flex-row justify-center items-center md:items-start gap-8">
         <ProductItem
-          {...productInfo.big}
-          imageSrc={ProductBig}
-          altText="Mật Ong KLT 435g"
-          quantity={bigProductQuantity}
-          onQuantityChange={setBigProductQuantity}
-        />
-        <ProductItem
-          {...productInfo.small}
+          {...productInfo.small} // Đảm bảo nameJp cũng được truyền vào
           imageSrc={ProductSmall}
           altText="Mật Ong KLT 136g"
           quantity={smallProductQuantity}
           onQuantityChange={setSmallProductQuantity}
+        />
+        <ProductItem
+          {...productInfo.big} // Đảm bảo nameJp cũng được truyền vào
+          imageSrc={ProductBig}
+          altText="Mật Ong KLT 435g"
+          quantity={bigProductQuantity}
+          onQuantityChange={setBigProductQuantity}
         />
       </div>
 
@@ -115,19 +124,7 @@ function PaymentPage() {
         <div className="space-y-3 text-gray-700">
           <div className="flex justify-between items-center">
             <p>
-              Mật Ong Hoa Vải 165g ({smallProductQuantity} x{" "}
-              {productInfo.small.price.toLocaleString("vi-VN")}đ)
-            </p>
-            <p className="font-semibold">
-              {smallProductTotal.toLocaleString("vi-VN", {
-                style: "currency",
-                currency: "VND",
-              })}
-            </p>
-          </div>
-          <div className="flex justify-between items-center">
-            <p>
-              ({productInfo.big.name} {bigProductQuantity} x{" "}
+              {productInfo.big.name} ({bigProductQuantity} x{" "}
               {productInfo.big.price.toLocaleString("vi-VN")}đ)
             </p>
             <p className="font-semibold">
@@ -137,10 +134,22 @@ function PaymentPage() {
               })}
             </p>
           </div>
+          <div className="flex justify-between items-center">
+            <p>
+              {productInfo.small.name} ({smallProductQuantity} x{" "}
+              {productInfo.small.price.toLocaleString("vi-VN")}đ)
+            </p>
+            <p className="font-semibold">
+              {smallProductTotal.toLocaleString("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              })}
+            </p>
+          </div>
         </div>
         <hr className="my-4" />
         <div className="flex justify-between items-center text-xl font-bold">
-          <p>Tổng cộng ({totalQuantity} sản phẩm)</p>
+          <p>Tổng cộng {totalQuantity} sản phẩm</p>
           <p className="text-indigo-600">
             {totalPrice.toLocaleString("vi-VN", {
               style: "currency",
