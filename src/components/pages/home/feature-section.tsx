@@ -1,4 +1,4 @@
-export const FeaturesSection = () => {
+export default function FeaturesSection() {
   const features = [
     {
       icon: (
@@ -108,4 +108,4 @@ export const FeaturesSection = () => {
       </div>
     </section>
   );
-};
+}

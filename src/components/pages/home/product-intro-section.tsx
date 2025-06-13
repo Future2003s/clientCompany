@@ -1,54 +1,51 @@
-// components/ProductIntroSection.tsx
-import React from "react";
-import Image from "next/image";
-import ProductImg1 from "../../../../public/images/AQ0P4307.jpg"; // homeImg2
-import ProductImg2 from "../../../../public/images/AQ0P4307.jpg"; // homeImg3
-import ProductImg3 from "../../../../public/images/AQ0P4406.jpg"; // homeImg1
-import ProductImg4 from "../../../../public/images/AQ0P4410.jpg"; // homeImg4
-
-const productHoney = {
-  name: "Mật Ong Hoa Vải Nguyên Chất",
-  nameJp: "ライチ蜂蜜",
-  shortDescription:
-    "100% tự nhiên, nguyên chất, được thu hoạch trực tiếp từ các tổ ong trên cây vải tại vùng đất Thanh Hà.",
-  longDescription:
-    "Mật ong hoa vải của chúng tôi mang hương vị ngọt ngào đặc trưng của hoa vải, thanh mát và bổ dưỡng. Sản phẩm không chỉ là một món ăn ngon mà còn là nguồn năng lượng tự nhiên dồi dào, hỗ trợ tiêu hóa và tăng cường sức đề kháng. Mật ong được thu hoạch và đóng gói cẩn thận, đảm bảo giữ trọn vẹn tinh túy từ thiên nhiên, lý tưởng để chăm sóc sức khỏe và làm quà biếu ý nghĩa.",
-  features: [
-    {
-      name: "Nguồn gốc",
-      description:
-        "Sản phẩm được nuôi trồng tại trang trại riêng của chúng tôi ở Thanh Hà, Hải Dương.",
-    },
-    {
-      name: "Nguyên liệu",
-      description:
-        "100% mật ong hoa vải tự nhiên, không pha chế, không chất bảo quản.",
-    },
-    {
-      name: "Quy cách",
-      description:
-        "Đóng gói trong chai thủy tinh cao cấp, dung tích 165g và 435g.",
-    },
-    {
-      name: "Chất lượng",
-      description:
-        "Đảm bảo đạt tiêu chuẩn an toàn vệ sinh thực phẩm, giữ trọn hương vị và dưỡng chất tự nhiên.",
-    },
-    {
-      name: "Đặc điểm",
-      description:
-        "Màu vàng sánh, mùi thơm nhẹ đặc trưng của hoa vải, vị ngọt dịu thanh mát.",
-    },
-    {
-      name: "Lưu ý",
-      description:
-        "Sản phẩm tự nhiên, màu sắc và độ sánh có thể thay đổi nhẹ theo mùa và điều kiện bảo quản.",
-    },
-  ],
-  images: [ProductImg1, ProductImg2, ProductImg3, ProductImg4],
-};
-
 export default function ProductIntroSection() {
+  const productHoney = {
+    name: "Mật Ong Hoa Vải Nguyên Chất",
+    nameJp: "ライチ蜂蜜",
+    shortDescription:
+      "100% tự nhiên, nguyên chất, được thu hoạch trực tiếp từ các tổ ong trên cây vải tại vùng đất Thanh Hà.",
+    longDescription:
+      "Mật ong hoa vải của chúng tôi mang hương vị ngọt ngào đặc trưng của hoa vải, thanh mát và bổ dưỡng. Sản phẩm không chỉ là một món ăn ngon mà còn là nguồn năng lượng tự nhiên dồi dào, hỗ trợ tiêu hóa và tăng cường sức đề kháng. Mật ong được thu hoạch và đóng gói cẩn thận, đảm bảo giữ trọn vẹn tinh túy từ thiên nhiên, lý tưởng để chăm sóc sức khỏe và làm quà biếu ý nghĩa.",
+    features: [
+      {
+        name: "Nguồn gốc",
+        description:
+          "Sản phẩm được nuôi trồng tại trang trại riêng của chúng tôi ở Thanh Hà, Hải Dương.",
+      },
+      {
+        name: "Nguyên liệu",
+        description:
+          "100% mật ong hoa vải tự nhiên, không pha chế, không chất bảo quản.",
+      },
+      {
+        name: "Quy cách",
+        description:
+          "Đóng gói trong chai thủy tinh cao cấp, dung tích 165g và 435g.",
+      },
+      {
+        name: "Chất lượng",
+        description:
+          "Đảm bảo đạt tiêu chuẩn an toàn vệ sinh thực phẩm, giữ trọn hương vị và dưỡng chất tự nhiên.",
+      },
+      {
+        name: "Đặc điểm",
+        description:
+          "Màu vàng sánh, mùi thơm nhẹ đặc trưng của hoa vải, vị ngọt dịu thanh mát.",
+      },
+      {
+        name: "Lưu ý",
+        description:
+          "Sản phẩm tự nhiên, màu sắc và độ sánh có thể thay đổi nhẹ theo mùa và điều kiện bảo quản.",
+      },
+    ],
+    images: [
+      "https://placehold.co/600x400/FFD700/000000?text=Mật+Ong+1",
+      "https://placehold.co/600x400/FFA500/000000?text=Mật+Ong+2",
+      "https://placehold.co/600x400/FF8C00/000000?text=Mật+Ong+3",
+      "https://placehold.co/600x400/FF6347/000000?text=Mật+Ong+4",
+    ], // Placeholder images for honey
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
       {/* Image Gallery */}
@@ -62,12 +59,15 @@ export default function ProductIntroSection() {
               key={index}
               className="relative aspect-[3/2] rounded-xl overflow-hidden shadow-lg group"
             >
-              <Image
+              <img
                 src={imgSrc}
                 alt={`Mật Ong Hoa Vải ${index + 1}`}
-                fill
-                className="object-cover group-hover:scale-110 transition-transform duration-500 ease-in-out"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500 ease-in-out"
+                onError={(e) => {
+                  e.currentTarget.src = `https://placehold.co/600x400/FFD700/000000?text=Mật+Ong+${
+                    index + 1
+                  }`;
+                }}
               />
               <div className="absolute inset-0 bg-black bg-opacity-10 group-hover:bg-opacity-0 transition-opacity duration-300"></div>
             </div>
