@@ -185,6 +185,11 @@ import { useEffect, useRef, useState } from "react";
 //     </section>
 //   );
 // }
+import Image1 from "../../../../public/images/mat_ong_1-min.jpg";
+import Image2 from "../../../../public/images/pha_voi_chanh_2-min.jpg";
+import Image3 from "../../../../public/images/mat_ong_voi_pho_mai_3-min.jpg";
+import Image4 from "../../../../public/images/AQ0P4338_4-min.jpg";
+import Image from "next/image";
 
 export default function HeroSection() {
   const heroProduct = {
@@ -199,12 +204,7 @@ export default function HeroSection() {
       "Phù hợp cho trang phục hàng ngày và các sản phẩm gia dụng.",
     ],
     // Using placeholder images for the slider
-    images: [
-      "https://placehold.co/1000x800/FF6347/FFFFFF?text=Lalalycheee+Vải+1",
-      "https://placehold.co/1000x800/FFA07A/FFFFFF?text=Lalalycheee+Vải+2",
-      "https://placehold.co/1000x800/CD5C5C/FFFFFF?text=Lalalycheee+Vải+3",
-      "https://placehold.co/1000x800/DC143C/FFFFFF?text=Lalalycheee+Vải+4",
-    ],
+    images: [Image1, Image2, Image3, Image4],
   };
 
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -216,8 +216,8 @@ export default function HeroSection() {
   const isDraggingRef = useRef(false); // Tracks if a drag is in progress
 
   const totalSlides = heroProduct.images.length;
-  const AUTO_PLAY_DELAY = 5000; // Auto-advance slide every 5 seconds
-  const RESUME_DELAY = 3000; // Resume autoplay after 3 seconds of user inactivity
+  const AUTO_PLAY_DELAY = 2000; // Auto-advance slide every 5 seconds
+  const RESUME_DELAY = 1500; // Resume autoplay after 3 seconds of user inactivity
   const SWIPE_THRESHOLD = 50; // Minimum pixel distance to register a swipe
 
   // Effect for autoplay logic
@@ -379,28 +379,37 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Image Slider - with swipe events */}
+        {/* Image Slider - with swipe events and slide transition */}
         <div
           ref={sliderRef}
           className="lg:col-span-1 order-1 lg:order-2 relative w-full h-[24rem] sm:h-[30rem] lg:h-[40rem] rounded-3xl overflow-hidden shadow-2xl"
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseLeave} // To handle cases where mouse is released outside
+          onMouseLeave={handleMouseLeave}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          <img
-            src={heroProduct.images[currentSlide]}
-            alt={`${heroProduct.name} ${currentSlide + 1}`}
-            className="w-full h-full object-cover transition-opacity duration-700 ease-in-out"
-            onError={(e) => {
-              e.currentTarget.src = `https://placehold.co/1000x800/FF6347/FFFFFF?text=Lalalycheee+Vải+${
-                currentSlide + 1
-              }`;
-            }}
-          />
+          <div
+            className="flex h-full transition-transform duration-700 ease-in-out"
+            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+          >
+            {heroProduct.images.map((imgSrc, idx) => (
+              <Image
+                key={idx}
+                src={imgSrc}
+                alt={`${heroProduct.name} ${idx + 1}`}
+                className="min-w-full h-full object-cover" // min-w-full ensures each image takes up 100% width of flex container
+                onError={(e) => {
+                  e.currentTarget.src = `https://placehold.co/1000x800/FF6347/FFFFFF?text=Lalalycheee+Vải+${
+                    idx + 1
+                  }`;
+                }}
+              />
+            ))}
+          </div>
+
           {/* Navigation Buttons */}
           <button
             onClick={goToPrevSlide}
@@ -447,7 +456,7 @@ export default function HeroSection() {
             {heroProduct.images.map((_, idx) => (
               <button
                 key={idx}
-                onClick={() => goToSlide(idx)} // Use goToSlide for indicator clicks
+                onClick={() => goToSlide(idx)}
                 className={`h-2 w-2 rounded-full transition-all duration-300 ${
                   currentSlide === idx ? "bg-white w-6" : "bg-white/50"
                 }`}

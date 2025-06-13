@@ -1,8 +1,5 @@
 "use client";
 import ProductIntroSection from "@/components/pages/home/product-intro-section";
-import React from "react";
-
-import Footer from "@/layouts/Footer";
 import HeroSection from "@/components/pages/home/home-hero";
 import FeaturesSection from "@/components/pages/home/feature-section";
 import CallToActionSection from "@/components/pages/home/call-to-action-section";
@@ -38,7 +35,6 @@ export default function HomePage() {
                 className="absolute top-0 left-0 w-full h-full"
                 src="https://www.youtube.com/embed/zZaav6omxko?si=ripNjVylKCrxDxm-&amp;start=337" // THAY THẾ BẰNG ID VIDEO THỰC CỦA BẠN
                 title="Giới thiệu về Vải Thiều Thanh Hà"
-                frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 referrerPolicy="strict-origin-when-cross-origin"
                 allowFullScreen

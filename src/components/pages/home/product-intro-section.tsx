@@ -1,3 +1,9 @@
+import Image1 from "../../../../public/images/AQ0P4338_4-min.jpg";
+import Image2 from "../../../../public/images/pha_voi_chanh_2-min.jpg";
+import Image3 from "../../../../public/images/mat_ong_voi_pho_mai_3-min.jpg";
+import Image4 from "../../../../public/images/AQ0P4338_4-min.jpg";
+import Image from "next/image";
+
 export default function ProductIntroSection() {
   const productHoney = {
     name: "Mật Ong Hoa Vải Nguyên Chất",
@@ -38,12 +44,7 @@ export default function ProductIntroSection() {
           "Sản phẩm tự nhiên, màu sắc và độ sánh có thể thay đổi nhẹ theo mùa và điều kiện bảo quản.",
       },
     ],
-    images: [
-      "https://placehold.co/600x400/FFD700/000000?text=Mật+Ong+1",
-      "https://placehold.co/600x400/FFA500/000000?text=Mật+Ong+2",
-      "https://placehold.co/600x400/FF8C00/000000?text=Mật+Ong+3",
-      "https://placehold.co/600x400/FF6347/000000?text=Mật+Ong+4",
-    ], // Placeholder images for honey
+    images: [Image1, Image2, Image3, Image4],
   };
 
   return (
@@ -59,17 +60,11 @@ export default function ProductIntroSection() {
               key={index}
               className="relative aspect-[3/2] rounded-xl overflow-hidden shadow-lg group"
             >
-              <img
+              <Image
                 src={imgSrc}
                 alt={`Mật Ong Hoa Vải ${index + 1}`}
                 className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500 ease-in-out"
-                onError={(e) => {
-                  e.currentTarget.src = `https://placehold.co/600x400/FFD700/000000?text=Mật+Ong+${
-                    index + 1
-                  }`;
-                }}
               />
-              <div className="absolute inset-0 bg-black bg-opacity-10 group-hover:bg-opacity-0 transition-opacity duration-300"></div>
             </div>
           ))}
         </div>
