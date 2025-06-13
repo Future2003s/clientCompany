@@ -1,9 +1,5 @@
-import React from "react";
+import React, { Fragment } from "react";
 
-export default function AboutLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return <div className="container mx-auto mt-10">{children}</div>;
+export default function layout({ children }: { children: React.ReactNode }) {
+  return <div className="mt-25 container mx-auto">{children}</div>;
 }

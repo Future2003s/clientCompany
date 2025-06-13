@@ -1,90 +1,48 @@
 "use client";
 import React, { useState } from "react";
-
-// Định nghĩa kiểu dữ liệu cho sản phẩm
+import ProductBig from "../../../../public/products/IMG_0404.png";
+import ProductSmall from "../../../../public/products/IMG_0405.png";
+import Image, { StaticImageData } from "next/image";
+import ProductDetailView from "./product-detail";
 interface Product {
   id: string;
   name: string;
   description: string;
   price: number;
-  imageUrl: string;
+  imageUrl: StaticImageData | string;
+  imageThumbUrl?: string;
+  galleryImages?: string | any[];
 }
 
-// Dữ liệu sản phẩm mẫu (có thể lấy từ API thực tế)
 const sampleProducts: Product[] = [
   {
-    id: "lychee-honey-1",
-    name: "Mật Ong Hoa Vải Thanh Hà (Chai lớn)",
-    description:
-      "Mật ong hoa vải nguyên chất từ vùng Thanh Hà, Hải Dương. Hương vị thơm ngon đặc trưng, màu vàng óng tự nhiên.",
-    price: 250000,
-    imageUrl: "chai mat ong.jpg", // Using provided image
-  },
-  {
     id: "lychee-honey-2",
-    name: "Mật Ong Hoa Vải Thanh Hà (Chai nhỏ)",
+    name: "Mật Ong Hoa Vải Thanh Hà 165g",
     description:
       "Chai mật ong hoa vải nhỏ gọn, tiện lợi mang theo hoặc làm quà tặng.",
     price: 150000,
-    imageUrl: "AQ0P4307.jpg", // Using provided image
+    imageUrl: ProductSmall, // Using provided image
+    galleryImages: [ProductSmall, ProductSmall, ProductSmall, ProductSmall],
   },
   {
-    id: "royal-jelly",
-    name: "Sữa Ong Chúa Tươi Nguyên Chất",
+    id: "lychee-honey-1",
+    name: "Mật Ong Hoa Vải Thanh Hà Dung Tích 435g",
     description:
-      "Sữa ong chúa tươi nguyên chất, được thu hoạch cẩn thận để giữ trọn vẹn dưỡng chất, giúp tăng cường sức khỏe và làm đẹp da từ bên trong.",
-    price: 350000,
-    imageUrl:
-      "https://placehold.co/400x300/e6f0e6/000000?text=S%E1%BB%AFa+Ong+Ch%C3%BAa",
-  },
-  {
-    id: "pollen",
-    name: "Phấn Hoa Tự Nhiên Cao Cấp",
-    description:
-      "Phấn hoa tự nhiên, giàu vitamin, khoáng chất và axit amin thiết yếu. Sản phẩm hỗ trợ tiêu hóa, tăng cường miễn dịch và cải thiện năng lượng tổng thể.",
-    price: 180000,
-    imageUrl:
-      "https://placehold.co/400x300/f0e6e6/000000?text=Ph%E1%BA%A5n+Hoa",
-  },
-  {
-    id: "forest-honey",
-    name: "Mật Ong Rừng Hoang Dã",
-    description:
-      "Mật ong khai thác từ rừng tự nhiên, không pha tạp, mang hương vị đậm đà, đặc trưng của hoa rừng. Sản phẩm lý tưởng cho những ai tìm kiếm sự tinh khiết và tự nhiên.",
-    price: 400000,
-    imageUrl:
-      "https://placehold.co/400x300/e6e6f0/000000?text=M%E1%BA%ADt+Ong+R%E1%BB%ABng",
-  },
-  {
-    id: "propolis",
-    name: "Keo Ong Nguyên Chất",
-    description:
-      "Keo ong được thu hoạch từ tổ ong, nổi tiếng với đặc tính kháng khuẩn, chống viêm và tăng cường hệ miễn dịch. Sản phẩm tự nhiên hỗ trợ bảo vệ sức khỏe.",
-    price: 280000,
-    imageUrl: "https://placehold.co/400x300/e6f0f0/000000?text=Keo+Ong",
-  },
-  {
-    id: "bee-wax",
-    name: "Sáp Ong Tinh Khiết",
-    description:
-      "Sáp ong tự nhiên, không qua xử lý hóa chất. Thích hợp dùng trong làm nến, mỹ phẩm handmade, hoặc các ứng dụng tự nhiên khác. An toàn và thân thiện với môi trường.",
-    price: 80000,
-    imageUrl: "https://placehold.co/400x300/f0f0e6/000000?text=S%C3%A1p+Ong",
-  },
-  {
-    id: "honeycomb",
-    name: "Tổ Ong Mật Tươi Nguyên Tổ",
-    description:
-      "Tổ ong mật tươi nguyên miếng, mang đến trải nghiệm hương vị mật ong tự nhiên nhất cùng với sáp ong mềm mại, giàu dưỡng chất.",
-    price: 500000,
-    imageUrl:
-      "https://placehold.co/400x300/f0eaf0/000000?text=T%E1%BB%95+Ong+M%E1%BA%ADt",
+      "Mật ong hoa vải nguyên chất từ vùng Thanh Hà, Hải Dương. Hương vị thơm ngon đặc trưng, màu vàng óng tự nhiên, và nhiều lợi ích cho sức khỏe. Thích hợp dùng pha đồ uống, làm bánh, hoặc ăn trực tiếp.",
+    price: 250000,
+    imageUrl: ProductBig,
+    galleryImages: [ProductBig, ProductBig, ProductBig, ProductBig],
   },
 ];
 
-// Component chính của ứng dụng danh sách sản phẩm
+// Component hiển thị chi tiết một sản phẩm
+interface ProductDetailViewProps {
+  product: Product;
+  onBack: () => void;
+}
 export default function ProductList() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   // Lọc sản phẩm dựa trên từ khóa tìm kiếm
   const filteredProducts = sampleProducts.filter(
@@ -92,6 +50,20 @@ export default function ProductList() {
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleProductClick = (product: Product) => {
+    setSelectedProduct(product);
+  };
+
+  const handleBackToList = () => {
+    setSelectedProduct(null);
+  };
+
+  if (selectedProduct) {
+    return (
+      <ProductDetailView product={selectedProduct} onBack={handleBackToList} />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-8 font-inter antialiased">
@@ -143,21 +115,19 @@ export default function ProductList() {
             <div
               key={product.id}
               className="bg-white rounded-2xl shadow-xl overflow-hidden transform transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl flex flex-col cursor-pointer"
-              onClick={() =>
-                console.log(`Xem chi tiết sản phẩm: ${product.name}`)
-              }
+              onClick={() => handleProductClick(product)} // Xử lý click để hiển thị chi tiết
               role="button"
               tabIndex={0}
               aria-label={`Xem chi tiết sản phẩm ${product.name}`}
             >
               {/* Ảnh sản phẩm */}
               <div className="relative w-full h-56 overflow-hidden bg-gray-100 rounded-t-2xl">
-                <img
+                <Image
                   src={product.imageUrl}
                   alt={product.name}
                   className="w-full h-full object-cover object-center transition-transform duration-300 hover:scale-105"
                   onError={(e) => {
-                    e.currentTarget.onerror = null; // Prevent infinite loop if placeholder also errors
+                    e.currentTarget.onerror = null;
                     e.currentTarget.src = `https://placehold.co/400x300/F0F0F0/000000?text=L%E1%BB%97i+%E1%BA%A2nh`;
                   }}
                 />
@@ -179,13 +149,13 @@ export default function ProductList() {
                   <button
                     className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg text-lg font-bold hover:bg-blue-700 transition-colors shadow-md transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-blue-300"
                     onClick={(e) => {
-                      e.stopPropagation(); // Prevent card click event from firing
+                      e.stopPropagation(); // Ngăn chặn sự kiện click của thẻ cha
                       console.log(`Đã thêm ${product.name} vào giỏ hàng`);
-                      // In a real app, you'd add to cart here
+                      // Trong một ứng dụng thực tế, bạn sẽ thêm vào giỏ hàng ở đây
                     }}
                     aria-label={`Thêm ${product.name} vào giỏ hàng`}
                   >
-                    Thêm vào giỏ hàng
+                    Mua Ngay
                   </button>
                 </div>
               </div>
