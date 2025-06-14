@@ -44,13 +44,17 @@ export default function ProductDetailView({
   product,
   onBack,
 }: ProductDetailViewProps) {
-  const [selectedImage, setSelectedImage] = useState(product.imageUrl);
+  const [selectedImage, setSelectedImage] = useState<string>(
+    product.imageUrl as string
+  );
   const [quantity, setQuantity] = useState(1);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(""); // State để hiển thị thông báo thay vì alert
 
+  // Đặt lại ảnh chính và số lượng khi sản phẩm thay đổi và cuộn lên đầu trang
   useEffect(() => {
-    setSelectedImage(product.imageUrl);
+    setSelectedImage(product.imageUrl as string);
     setQuantity(1);
+    window.scrollTo(0, 0); // Cuộn lên đầu trang khi component được mount
   }, [product]);
 
   const handleAddToCart = () => {
@@ -59,13 +63,20 @@ export default function ProductDetailView({
     setTimeout(() => setMessage(""), 3000); // Xóa thông báo sau 3 giây
   };
 
-  const handleImageClick = (imageUrl: string) => {
-    setSelectedImage(imageUrl);
+  const handleBuyNow = () => {
+    console.log(`Mua ngay ${quantity} sản phẩm "${product.name}".`);
+    setMessage(`Mua ngay ${quantity} sản phẩm "${product.name}".`);
+    setTimeout(() => setMessage(""), 3000); // Xóa thông báo sau 3 giây
+    // Logic điều hướng đến trang thanh toán hoặc mở modal thanh toán ngay lập tức
+  };
+
+  const handleImageClick = (imgSrc: string) => {
+    setSelectedImage(imgSrc);
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 font-inter antialiased mt-52">
-      <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden md:flex">
+    <div className="min-h-screen bg-gray-100 p-4 font-inter antialiased">
+      <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden md:flex relative">
         {/* Nút quay lại */}
         <button
           onClick={onBack}
@@ -90,37 +101,41 @@ export default function ProductDetailView({
 
         {/* Phần ảnh sản phẩm */}
         <div className="md:w-1/2 p-6 flex flex-col items-center justify-center bg-gray-50 rounded-l-lg relative">
-          <Image
-            src={selectedImage}
-            alt={product.name}
-            className="w-full h-auto object-contain rounded-lg shadow-md mb-4 max-h-[500px]"
-            onError={(e) => {
-              e.currentTarget.onerror = null;
-              e.currentTarget.src = `https://placehold.co/600x400/F0F0F0/000000?text=L%E1%BB%97i+%E1%BA%A2nh`;
-            }}
-          />
+          <div className="relative w-full max-w-[500px] h-[400px] mb-4">
+            <img
+              src={selectedImage}
+              alt={product.name}
+              className="w-full h-full object-contain rounded-lg shadow-md"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = `https://placehold.co/600x400/F0F0F0/000000?text=L%E1%BB%97i+%E1%BA%A2nh`;
+              }}
+            />
+          </div>
           {/* Gallery ảnh thumbnail */}
           <div className="flex flex-wrap justify-center gap-2 mt-4">
-            {/*@ts-ignore*/}
-            {product.galleryImages?.map(
-              (imgUrl: string | StaticImageData, index: any) => (
-                <Image
-                  key={index}
-                  src={imgUrl}
+            {/*//@ts-ignore*/}
+            {product.galleryImages?.map((imgSrc: string, index: string) => (
+              <div
+                key={index}
+                className={`relative w-20 h-20 rounded-md cursor-pointer border-2 ${
+                  selectedImage === imgSrc
+                    ? "border-blue-500"
+                    : "border-transparent"
+                } hover:border-blue-500 transition-all duration-200 overflow-hidden`}
+                onClick={() => handleImageClick(imgSrc)}
+              >
+                <img
+                  src={imgSrc}
                   alt={`${product.name} - Ảnh ${index + 1}`}
-                  className={`w-20 h-20 object-cover rounded-md cursor-pointer border-2 ${
-                    selectedImage === imgUrl
-                      ? "border-blue-500"
-                      : "border-transparent"
-                  } hover:border-blue-500 transition-all duration-200`}
-                  onClick={() => handleImageClick(imgUrl as any)}
+                  className="w-full h-full object-cover rounded-md"
                   onError={(e) => {
                     e.currentTarget.onerror = null;
                     e.currentTarget.src = `https://placehold.co/100x100/F0F0F0/000000?text=L%E1%BB%97i`;
                   }}
                 />
-              )
-            )}
+              </div>
+            ))}
           </div>
         </div>
 
@@ -172,13 +187,21 @@ export default function ProductDetailView({
             </div>
           </div>
 
-          {/* Nút thêm vào giỏ hàng */}
-          <button
-            onClick={handleAddToCart}
-            className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg text-lg font-bold hover:bg-blue-700 transition-colors shadow-lg transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-blue-300 mt-6 md:mt-0"
-          >
-            Thêm vào giỏ hàng
-          </button>
+          {/* Nút thêm vào giỏ hàng và Mua ngay */}
+          <div className="flex flex-col sm:flex-row gap-4 mt-6 md:mt-0">
+            <button
+              onClick={handleAddToCart}
+              className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg text-lg font-bold hover:bg-blue-700 transition-colors shadow-lg transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-blue-300"
+            >
+              Thêm vào giỏ hàng
+            </button>
+            <button
+              onClick={handleBuyNow}
+              className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg text-lg font-bold hover:bg-green-700 transition-colors shadow-lg transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-green-300"
+            >
+              Mua ngay
+            </button>
+          </div>
 
           {/* Message box */}
           {message && (
@@ -201,17 +224,21 @@ export default function ProductDetailView({
                 <div
                   key={relatedProduct.id}
                   className="bg-gray-50 rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition-transform duration-300 cursor-pointer"
-                  onClick={() => onBack()} // Quay lại danh sách để click vào sản phẩm khác
+                  onClick={() => onBack()} // Quay lại danh sách và chọn sản phẩm mới
                 >
-                  <Image
-                    src={relatedProduct.imageUrl}
-                    alt={relatedProduct.name}
-                    className="w-full h-48 object-cover"
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = `https://placehold.co/400x300/F0F0F0/000000?text=L%E1%BB%97i+%E1%BA%A2nh`;
-                    }}
-                  />
+                  <div className="relative w-full h-48">
+                    {" "}
+                    {/* Container cho ảnh */}
+                    <Image // Sử dụng <img> thay vì <Image>
+                      src={relatedProduct.imageUrl}
+                      alt={relatedProduct.name}
+                      className="w-full h-full object-cover rounded-t-lg"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = `https://placehold.co/400x300/F0F0F0/000000?text=L%E1%BB%97i+%E1%BA%A2nh`;
+                      }}
+                    />
+                  </div>
                   <div className="p-4">
                     <h3 className="text-lg font-semibold text-gray-800 mb-1 line-clamp-1">
                       {relatedProduct.name}
@@ -222,8 +249,8 @@ export default function ProductDetailView({
                     <button
                       className="w-full bg-green-500 text-white py-2 rounded-md text-sm hover:bg-green-600 transition-colors"
                       onClick={(e) => {
-                        e.stopPropagation(); // Prevent parent div click
-                        onBack(); // Go back to list and simulate clicking on related product
+                        e.stopPropagation(); // Ngăn chặn sự kiện click của thẻ cha
+                        onBack(); // Quay lại danh sách và mô phỏng click vào sản phẩm liên quan
                       }}
                     >
                       Xem chi tiết
