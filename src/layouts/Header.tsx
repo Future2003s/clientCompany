@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef, Fragment } from "react";
-import Logo from "../../public/logo_company.jpg";
+import Logo from "../../public/logo_company-min.jpg";
 import Image from "next/image";
 // --- Dữ liệu cho các liên kết điều hướng ---
 // Quản lý các link ở một nơi giúp dễ dàng cập nhật và bảo trì
@@ -91,8 +91,6 @@ const XIcon = () => (
   </svg>
 );
 
-// --- Component Link tùy chỉnh ---
-// Sử dụng một component Link chung để dễ dàng thay đổi hành vi trong tương lai
 const CustomLink = ({
   href,
   children,
@@ -112,7 +110,6 @@ const CustomLink = ({
   );
 };
 
-// --- Component Menu Sản phẩm cho Desktop ---
 const DesktopProductDropdown = ({
   subItems,
 }: {
@@ -135,7 +132,6 @@ const DesktopProductDropdown = ({
   );
 };
 
-// --- Component Menu Điều hướng cho Mobile ---
 const MobileNav = ({
   isOpen,
   onClose,
@@ -230,7 +226,6 @@ const MobileNav = ({
   );
 };
 
-// --- Component Header Chính ---
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isHeaderScrolled, setIsHeaderScrolled] = useState(false);
