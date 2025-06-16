@@ -264,7 +264,7 @@ export default function Header() {
           <div className="flex items-center justify-between h-full">
             {/* Logo */}
             <CustomLink href="/" className="flex items-center gap-3">
-              <div className="relative w-12 h-12">
+              <div className="relative w-17 h-17">
                 {/* Sử dụng thẻ `img` tiêu chuẩn với URL placeholder */}
                 <Image
                   src={Logo}
