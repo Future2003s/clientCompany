@@ -7,7 +7,7 @@ import CallToActionSection from "@/components/pages/home/call-to-action-section"
 export default function HomePage() {
   return (
     <div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen font-sans antialiased text-gray-800">
-      <main className="px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24 space-y-16 sm:space-y-24 lg:space-y-32">
+      <article className="px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24 space-y-16 sm:space-y-24 lg:space-y-32">
         {/* 1. Hero Section - Vải Thiều Chính Vụ */}
         <section className="container mx-auto bg-white rounded-3xl shadow-xl transform transition-transform duration-300 hover:scale-[1.005]">
           <HeroSection />
@@ -42,7 +42,7 @@ export default function HomePage() {
             </div>
           </div>
         </section>
-      </main>
+      </article>
     </div>
   );
 }

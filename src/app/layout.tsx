@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Quicksand } from "next/font/google";
 import "./globals.css";
-import Header from "@/layouts/Header";
 import Footer from "@/layouts/Footer";
 import { NextFont } from "next/dist/compiled/@next/font";
+import Header from "@/layouts/Header";
 
 const fontSans: NextFont = Quicksand({
   subsets: ["latin"],

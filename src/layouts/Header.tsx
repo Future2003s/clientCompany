@@ -2,8 +2,7 @@
 import React, { useState, useEffect, useRef, Fragment } from "react";
 import Logo from "../../public/logo_company-min.jpg";
 import Image from "next/image";
-// --- Dữ liệu cho các liên kết điều hướng ---
-// Quản lý các link ở một nơi giúp dễ dàng cập nhật và bảo trì
+
 const navLinks = [
   { href: "/", label: "Trang Chủ" },
   {
@@ -91,6 +90,9 @@ const XIcon = () => (
   </svg>
 );
 
+// --- Các Component UI ---
+
+// Link tùy chỉnh với hiệu ứng
 const CustomLink = ({
   href,
   children,
@@ -103,26 +105,28 @@ const CustomLink = ({
   return (
     <a
       href={href}
-      className={`text-gray-700 hover:text-red-600 transition-colors duration-300 ${className}`}
+      className={`text-gray-800 hover:text-red-600 transition-colors duration-300 ${className}`}
     >
       {children}
     </a>
   );
 };
 
+// Menu dropdown cho desktop
 const DesktopProductDropdown = ({
   subItems,
 }: {
   subItems: { href: string; label: string }[];
 }) => {
   return (
-    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 z-20">
+    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-48 bg-white/50 backdrop-blur-lg rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 z-20 border border-white/20">
       <div className="py-2">
         {subItems.map((item) => (
+          // SỬA LỖI: Sử dụng `item.label` làm key vì nó là duy nhất, không dùng `item.href`
           <CustomLink
-            key={item.href}
+            key={item.label}
             href={item.href}
-            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-red-600"
+            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-white/20 hover:text-red-600"
           >
             {item.label}
           </CustomLink>
@@ -132,6 +136,7 @@ const DesktopProductDropdown = ({
   );
 };
 
+// Menu cho mobile
 const MobileNav = ({
   isOpen,
   onClose,
@@ -142,7 +147,6 @@ const MobileNav = ({
   const [openSubMenu, setOpenSubMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Xử lý đóng menu khi nhấn phím Escape
   useEffect(() => {
     const handleEsc = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -162,7 +166,10 @@ const MobileNav = ({
       }`}
     >
       {/* Lớp nền mờ */}
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <div
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        onClick={onClose}
+      />
 
       {/* Nội dung menu trượt */}
       <div
@@ -197,7 +204,8 @@ const MobileNav = ({
                     {openSubMenu && (
                       <ul className="pl-4 mt-2 space-y-2 border-l-2 border-red-100">
                         {link.subItems.map((item) => (
-                          <li key={item.href}>
+                          // SỬA LỖI: Sử dụng `item.label` làm key cho thẻ li
+                          <li key={item.label}>
                             <CustomLink
                               href={item.href}
                               className="block py-2 text-md text-gray-600 hover:text-red-600"
@@ -226,38 +234,42 @@ const MobileNav = ({
   );
 };
 
+// --- Component Header Chính ---
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isHeaderScrolled, setIsHeaderScrolled] = useState(false);
+  const logoUrl = "https://placehold.co/100x100/f87171/ffffff?text=Logo"; // URL logo thay thế
 
   // Xử lý hiệu ứng header khi cuộn trang
   useEffect(() => {
     const handleScroll = () => {
-      setIsHeaderScrolled(window.scrollY > 10);
+      setIsHeaderScrolled(window.scrollY > 20);
     };
     window.addEventListener("scroll", handleScroll);
+    // Xóa event listener khi component bị unmount
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <>
       <header
-        className={`fixed w-full top-0 z-40 transition-all duration-300 ease-in-out ${
-          isHeaderScrolled
-            ? "bg-white/95 backdrop-blur-sm shadow-md h-20" // Chiều cao khi cuộn
-            : "bg-white/80 h-24" // Chiều cao ban đầu
-        }`}
+        className={`fixed w-full top-0 z-40 transition-all duration-300 ease-in-out border-b
+          ${
+            isHeaderScrolled
+              ? "bg-white/70 backdrop-blur-lg shadow-lg h-20 border-white/20" // <-- HIỆU ỨNG KHI CUỘN
+              : "bg-white/30 backdrop-blur-md h-24 border-transparent" // <-- HIỆU ỨNG BAN ĐẦU
+          }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
           <div className="flex items-center justify-between h-full">
             {/* Logo */}
             <CustomLink href="/" className="flex items-center gap-3">
               <div className="relative w-12 h-12">
-                {/* Thay thế Next/Image bằng thẻ img thông thường để tương thích */}
+                {/* Sử dụng thẻ `img` tiêu chuẩn với URL placeholder */}
                 <Image
                   src={Logo}
                   alt="LALA-LYCHEEE Logo"
-                  className="absolute top-0 left-0 w-full h-full object-contain rounded-full"
+                  className="w-full h-full object-contain rounded-full"
                 />
               </div>
               <span className="text-4xl font-extrabold tracking-wider bg-gradient-to-r from-red-500 via-pink-500 to-orange-400 text-transparent bg-clip-text italic">
@@ -271,7 +283,7 @@ export default function Header() {
                 link.subItems ? (
                   // Item có menu con
                   <div key={link.label} className="relative group">
-                    <span className="flex items-center gap-1 cursor-pointer py-2 text-md font-medium text-gray-700 hover:text-red-600 transition-colors duration-300">
+                    <span className="flex items-center gap-1 cursor-pointer py-2 text-md font-medium text-gray-800 hover:text-red-600 transition-colors duration-300">
                       {link.label}
                       <ChevronDownIcon />
                     </span>
@@ -294,14 +306,14 @@ export default function Header() {
             <div className="flex items-center gap-3">
               <button
                 aria-label="Giỏ hàng"
-                className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+                className="p-2 text-gray-700 hover:text-red-600 hover:bg-white/30 rounded-full transition-colors"
               >
                 <ShoppingCartIcon />
               </button>
 
               <button
                 onClick={() => setIsMobileMenuOpen(true)}
-                className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors lg:hidden"
+                className="p-2 text-gray-700 hover:text-red-600 hover:bg-white/30 rounded-full transition-colors lg:hidden"
                 aria-label="Mở menu"
               >
                 <MenuIcon />
