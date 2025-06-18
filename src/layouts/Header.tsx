@@ -19,6 +19,7 @@ const navLinks = [
     href: "/chuc-nang",
     label: "Chức Năng",
     subItems: [
+      { href: "/payment", label: "Thanh Toán" },
       { href: "/login", label: "Đăng Nhập" },
       { href: "/register", label: "Đăng Ký" },
       { href: "/quantri", label: "Quản Trị" },
