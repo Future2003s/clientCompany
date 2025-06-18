@@ -1,7 +1,5 @@
 "use client";
-
 import React, { useRef, useState, useEffect } from "react";
-import type { NextPage } from "next";
 import {
   Heart,
   MessageCircle,
@@ -16,21 +14,6 @@ import {
 // Giả lập các component từ project của bạn
 const HeroSection = () => (
   <div className="p-16 text-center bg-red-100 rounded-2xl">Hero Section</div>
-);
-const ProductIntroSection = () => (
-  <div className="p-16 text-center bg-green-100 rounded-2xl">
-    Product Intro Section
-  </div>
-);
-const FeaturesSection = () => (
-  <div className="p-16 text-center bg-blue-100 rounded-2xl">
-    Features Section
-  </div>
-);
-const CallToActionSection = () => (
-  <div className="p-16 text-center bg-yellow-100 rounded-2xl">
-    Call to Action Section
-  </div>
 );
 
 // =======================================================================
@@ -107,7 +90,7 @@ const VideoItem: React.FC<{ video: MockVideo; isVisible: boolean }> = ({
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
 
   useEffect(() => {
     if (videoRef.current) videoRef.current.muted = isMuted;
@@ -296,22 +279,7 @@ const TiktokFeed: React.FC = () => {
 export default function HomePage() {
   return (
     <div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen font-sans antialiased text-gray-800">
-      {/* Giả lập Header, bạn có thể thay thế bằng component Header thực của mình */}
-      {/* <Header /> */}
-
       <article className="px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24 space-y-16 sm:space-y-24 lg:space-y-32">
-        <section className="container mx-auto bg-white rounded-3xl shadow-xl transform transition-transform duration-300 hover:scale-[1.005]">
-          <HeroSection />
-        </section>
-
-        <section className="container mx-auto bg-white rounded-3xl shadow-xl p-6 sm:p-8 lg:p-12 transition-all duration-300 hover:shadow-2xl">
-          <ProductIntroSection />
-        </section>
-
-        <FeaturesSection />
-
-        <CallToActionSection />
-
         {/* --- PHẦN TÍCH HỢP VIDEO MỚI --- */}
         <section className="container mx-auto p-6 sm:p-8 lg:p-12 bg-gray-900 rounded-3xl shadow-2xl">
           <div className="text-center mb-12">
