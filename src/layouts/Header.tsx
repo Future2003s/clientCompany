@@ -14,6 +14,15 @@ const navLinks = [
   },
   { href: "/about", label: "Về Chúng Tôi" },
   { href: "/contact", label: "Liên Hệ" },
+  {
+    href: "/chuc-nang",
+    label: "Chức Năng",
+    subItems: [
+      { href: "/login", label: "Đăng Nhập" },
+      { href: "/register", label: "Đăng Ký" },
+      { href: "/quantri", label: "Quản Trị" },
+    ],
+  },
 ];
 
 const Logo = "https://d3enplyig2yenj.cloudfront.net/logo";
