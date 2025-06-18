@@ -14,6 +14,7 @@ const navLinks = [
   },
   { href: "/about", label: "Về Chúng Tôi" },
   { href: "/contact", label: "Liên Hệ" },
+  { href: "/short", label: "SHORT VIDEO" },
   {
     href: "/chuc-nang",
     label: "Chức Năng",
