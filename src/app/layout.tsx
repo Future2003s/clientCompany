@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Quicksand } from "next/font/google";
 import "./globals.css";
-import Footer from "@/layouts/Footer";
 import { NextFont } from "next/dist/compiled/@next/font";
-import Header from "@/layouts/Header";
+import LayoutMain from "@/layouts/layout-main";
 
 const fontSans: NextFont = Quicksand({
   subsets: ["latin"],
@@ -23,11 +22,7 @@ export default function RootLayout({
   return (
     <html lang="vi" suppressHydrationWarning>
       <body className={`${fontSans.className}`} suppressHydrationWarning>
-        <div className="flex flex-col justify-between">
-          <Header />
-          <main>{children}</main>
-          <Footer />
-        </div>
+        <LayoutMain children={children} />
       </body>
     </html>
   );

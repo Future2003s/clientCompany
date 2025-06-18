@@ -1,7 +1,5 @@
 "use client";
 import React, { useState, useEffect, useRef, Fragment } from "react";
-import Logo from "../../public/logo_company-min.jpg";
-import Image from "next/image";
 
 const navLinks = [
   { href: "/", label: "Trang Chủ" },
@@ -17,6 +15,8 @@ const navLinks = [
   { href: "/about", label: "Về Chúng Tôi" },
   { href: "/contact", label: "Liên Hệ" },
 ];
+
+const Logo = "https://d3enplyig2yenj.cloudfront.net/logo";
 
 // --- Các Icon SVG ---
 // Sử dụng component cho icon để dễ dàng tái sử dụng và quản lý
@@ -266,7 +266,7 @@ export default function Header() {
             <CustomLink href="/" className="flex items-center gap-3">
               <div className="relative w-17 h-17">
                 {/* Sử dụng thẻ `img` tiêu chuẩn với URL placeholder */}
-                <Image
+                <img
                   src={Logo}
                   alt="LALA-LYCHEEE Logo"
                   className="w-full h-full object-contain rounded-full"
