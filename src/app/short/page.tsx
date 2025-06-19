@@ -253,7 +253,7 @@ const TiktokFeed: React.FC = () => {
         <button
           onClick={() => scrollToVideo(currentIndex - 1)}
           disabled={currentIndex === 0}
-          className="w-12 h-12 bg-white bg-opacity-20 backdrop-blur-md rounded-full flex items-center justify-center text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:bg-opacity-30"
+          className="w-12 h-12 bg-white bg-opacity-20 backdrop-blur-md rounded-full flex items-center justify-center text-red-500 disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:bg-opacity-30"
           aria-label="Video trước"
         >
           <ChevronUp size={24} />
@@ -261,7 +261,7 @@ const TiktokFeed: React.FC = () => {
         <button
           onClick={() => scrollToVideo(currentIndex + 1)}
           disabled={currentIndex === mockVideos.length - 1}
-          className="w-12 h-12 bg-white bg-opacity-20 backdrop-blur-md rounded-full flex items-center justify-center text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:bg-opacity-30"
+          className="w-12 h-12 bg-white bg-opacity-20 backdrop-blur-md rounded-full flex items-center justify-center text-red-500 disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:bg-opacity-30"
           aria-label="Video tiếp theo"
         >
           <ChevronDown size={24} />
