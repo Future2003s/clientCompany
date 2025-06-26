@@ -1,4 +1,5 @@
 import type { NextPage } from "next";
+import Link from "next/link";
 
 // Component Icon SVG cho gọn gàng
 const LycheeIcon = () => (
@@ -138,9 +139,12 @@ const SignUpPage: NextPage = () => {
           {/* Liên kết Đăng nhập */}
           <p className="text-sm font-light text-white/80 text-center mt-8">
             Đã có tài khoản?{" "}
-            <a href="#" className="font-bold text-white hover:underline">
+            <Link
+              href="/login"
+              className="font-bold text-white hover:underline"
+            >
               Đăng nhập tại đây
-            </a>
+            </Link>
           </p>
         </form>
       </div>
