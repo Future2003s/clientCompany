@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Quicksand } from "next/font/google";
 import "./globals.css";
 import { NextFont } from "next/dist/compiled/@next/font";
+import AppProvider from "@/context/app-provider";
+import { QueryClient } from "@tanstack/react-query";
 import LayoutMain from "@/layouts/layout-main";
 
 const fontSans: NextFont = Quicksand({
@@ -22,7 +24,9 @@ export default function RootLayout({
   return (
     <html lang="vi" suppressHydrationWarning>
       <body className={`${fontSans.className}`} suppressHydrationWarning>
-        <LayoutMain children={children} />
+        <AppProvider>
+          <LayoutMain>{children}</LayoutMain>
+        </AppProvider>
       </body>
     </html>
   );

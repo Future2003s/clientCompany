@@ -9,6 +9,30 @@ class HttpError extends Error {
     this.status = status;
     this.payload = payload;
   }
+
+  public getPayload(): any {
+    return this.payload;
+  }
+
+  public setPayload(payload: any) {
+    this.payload = payload;
+  }
+
+  public getStatus(): number {
+    return this.status;
+  }
+
+  public getMessage(): string {
+    return this.message;
+  }
+
+  public setStatus(status: number) {
+    this.status = status;
+  }
+
+  public setMessage(messgae: string) {
+    this.message = messgae;
+  }
 }
 
 const request = async <Response>(
@@ -81,14 +105,3 @@ export const http = {
     return request<Response>("GET", url, options);
   },
 };
-
-const fetchData = fetch("http://localhost:4000/v1/api/login", {
-  headers: {
-    "Content-Type": "application/json",
-  },
-  method: "POST",
-  body: JSON.stringify({
-    name: "OK",
-    email: "ádasdasd",
-  }),
-});

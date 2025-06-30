@@ -1,20 +1,42 @@
 "use client";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useQuery } from "@tanstack/react-query";
+
+const FormSchema = z.object({
+  email: z
+    .string()
+    .email("Email incorrect format")
+    .min(4, "Required 4 character"),
+  password: z.string().min(8, "Required 8 character"),
+});
+
+type FormInput = z.infer<typeof FormSchema>;
 
 function LoginForm() {
-  const [email, setEmail] = useState<string>(" ");
-  const [password, setPassword] = useState<string>(" ");
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<FormInput>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-    console.log(1);
-    console.log({ email, password });
-  };
 
-  useEffect(() => {
+  const {} = useQuery(
     
-  },[])
+  )
+
+  const onSubmit = (data: FormInput) => {
+    console.log(data);
+  };
 
   return (
     <main className="relative min-h-screen w-full flex items-center justify-center p-4 overflow-hidden bg-gray-900">
@@ -44,7 +66,7 @@ function LoginForm() {
         </div>
 
         {/* Form đăng nhập */}
-        <div>
+        <form onSubmit={handleSubmit(onSubmit)}>
           {/* Ô nhập Email */}
           <div className="mb-5">
             <label
@@ -56,12 +78,11 @@ function LoginForm() {
             <input
               type="email"
               id="email"
-              name="email"
               className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 text-sm focus:ring-pink-500 focus:border-pink-500 transition duration-300"
               placeholder="name@email.com"
-              onChange={(e) => setEmail(e.target.value)}
-              required
+              {...register("email")}
             />
+            <span className="text-red-500">{errors.email?.message}</span>
           </div>
 
           {/* Ô nhập Mật khẩu */}
@@ -73,14 +94,13 @@ function LoginForm() {
               Mật khẩu
             </label>
             <input
+              {...register("password")}
               type="password"
               id="password"
-              name="password"
               className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 text-sm focus:ring-pink-500 focus:border-pink-500 transition duration-300"
               placeholder="••••••••"
-              required
-              onChange={(e) => setPassword(e.target.value)}
             />
+            <span className="text-red-500">{errors.password?.message}</span>
           </div>
 
           {/* Liên kết Quên mật khẩu */}
@@ -94,10 +114,7 @@ function LoginForm() {
           </div>
 
           {/* Nút Đăng nhập */}
-          <button
-            className="w-full text-white bg-pink-500/80 hover:bg-pink-500 focus:ring-4 focus:outline-none focus:ring-pink-300/50 font-bold rounded-lg text-base px-5 py-3.5 text-center transition-all transform hover:scale-105 duration-300 border border-white/20"
-            onClick={handleSubmit}
-          >
+          <button className="w-full text-white bg-pink-500/80 hover:bg-pink-500 focus:ring-4 focus:outline-none focus:ring-pink-300/50 font-bold rounded-lg text-base px-5 py-3.5 text-center transition-all transform hover:scale-105 duration-300 border border-white/20">
             Đăng Nhập
           </button>
 
@@ -111,7 +128,7 @@ function LoginForm() {
               Đăng ký ngay
             </Link>
           </p>
-        </div>
+        </form>
       </div>
     </main>
   );
