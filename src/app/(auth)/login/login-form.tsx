@@ -29,11 +29,6 @@ function LoginForm() {
     },
   });
 
-
-  const {} = useQuery(
-    
-  )
-
   const onSubmit = (data: FormInput) => {
     console.log(data);
   };

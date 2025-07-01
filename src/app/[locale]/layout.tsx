@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Quicksand } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 import { NextFont } from "next/dist/compiled/@next/font";
 import AppProvider from "@/context/app-provider";
-import { QueryClient } from "@tanstack/react-query";
 import LayoutMain from "@/layouts/layout-main";
+import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { routing } from "@/i18n/routing";
+import { notFound } from "next/navigation";
 
 const fontSans: NextFont = Quicksand({
   subsets: ["latin"],
@@ -16,16 +18,26 @@ export const metadata: Metadata = {
   description: "CÔNG TY TNHH LALA-LYCHEEE",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }>) {
+  const { locale } = await params;
+
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
+
   return (
-    <html lang="vi" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <body className={`${fontSans.className}`} suppressHydrationWarning>
         <AppProvider>
-          <LayoutMain>{children}</LayoutMain>
+          <NextIntlClientProvider>
+            <LayoutMain>{children}</LayoutMain>
+          </NextIntlClientProvider>
         </AppProvider>
       </body>
     </html>
