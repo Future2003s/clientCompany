@@ -48,9 +48,7 @@ const request = async <Response>(
 
   const baseUrl = options?.baseUrl;
 
-  const endPointUrl = url.startsWith("/")
-    ? `${baseUrl}${url}`
-    : `${baseUrl}/${url}`;
+  const endPointUrl = "http://localhost:4000/v1/api/auth/login";
 
   const res = await fetch(endPointUrl, {
     ...options,
@@ -88,7 +86,8 @@ export const http = {
     body: any,
     options?: Omit<CustomOptions, "body"> | undefined
   ) {
-    return request<Response>("POST", url, {
+    console.log(`http://localhost:4000/api/auth${url}`);
+    return request<Response>("POST", `http://localhost:4000/api/auth/login`, {
       ...options,
     });
   },

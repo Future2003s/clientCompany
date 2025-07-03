@@ -134,8 +134,7 @@ function Footer() {
           <address className="not-italic space-y-2">
             <p className="text-blue-200">
               <span className="font-semibold text-blue-300">Địa chỉ: </span>
-              LALALYCHEEE, Vĩnh Lập, Vĩnh Cường, Thanh Hà, Hải Dương 03227, Việt
-              Nam
+              thôn Tú Y, xã Hà Đông, Thành Phố Hải Phòng.
             </p>
             <p className="text-blue-200">
               <span className="font-semibold text-blue-300">Email:</span>{" "}
