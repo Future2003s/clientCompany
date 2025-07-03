@@ -1,4 +1,3 @@
-"use client";
 import ProductIntroSection from "@/components/pages/home/product-intro-section";
 import HeroSection from "@/components/pages/home/home-hero";
 import FeaturesSection from "@/components/pages/home/feature-section";

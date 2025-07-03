@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import { Quicksand } from "next/font/google";
-import "../globals.css";
+import "./globals.css";
 import { NextFont } from "next/dist/compiled/@next/font";
 import AppProvider from "@/context/app-provider";
 import LayoutMain from "@/layouts/layout-main";
-import { hasLocale, NextIntlClientProvider } from "next-intl";
-import { routing } from "@/i18n/routing";
-import { notFound } from "next/navigation";
 
 const fontSans: NextFont = Quicksand({
   subsets: ["latin"],
@@ -20,24 +17,14 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
-  params,
 }: Readonly<{
   children: React.ReactNode;
-  params: Promise<{ locale: string }>;
 }>) {
-  const { locale } = await params;
-
-  if (!hasLocale(routing.locales, locale)) {
-    notFound();
-  }
-
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang="vi" suppressHydrationWarning>
       <body className={`${fontSans.className}`} suppressHydrationWarning>
         <AppProvider>
-          <NextIntlClientProvider>
-            <LayoutMain>{children}</LayoutMain>
-          </NextIntlClientProvider>
+          <LayoutMain>{children}</LayoutMain>
         </AppProvider>
       </body>
     </html>

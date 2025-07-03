@@ -11,7 +11,7 @@ function LayoutMain({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-col justify-between">
       {!isAdminPage && <Header />}
-      <main>{children}</main>
+      <main className="mt-25">{children}</main>
       {!isAdminPage && <Footer />}
     </div>
   );
