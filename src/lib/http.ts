@@ -46,11 +46,9 @@ const request = async <Response>(
     "Content-Type": "application/json",
   };
 
-  const baseUrl = options?.baseUrl;
+  const baseUrl = options?.baseUrl ? options.baseUrl : "http://localhost:4000";
 
-  const endPointUrl = "http://localhost:4000/v1/api/auth/login";
-
-  const res = await fetch(endPointUrl, {
+  const res = await fetch(url, {
     ...options,
     headers: {
       ...baseHeaders,
@@ -75,21 +73,23 @@ const request = async <Response>(
 };
 
 export const http = {
-  get<Response>(
-    url: string,
-    options?: Omit<CustomOptions, "body"> | undefined
-  ) {
-    return request<Response>("GET", url, options);
-  },
   post<Response>(
     url: string,
     body: any,
     options?: Omit<CustomOptions, "body"> | undefined
   ) {
-    console.log(`http://localhost:4000/api/auth${url}`);
-    return request<Response>("POST", `http://localhost:4000/api/auth/login`, {
+    return request<Response>("POST", url, {
       ...options,
+      ...body,
     });
+  },
+
+  get<Response>(
+    url: string,
+    options?: Omit<CustomOptions, "body"> | undefined
+  ) {
+    console.log(url);
+    return request<Response>("GET", url, options);
   },
   put<Response>(
     url: string,

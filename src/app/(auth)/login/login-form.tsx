@@ -4,10 +4,11 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-// 1. Import toast và Toaster
 import toast, { Toaster } from "react-hot-toast";
-// Giả sử bạn có hook này, nếu không có hãy comment dòng này lại
-// import { useLoginMutation } from "@/queries/useAuth";
+import { http } from "@/lib/http";
+import { request } from "http";
+import { useLoginMutation } from "@/queries/useAuth";
+import { useAppContext } from "@/context/app-context";
 
 const FormSchema = z.object({
   email: z
@@ -63,7 +64,9 @@ function LoginForm() {
   const [showPassword, setShowPassword] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  // const loginMutation = useLoginMutation();
+  const { setSessionId } = useAppContext();
+
+  const loginMutation = useLoginMutation();
   const {
     register,
     formState: { errors },
@@ -77,35 +80,34 @@ function LoginForm() {
   });
 
   const onSubmit = async (data: FormInput) => {
-    setIsSubmitting(true);
     try {
       const res = await fetch("http://localhost:4000/v1/api/auth/login", {
         method: "POST",
+        body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
       });
 
-      const responseData = await res.json();
-
       if (!res.ok) {
-        // 3. Hiển thị toast lỗi với thông điệp từ server
-        const errorMessage =
-          responseData.message || `Đăng nhập thất bại. Mã lỗi: ${res.status}`;
-        toast.error(errorMessage);
-        throw new Error(errorMessage);
+        throw new Error("Loi Goi API");
       }
 
-      // 4. Hiển thị toast thành công
-      toast.success("Đăng nhập thành công!");
-      console.log("Đăng nhập thành công:", responseData);
-      // Thêm logic chuyển hướng hoặc lưu token ở đây
+      const result = await res.json();
+
+      const resultFromNext = await fetch("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify(result),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const dataProvider = await resultFromNext.json();
+
+      setSessionId(dataProvider.metaData);
     } catch (error) {
-      // Lỗi này sẽ bắt các lỗi mạng hoặc lỗi đã được throw ở trên
-      console.error("Lỗi khi đăng nhập:", error);
-    } finally {
-      setIsSubmitting(false);
+      console.log(error);
     }
   };
 

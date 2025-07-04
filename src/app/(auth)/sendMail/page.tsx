@@ -176,11 +176,10 @@ const customAnimationStyle = `
   .animate-dot-3 { animation: loading-dots-bounce 1.5s ease-in-out 0.4s infinite; }
 `;
 
-const Loader: React.FC<LoaderProps> = ({ isLoading }) => {
+export const Loader: React.FC<LoaderProps> = ({ isLoading }) => {
   return (
     <>
       <style>{customAnimationStyle}</style>
-
       <div
         className={`fixed inset-0 z-50 flex items-center justify-center bg-[#f0f2f5] transition-opacity duration-700 ease-in-out ${
           isLoading ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -242,7 +241,6 @@ const Loader: React.FC<LoaderProps> = ({ isLoading }) => {
               />
             </div>
           </div>
-
           {/* Hiệu ứng 3 chấm đang tải */}
           <div className="flex space-x-2 mt-12">
             <div className="w-3 h-3 bg-gray-400 rounded-full animate-dot-1"></div>
@@ -290,7 +288,6 @@ const OrderForm: React.FC = () => {
       setEmailBody("");
       return;
     }
-
     const customerName = formData.customerName || "[Tên khách hàng]";
     const totalValue = formData.totalValue
       ? new Intl.NumberFormat("vi-VN").format(Number(formData.totalValue)) +

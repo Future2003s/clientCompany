@@ -5,6 +5,7 @@ import { NextFont } from "next/dist/compiled/@next/font";
 import AppProvider from "@/context/app-provider";
 import LayoutMain from "@/layouts/layout-main";
 import { Toaster } from "react-hot-toast";
+import AppContextProvider from "@/context/app-context";
 
 const fontSans: NextFont = Quicksand({
   subsets: ["latin"],
@@ -25,7 +26,9 @@ export default async function RootLayout({
     <html lang="vi" suppressHydrationWarning>
       <body className={`${fontSans.className}`} suppressHydrationWarning>
         <AppProvider>
-          <LayoutMain>{children}</LayoutMain>
+          <AppContextProvider>
+            <LayoutMain>{children}</LayoutMain>
+          </AppContextProvider>
           <Toaster />
         </AppProvider>
       </body>
