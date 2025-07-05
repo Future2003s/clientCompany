@@ -16,13 +16,10 @@ export default function HomePage() {
         <section className="container mx-auto bg-white rounded-3xl shadow-xl p-6 sm:p-8 lg:p-12 transition-all duration-300 hover:shadow-2xl">
           <ProductIntroSection />
         </section>
-
         {/* Features Section */}
         <FeaturesSection />
-
         {/* Call to Action Section */}
         <CallToActionSection />
-
         {/* 3. Video Section - Giới thiệu */}
         <section className="flex justify-center items-center">
           <div className="w-full max-w-5xl rounded-3xl overflow-hidden shadow-2xl border border-gray-100 transition-all duration-300 hover:scale-[1.01]">
@@ -32,7 +29,7 @@ export default function HomePage() {
             >
               <iframe
                 className="absolute top-0 left-0 w-full h-full"
-                src="https://www.youtube.com/embed/zZaav6omxko?si=ripNjVylKCrxDxm-&amp;start=337" // THAY THẾ BẰNG ID VIDEO THỰC CỦA BẠN
+                src="https://www.youtube.com/embed/zZaav6omxko?si=ripNjVylKCrxDxm-&amp;start=337"
                 title="Giới thiệu về Vải Thiều Thanh Hà"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 referrerPolicy="strict-origin-when-cross-origin"
