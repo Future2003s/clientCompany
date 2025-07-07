@@ -3,12 +3,11 @@ import Link from "next/link";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-<<<<<<< HEAD
+
 import { EyeSlashIcon } from "@/icons/icons.global";
 import { EyeIcon } from "lucide-react";
 import { authSchema, LoginBodyType } from "@/app/shemaValidation/auth.schema";
 import { useLoginMutation } from "@/queries/useAuth";
-=======
 import { z } from "zod";
 import toast, { Toaster } from "react-hot-toast";
 import { http } from "@/lib/http";
@@ -65,25 +64,20 @@ const EyeSlashIcon = (props: React.SVGProps<SVGSVGElement>) => (
     />
   </svg>
 );
->>>>>>> 276a6ae18ebb88490169a9dd0533c52a67c791b3
 
 function LoginForm() {
   const [showPassword, setShowPassword] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-<<<<<<< HEAD
-=======
 
   const { setSessionId } = useAppContext();
 
   const loginMutation = useLoginMutation();
->>>>>>> 276a6ae18ebb88490169a9dd0533c52a67c791b3
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm<LoginBodyType>({ resolver: zodResolver(authSchema) });
 
-<<<<<<< HEAD
   const loginMutation = useLoginMutation();
 
   const onSubmit = async (data: LoginBodyType) => {
@@ -99,7 +93,6 @@ function LoginForm() {
       console.error("Lỗi khi đăng nhập:", error);
     } finally {
       setIsSubmitting(false);
-=======
   const onSubmit = async (data: FormInput) => {
     try {
       const res = await fetch("http://localhost:4000/v1/api/auth/login", {
@@ -129,7 +122,6 @@ function LoginForm() {
       setSessionId(dataProvider.metaData);
     } catch (error) {
       console.log(error);
->>>>>>> 276a6ae18ebb88490169a9dd0533c52a67c791b3
     }
   };
 
