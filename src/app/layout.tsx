@@ -6,6 +6,10 @@ import AppProvider from "@/context/app-provider";
 import LayoutMain from "@/layouts/layout-main";
 import { Toaster } from "react-hot-toast";
 import AppContextProvider from "@/context/app-context";
+<<<<<<< HEAD
+=======
+
+>>>>>>> 276a6ae18ebb88490169a9dd0533c52a67c791b3
 const fontSans: NextFont = Quicksand({
   subsets: ["latin"],
   weight: ["500", "600", "700"],

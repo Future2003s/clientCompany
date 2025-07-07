@@ -166,7 +166,7 @@ const customAnimationStyle = `
   .animate-dot-3 { animation: loading-dots-bounce 1.5s ease-in-out 0.4s infinite; }
 `;
 
-const Loader: React.FC<LoaderProps> = ({ isLoading }) => {
+export const Loader: React.FC<LoaderProps> = ({ isLoading }) => {
   return (
     <>
       <style>{customAnimationStyle}</style>
@@ -226,6 +226,10 @@ const Loader: React.FC<LoaderProps> = ({ isLoading }) => {
               />
             </div>
           </div>
+<<<<<<< HEAD
+=======
+          {/* Hiệu ứng 3 chấm đang tải */}
+>>>>>>> 276a6ae18ebb88490169a9dd0533c52a67c791b3
           <div className="flex space-x-2 mt-12">
             <div className="w-3 h-3 bg-gray-400 rounded-full animate-dot-1"></div>
             <div className="w-3 h-3 bg-gray-400 rounded-full animate-dot-2"></div>
@@ -286,10 +290,15 @@ const OrderForm: React.FC = () => {
       setEmailBody("");
       return;
     }
+<<<<<<< HEAD
 
     // --- Placeholders for Vietnamese ---
     const customerNameVi = formData.customerName || "[Tên khách hàng]";
     const totalValueVi = formData.totalValue
+=======
+    const customerName = formData.customerName || "[Tên khách hàng]";
+    const totalValue = formData.totalValue
+>>>>>>> 276a6ae18ebb88490169a9dd0533c52a67c791b3
       ? new Intl.NumberFormat("vi-VN").format(Number(formData.totalValue)) +
         " VNĐ"
       : "[Tổng giá trị]";
