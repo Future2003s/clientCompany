@@ -3,14 +3,84 @@ import Link from "next/link";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f764ce14d599369ceb065a46afce2d5f63681c5
 import { EyeSlashIcon } from "@/icons/icons.global";
 import { EyeIcon } from "lucide-react";
 import { authSchema, LoginBodyType } from "@/app/shemaValidation/auth.schema";
 import { useLoginMutation } from "@/queries/useAuth";
+<<<<<<< HEAD
+=======
+import { z } from "zod";
+import toast, { Toaster } from "react-hot-toast";
+import { http } from "@/lib/http";
+import { request } from "http";
+import { useLoginMutation } from "@/queries/useAuth";
+import { useAppContext } from "@/context/app-context";
+
+const FormSchema = z.object({
+  email: z
+    .string()
+    .email("Email không đúng định dạng")
+    .min(4, "Yêu cầu 4 ký tự"),
+  password: z.string().min(8, "Yêu cầu 8 ký tự"),
+});
+
+type FormInput = z.infer<typeof FormSchema>;
+
+// --- ICONS ---
+const EyeIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={1.5}
+    stroke="currentColor"
+    {...props}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+    />
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+    />
+  </svg>
+);
+
+const EyeSlashIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={1.5}
+    stroke="currentColor"
+    {...props}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.575M5.121 5.121L18.879 18.879"
+    />
+  </svg>
+);
+>>>>>>> 0f764ce14d599369ceb065a46afce2d5f63681c5
 
 function LoginForm() {
   const [showPassword, setShowPassword] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+<<<<<<< HEAD
+=======
+
+  const { setSessionId } = useAppContext();
+
+  const loginMutation = useLoginMutation();
+>>>>>>> 0f764ce14d599369ceb065a46afce2d5f63681c5
   const {
     register,
     formState: { errors },
@@ -32,6 +102,38 @@ function LoginForm() {
       console.error("Lỗi khi đăng nhập:", error);
     } finally {
       setIsSubmitting(false);
+<<<<<<< HEAD
+=======
+  const onSubmit = async (data: FormInput) => {
+    try {
+      const res = await fetch("http://localhost:4000/v1/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Loi Goi API");
+      }
+
+      const result = await res.json();
+
+      const resultFromNext = await fetch("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify(result),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const dataProvider = await resultFromNext.json();
+
+      setSessionId(dataProvider.metaData);
+    } catch (error) {
+      console.log(error);
+>>>>>>> 0f764ce14d599369ceb065a46afce2d5f63681c5
     }
   };
 
