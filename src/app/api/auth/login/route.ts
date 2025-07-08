@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { authApiRequest } from "@/apiRequests/auth";
 import { LoginBodyType } from "@/app/shemaValidation/auth.schema";
 import { LoginResType } from "@/types/types";
@@ -32,18 +31,4 @@ export async function POST(request: Request) {
   } catch (error) {
     console.log(error);
   }
-=======
-export async function POST(request: Request) {
-  const res = await request.json();
-
-  const sessionId = res?.metaData.token.access_token;
-  return Response.json(
-    { payload: res },
-    {
-      headers: {
-        "Set-Cookie": `sessionId=${sessionId};HttpOnly;Path=/`,
-      },
-    }
-  );
->>>>>>> 276a6ae18ebb88490169a9dd0533c52a67c791b3
 }

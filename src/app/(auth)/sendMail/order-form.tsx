@@ -644,7 +644,6 @@ const OrderForm: React.FC = () => {
         throw new Error(`Lỗi từ server: ${result.statusText}`);
       }
 
-      console.log(await result.json());
       setIsSuccess(true);
       setStatusMessage("Thông tin đơn hàng đã được gửi thành công!");
       setFormData(initialFormData);
