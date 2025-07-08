@@ -30,22 +30,9 @@ const request = async <Response>(
   url: string,
   options?: CustomOptions
 ) => {
-<<<<<<< HEAD
   console.log(envConfig.NEXT_PUBLIC_API_END_POINT);
   const fullURL = `${envConfig.NEXT_PUBLIC_API_END_POINT}/v1/api${url}`;
   const res = await fetch(fullURL, {
-=======
-  const body = options?.body ? JSON.stringify(options.body) : undefined;
-
-  const baseHeaders = {
-    "Content-Type": "application/json",
-  };
-
-  const baseUrl = options?.baseUrl ? options.baseUrl : "http://localhost:4000";
-
-  const res = await fetch(url, {
-    ...options,
->>>>>>> 276a6ae18ebb88490169a9dd0533c52a67c791b3
     headers: {
       "Content-Type": "application/json",
     },
@@ -66,33 +53,7 @@ export const http = {
   ) {
     return request<Response>("POST", url, {
       ...options,
-<<<<<<< HEAD
       body,
     });
   },
-=======
-      ...body,
-    });
-  },
-
-  get<Response>(
-    url: string,
-    options?: Omit<CustomOptions, "body"> | undefined
-  ) {
-    console.log(url);
-    return request<Response>("GET", url, options);
-  },
-  put<Response>(
-    url: string,
-    options?: Omit<CustomOptions, "body"> | undefined
-  ) {
-    return request<Response>("GET", url, options);
-  },
-  delete<Response>(
-    url: string,
-    options?: Omit<CustomOptions, "body"> | undefined
-  ) {
-    return request<Response>("GET", url, options);
-  },
->>>>>>> 276a6ae18ebb88490169a9dd0533c52a67c791b3
 };

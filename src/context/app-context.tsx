@@ -16,15 +16,10 @@ export const useAppContext = () => {
 
 export default function AppContextProvider({
   children,
-<<<<<<< HEAD
   initialSessionToken = "",
 }: {
   children: React.ReactNode;
   initialSessionToken?: string;
-=======
-}: {
-  children: React.ReactNode;
->>>>>>> 276a6ae18ebb88490169a9dd0533c52a67c791b3
 }) {
   const [sessionId, setSessionId] = useState<string>("");
 

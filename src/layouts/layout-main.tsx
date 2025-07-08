@@ -3,11 +3,9 @@ import { usePathname } from "next/navigation";
 import React from "react";
 import Header from "./Header";
 import Footer from "./Footer";
-import { Loader } from "@/app/(auth)/sendMail/page";
 
 function LayoutMain({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  <Loader isLoading={true} />;
   // check page admin
   const isAdminPage = pathname.startsWith("/quantri");
   return (
