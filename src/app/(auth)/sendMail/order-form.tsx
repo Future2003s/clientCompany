@@ -432,7 +432,7 @@ const OrderForm: React.FC = () => {
         <body style="margin: 0; padding: 0; background-color: #fdf6f6; font-family: 'Quicksand', Arial, sans-serif;"><table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color:rgb(240, 242, 245);"><tr><td align="center" style="padding: 20px 10px;"><table class="container" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #dddddd; box-shadow: 0 4px 15px rgba(0,0,0,0.05);" border="0" cellspacing="0" cellpadding="0">
         <tr><td style="padding: 30px 0; text-align: center; background-color: #ffffff;"><img src="https://d3enplyig2yenj.cloudfront.net/logo" alt="LALA-LYCHEEE ロゴ" style="display: block; max-width: 200px; height: auto; margin: 0 auto;"></td></tr>
         <tr><td align="center" class="content" style="padding: 10px 40px 30px 40px;"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td style="background-color: rgba(255, 255, 255, 0.9); padding: 25px; border-radius: 8px; text-align: center;">
-        <h2 style="color: #d9534f; margin-top: 0;">🚚🚚🚚 ご注文の商品が発送されました！</h2>
+        <h2 style="color: #d9534f; margin-top: 0;"></h2>
         <p style="margin: 0 0 20px 0; color: #333333; font-size: 16px; line-height: 1.7;"><strong>${data.customerInfo.name}</strong>様</p>
         <p style="margin: 0 0 15px 0; color: #333333; font-size: 16px;"><strong>ご注文の商品が本日中にお手元に届く予定です。</strong></p>
         <p style="margin: 0 0 25px 0; color: #333333; font-size: 16px;">配送業者からの連絡をお待ちいただき、商品の受け取り準備をお願いいたします。</p>
@@ -489,11 +489,34 @@ const OrderForm: React.FC = () => {
         <html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ライチ花はちみつをご購入いただきありがとうございます！</title><style>body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; } table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; } img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; } table { border-collapse: collapse !important; } body { height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }</style></head>
         <body style="margin: 0 !important; padding: 0 !important; background-color: #f1f1f1;"><table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f1f1f1;"><tr><td align="center" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="600" class="email-container" style="background-color: #ffffff; margin: 20px auto; border-radius: 12px; box-shadow: 0 6px 18px rgba(0,0,0,0.08);">
         <tr><td align="center" style="padding: 30px 0; background: linear-gradient(to bottom, #fde4f2, #ffffff); border-radius: 12px 12px 0 0;"><div style="font-size: 22px; margin-bottom: 10px;">🐝 &nbsp; 🌸 &nbsp; 🐝</div><img src="https://d3enplyig2yenj.cloudfront.net/logo" alt="LALA-LYCHEEE ロゴ" width="160" style="display: block; border-radius: 999px; margin: 0 auto;"><div style="font-size: 22px; margin-top: 10px;">&nbsp; &nbsp; &nbsp; 🌸 &nbsp; &nbsp; &nbsp; 🐝</div></td></tr>
-        <tr><td style="padding: 0 40px 30px 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333333; text-align: center;"><h1 style="font-size: 28px; font-weight: bold; margin: 20px 0; color: #d63384;">🌸 ライチ花はちみつをお選びいただき、ありがとうございます！ 🐝</h1><p style="font-size: 16px; line-height: 1.6; margin: 0 0 15px 0;">${data.customerInfo.name}様</p><p style="font-size: 16px; line-height: 1.6; margin: 0;">LALA-LYCHEEEの美味しいライチ花はちみつをお選びいただき、誠にありがとうございます。この自然で繊細な甘さをお楽しみいただければ幸いです。</p></td></tr>
-        <tr><td style="padding: 0 40px 30px 40px;"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td style="padding: 20px; background-color: #f8f9fa; border-radius: 8px;"><table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; color: #555555;"><thead><tr><th align="left" style="padding-bottom: 10px; border-bottom: 1px solid #e0e0e0;">製品</th><th align="right" style="padding-bottom: 10px; border-bottom: 1px solid #e0e0e0;">価格</th></tr></thead><tbody>
+        <tr><td style="padding: 0 40px 30px 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333333; text-align: center;"><h1 style="font-size: 28px; font-weight: bold; margin: 20px 0; color: #d63384;">
+        
+        生ライチはちみつをご注文下さり誠にありがとうございます🍯
+
+        
+        </h1><p style="font-size: 16px; line-height: 1.6; margin: 0 0 15px 0;">${data.customerInfo.name}様</p><p style="font-size: 16px; line-height: 1.6; margin: 0;">
+        
+        
+
+        
+        </p></td></tr>
+        <tr><td style="padding: 0 40px 30px 40px;"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td style="padding: 20px; background-color: #f8f9fa; border-radius: 8px;"><table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; color: #555555;"><thead><tr><th align="left" style="padding-bottom: 10px; border-bottom: 1px solid #e0e0e0;">
+        
+        
+        ご注文内容
+
+        </th><th align="right" style="padding-bottom: 10px; border-bottom: 1px solid #e0e0e0;">価格</th></tr></thead><tbody>
         ${productRowsHtml}
         <tr><td style="padding: 15px 0 0 0; font-weight: bold; font-size: 16px;">合計</td><td align="right" style="padding: 15px 0 0 0; font-weight: bold; color: #d63384; font-size: 16px;">${formattedGrandTotal} VNĐ</td></tr></tbody></table></td></tr></table></td></tr>
-        <tr><td style="padding: 30px 40px; background-color: #f8f9fa; text-align: center; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 12px; color: #888888; border-radius: 0 0 12px 12px;"><p style="margin: 0 0 10px 0;">このメールはLALA-LYCHEEEでご注文された方にお送りしています。</p><p style="margin: 0;">© 2024 LALA-LYCHEEE. All Rights Reserved.</p></td></tr>
+        <tr><td style="padding: 30px 40px; background-color: #f8f9fa; text-align: center; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 12px; color: #888888; border-radius: 0 0 12px 12px;"><p style="margin: 0 0 10px 0;">
+        
+
+        このメールはLALA-LYCHEEEにてご注文下さった方のみにお送りしております。
+
+        
+        
+        
+        </p><p style="margin: 0;">© 2024 LALA-LYCHEEE. All Rights Reserved.</p></td></tr>
         </table></td></tr></table></body></html>`;
   };
   // =================================================================
