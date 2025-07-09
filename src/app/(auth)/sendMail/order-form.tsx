@@ -15,7 +15,7 @@ const productOptions = {
     {
       id: "435g-380",
       name: "Loại 435g giá 380.000",
-      name_jp: "新鮮なライチハニー（大）",
+      name_jp: "生ライチはちみつ（大）",
       price: 380000,
     },
   ],
@@ -395,7 +395,8 @@ const OrderForm: React.FC = () => {
         <html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ご注文の確認 - LALA-LYCHEEE</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet"><style>body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; } table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; } img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; } table { border-collapse: collapse !important; } body { height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; background-color: #f7f7f7; font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif; } .container { width: 100%; max-width: 620px; margin: 0 auto; background-color: #ffffff; border-radius: 4px; overflow: hidden; } .header { padding: 30px; text-align: center; background-color: #fafafa; } .header img { max-width: 150px; } .content { padding: 40px 40px; } .content h1 { font-family: 'Playfair Display', serif; font-size: 28px; color: #2b2b2b; font-weight: 700; margin-top: 0; margin-bottom: 15px; text-align: center; } .content p { font-size: 16px; line-height: 1.7; color: #555555; text-align: center; margin-bottom: 30px; } .order-summary-table { width: 100%; margin: 30px 0; border-top: 1px solid #e0e0e0; } .order-summary-table td { padding: 18px 0; text-align: left; border-bottom: 1px solid #e0e0e0; } .order-summary-table tr:last-child td { border-bottom: 0; } .product-image { width: 65px; height: 65px; object-fit: cover; border-radius: 4px; } .product-name { color: #2b2b2b; font-weight: 700; font-size: 16px; } .product-qty { color: #555555; } .totals-table { width: 100%; margin-top: 20px; } .totals-table td { padding: 8px 0; color: #555555; font-size: 16px; } .totals-table .total-row td { font-weight: 700; font-size: 18px; color: #2b2b2b; padding-top: 15px; } .address-info { padding: 20px 0; margin-top: 20px; border-top: 1px solid #e0e0e0; } .address-info h3 { font-family: 'Playfair Display', serif; font-size: 18px; color: #2b2b2b; margin-top: 0; margin-bottom: 12px; font-weight: 700; } .address-info p { font-size: 15px; line-height: 1.7; margin: 0; color: #555555; text-align: left; } .footer { text-align: center; padding: 30px; font-size: 13px; color: #888888; background-color: #fafafa; } .footer a { color: #c59a9a; text-decoration: none; font-weight: 700; } @media screen and (max-width: 600px) { .content { padding: 30px 20px; } } </style></head>
         <body><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td align="center" style="background-color: #f7f7f7; padding: 20px;"><table border="0" cellpadding="0" cellspacing="0" class="container">
         <tr><td class="header"><img src="https://d3enplyig2yenj.cloudfront.net/logo" alt="LALA-LYCHEEE ロゴ" style="display: block; margin: 0 auto;"></td></tr>
-        <tr><td class="content"><h1>ご注文ありがとうございます</h1><p>お客様のご注文は確定いたしました。LALA-LYCHEEEでは現在、商品の準備を進めており、まもなく発送いたします。</p>
+        <tr><td class="content"><h1>ご注文ありがとうございます</h1><p>準備ができ次第、発送致します。
+商品の発送が完了しましたら再度ご連絡差し上げますのでどうぞ宜しくお願い致します。</p>
         <table class="order-summary-table" border="0" cellpadding="0" cellspacing="0">${productRowsHtml}</table>
         <table class="totals-table" border="0" cellpadding="0" cellspacing="0">
             <tr><td>お支払い方法</td><td align="right">${paymentMethodJp}</td></tr>
@@ -404,7 +405,7 @@ const OrderForm: React.FC = () => {
         ${paymentDetailsHtml_JP}
         <div class="address-info"><h3>お届け先</h3><p><strong>${data.shippingInfo?.recipientName}</strong><br>${data.shippingInfo?.address}<br>${data.shippingInfo?.phone}</p></div>
         </td></tr>
-        <tr><td class="footer"><p>サポートが必要な場合は、<a href="mailto:support@example.com">こちらまでお問い合わせください</a>。</p><p style="margin-top: 15px;"><strong>LALA-LYCHEEE</strong><br>Thon Tu Y, Xa Ha Dong, Thanh Pho Hai Phong</p></td></tr>
+        <tr><td class="footer"><p>ご不明点等ございましたら<a href="mailto:support@example.com">こちらまでお問合せ下さい。</a></p><p style="margin-top: 15px;"><strong>LALA-LYCHEEE</strong><br>Thon Tu Y, Xa Ha Dong, Thanh Pho Hai Phong</p></td></tr>
         </table></td></tr></table></body></html>`;
   };
 
