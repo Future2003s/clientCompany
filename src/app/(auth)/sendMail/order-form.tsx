@@ -24,16 +24,22 @@ const productOptions = {
 // Bank Account Information for Transfers
 const bankAccountInfo = {
   qrCodeUrl:
-    "https://img.vietqr.io/image/970418-4330935949-print.png?accountName=PHAM%20HONG%20SANG",
-  accountNumber: "4330935949",
-  accountName: "PHAM HONG SANG",
-  bankName: "BIDV",
-  branch: "Chi nhánh Bắc Ninh",
-  branch_jp: "バクニン支店",
+    "https://img.vietqr.io/image/970415-104877911800-print.png?accountName=PHAM%20VAN%20NHAN",
+  accountNumber: "104877911800",
+  accountName: "PHAM VAN NHAN",
+  bankName: "Viettin Bank",
+  branch: "Chi nhánh Đông Hải Dương",
+  branch_jp: "DONG HAI DUONG 支店",
 };
 
 // Define the email template types
-type EmailType = "thankyou" | "confirmed" | "delivering" | "shipped" | "";
+type EmailType =
+  | "thankyou"
+  | "confirmed"
+  | "delivering"
+  | "shipped"
+  | "payment_received"
+  | "";
 
 // Define the type for the order form state
 interface OrderFormData {
@@ -42,11 +48,11 @@ interface OrderFormData {
   products: {
     [key: string]: { quantity: number | "" };
   };
-  totalValue: number | "";
   recipientName: string;
   shippingAddress: string;
   recipientPhone: string;
   paymentMethod: "cod" | "transfer" | "";
+  shippingFee: number | "";
 }
 
 // Define the type for the data passed to email templates
@@ -61,7 +67,9 @@ interface TypeRequestBodyMail {
       price: number;
       quantity: number;
     }[];
-    totalValue: number;
+    subtotal: number;
+    shippingFee: number;
+    grandTotal: number;
     paymentMethod: "cod" | "transfer" | "";
   };
 }
@@ -309,8 +317,15 @@ const OrderForm: React.FC = () => {
       })
       .join("");
 
+    const formattedSubtotal = new Intl.NumberFormat("vi-VN").format(
+      data.order.subtotal
+    );
+    const formattedShippingFee =
+      data.order.shippingFee === 0
+        ? "Miễn phí"
+        : `${new Intl.NumberFormat("vi-VN").format(data.order.shippingFee)}đ`;
     const formattedGrandTotal = new Intl.NumberFormat("vi-VN").format(
-      data.order.totalValue
+      data.order.grandTotal
     );
     const paymentMethodVi =
       data.order.paymentMethod === "cod"
@@ -343,6 +358,8 @@ const OrderForm: React.FC = () => {
         <tr><td class="content"><h1>Cảm ơn quý khách</h1><p>Đơn hàng của bạn đã được xác nhận. LALA-LYCHEEE đang chuẩn bị sản phẩm và sẽ sớm giao đến cho bạn.</p>
         <table class="order-summary-table" border="0" cellpadding="0" cellspacing="0">${productRowsHtml}</table>
         <table class="totals-table" border="0" cellpadding="0" cellspacing="0">
+            <tr><td>Tạm tính</td><td align="right">${formattedSubtotal}đ</td></tr>
+            <tr><td>Phí giao hàng</td><td align="right">${formattedShippingFee}</td></tr>
             <tr><td>Hình thức thanh toán</td><td align="right">${paymentMethodVi}</td></tr>
             <tr class="total-row"><td><strong>Tổng cộng</strong></td><td align="right"><strong>${formattedGrandTotal}đ</strong></td></tr>
         </table>
@@ -378,8 +395,17 @@ const OrderForm: React.FC = () => {
       })
       .join("");
 
+    const formattedSubtotal = new Intl.NumberFormat("ja-JP").format(
+      data.order.subtotal
+    );
+    const formattedShippingFee =
+      data.order.shippingFee === 0
+        ? "無料"
+        : `${new Intl.NumberFormat("ja-JP").format(
+            data.order.shippingFee
+          )} VNĐ`;
     const formattedGrandTotal = new Intl.NumberFormat("ja-JP").format(
-      data.order.totalValue
+      data.order.grandTotal
     );
     const paymentMethodJp =
       data.order.paymentMethod === "cod" ? "代金引換" : "銀行振込";
@@ -388,6 +414,14 @@ const OrderForm: React.FC = () => {
       data.order.paymentMethod === "transfer"
         ? "お振込みが確認でき次第、商品を発送致します。お振込みが完了しましたら再度ご連絡差し上げますのでどうぞ宜しくお願い致します。"
         : "準備ができ次第、発送致します。 商品の発送が完了しましたら再度ご連絡差し上げますのでどうぞ宜しくお願い致します。";
+
+    const extraNotesJP = `
+            <div style="text-align: left; font-size: 14px; color: #555555; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+                <p>※万が一、商品が破損していたり液漏れが発生していたり、異なった商品が届いた場合には大変お手数ですがすぐにご連絡頂きますようお願い申し上げます。<br>その際には破損した商品の画像をお撮り頂き、そちらを合わせてお送り頂けますと幸いです。<br>ただし、誠に恐れ入りますがお客様都合での返品・交換はお受けできかねますので予めご了承下さい。</p>
+                <p>※暑い時期は気温の関係もあり、生はちみつの酵素の発酵が活発化しており液漏れしやすくなっております。<br>対策としては、20℃以下の冷暗所もしくは冷蔵庫での保管がおすすめです。<br>もし、はちみつが白く結晶化してしまった場合は50℃以下のお湯で湯煎していただければ、酵素や栄養素が失われることなく生はちみつとしてお召し上がり頂けますのでお試しください。</p>
+                <p>※飛行機での輸送に関しましても強い衝撃や連続した揺れが加わると気圧の関係もあり液漏れする可能性がございます。飛行機で輸送される際は緩衝材で包み袋に入れ、スーツケースの真ん中に入れるなど十分ご注意下さいますようお願い申し上げます。</p>
+            </div>
+        `;
 
     const paymentDetailsHtml_JP =
       data.order.paymentMethod === "transfer"
@@ -415,11 +449,14 @@ const OrderForm: React.FC = () => {
         <tr><td class="content"><h1>ご注文ありがとうございます</h1><p>${confirmationText}</p>
         <table class="order-summary-table" border="0" cellpadding="0" cellspacing="0">${productRowsHtml}</table>
         <table class="totals-table" border="0" cellpadding="0" cellspacing="0">
+            <tr><td>小計</td><td align="right">${formattedSubtotal} VNĐ</td></tr>
+            <tr><td>送料</td><td align="right">${formattedShippingFee}</td></tr>
             <tr><td>お支払い方法</td><td align="right">${paymentMethodJp}</td></tr>
             <tr class="total-row"><td><strong>合計</strong></td><td align="right"><strong>${formattedGrandTotal} VNĐ</strong></td></tr>
         </table>
         ${paymentDetailsHtml_JP}
         <div class="address-info"><h3>お届け先</h3><p><strong>${data.shippingInfo?.recipientName}</strong><br>${data.shippingInfo?.address}<br>${data.shippingInfo?.phone}</p></div>
+        ${extraNotesJP}
         ${signatureHtml}
         </td></tr>
         <tr><td class="footer"><p>ご不明点等ございましたら<a href="mailto:support@example.com">こちらまでお問合せ下さい。</a></p><p style="margin-top: 15px;"><strong>LALA-LYCHEEE</strong><br>Thon Tu Y, Xa Ha Dong, Thanh Pho Hai Phong</p></td></tr>
@@ -451,7 +488,7 @@ const OrderForm: React.FC = () => {
         <tr><td align="center" class="content" style="padding: 10px 40px 30px 40px;"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td style="background-color: rgba(255, 255, 255, 0.9); padding: 25px; border-radius: 8px; text-align: center;">
         <h2 style="color: #d9534f; margin-top: 0;">📦 ご注文の商品を発送いたしました！</h2>
         <p style="margin: 0 0 20px 0; color: #333333; font-size: 16px; line-height: 1.7;"><strong>${data.customerInfo.name}</strong>様</p>
-        <p style="margin: 0 0 15px 0; color: #333333; font-size: 16px;">ご注文の商品が丁寧に梱包され、配送業者に引き渡されました。まもなく商品がお手元に届きますので、今しばらくお待ちください。</p>
+        <p style="margin: 0 0 15px 0; color: #333333; font-size: 16px;">ご注文頂いた商品の発送が完了しました。到着まで今しばらくお待ちください。どうぞ宜しくお願い致します。</p>
         ${signatureHtml}
         </td></tr></table></td></tr>
         <tr><td class="signature" style="padding: 30px 40px; background-color: #fff8f8; color: #333333; font-size: 14px; border-top: 1px solid #fceeee; text-align: center;"><p style="margin: 0;">LALA-LYCHEEEをご利用いただき、誠にありがとうございます。</p></td></tr>
@@ -489,66 +526,62 @@ const OrderForm: React.FC = () => {
         ${signatureHtml}
         </td></tr></table></td></tr>
         <tr><td class="signature" style="padding: 30px 40px; background-color: #fff8f8; color: #333333; font-size: 14px; border-top: 1px solid #fceeee; text-align: center;"><p style="margin: 0;">LALA-LYCHEEEをご利用いただき、誠にありがとうございます。</p></td></tr>
-        </table><table width="100%" style="max-width: 600px;" border="0" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding: 20px 0; font-size: 12px; color: #aaaaaa;"><p style="margin: 0;">🐝🐝🐝</p><p style="margin: 10px 0 0 0;">このメールはLALA-LYCHEEEでご注文された方にお送りしています。</p></td></tr></table></td></tr></table></body></html>`;
+        </table><table width="100%" style="max-width: 600px;" border="0" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding: 20px 0; font-size: 12px; color: #aaaaaa;"><p style="margin: 0;">🐝�🐝</p><p style="margin: 10px 0 0 0;">このメールはLALA-LYCHEEEでご注文された方にお送りしています。</p></td></tr></table></td></tr></table></body></html>`;
   };
 
   // TEMPLATE: THANK YOU (VIETNAMESE)
   const templateThankYou_VN = (data: TypeRequestBodyMail) => {
-    const productRowsHtml = data.order.products
-      .map((product) => {
-        const itemTotal = product.price * product.quantity;
-        const formatedTotal = new Intl.NumberFormat("vi-VN").format(itemTotal);
-        return `
-            <tr>
-                <td style="padding: 12px 0; border-bottom: 1px solid #e9ecef;">${product.name} (x${product.quantity})</td>
-                <td align="right" style="padding: 12px 0; border-bottom: 1px solid #e9ecef;">${formatedTotal}đ</td>
-            </tr>`;
-      })
-      .join("");
-    const formattedGrandTotal = new Intl.NumberFormat("vi-VN").format(
-      data.order.totalValue
-    );
     return `<!DOCTYPE html>
         <html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Cảm ơn bạn đã mua Mật Ong Hoa Vải!</title><style>body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; } table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; } img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; } table { border-collapse: collapse !important; } body { height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }</style></head>
         <body style="margin: 0 !important; padding: 0 !important; background-color: #f1f1f1;"><table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f1f1f1;"><tr><td align="center" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="600" class="email-container" style="background-color: #ffffff; margin: 20px auto; border-radius: 12px; box-shadow: 0 6px 18px rgba(0,0,0,0.08);">
         <tr><td align="center" style="padding: 30px 0; background: linear-gradient(to bottom, #fde4f2, #ffffff); border-radius: 12px 12px 0 0;"><div style="font-size: 22px; margin-bottom: 10px;">🐝 &nbsp; 🌸 &nbsp; 🐝</div><img src="https://d3enplyig2yenj.cloudfront.net/logo" alt="Logo LALA-LYCHEEE" width="160" style="display: block; border-radius: 999px; margin: 0 auto;"><div style="font-size: 22px; margin-top: 10px;">&nbsp; &nbsp; &nbsp; 🌸 &nbsp; &nbsp; &nbsp; 🐝</div></td></tr>
-        <tr><td style="padding: 0 40px 30px 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333333; text-align: center;"><h1 style="font-size: 28px; font-weight: bold; margin: 20px 0; color: #d63384;">🌸 Cảm ơn bạn đã chọn Mật Ong Hoa Vải! 🐝</h1><p style="font-size: 16px; line-height: 1.6; margin: 0 0 15px 0;">Xin chào ${data.customerInfo.name},</p><p style="font-size: 16px; line-height: 1.6; margin: 0;">Cảm ơn bạn đã tin tưởng và lựa chọn sản phẩm Mật Ong Hoa Vải thơm ngon từ LALA-LYCHEEE. Chúng tôi hy vọng bạn sẽ yêu thích vị ngọt thanh tự nhiên này.</p></td></tr>
-        <tr><td style="padding: 0 40px 30px 40px;"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td style="padding: 20px; background-color: #f8f9fa; border-radius: 8px;"><table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; color: #555555;"><thead><tr><th align="left" style="padding-bottom: 10px; border-bottom: 1px solid #e0e0e0;">Sản phẩm</th><th align="right" style="padding-bottom: 10px; border-bottom: 1px solid #e0e0e0;">Giá</th></tr></thead><tbody>
-        ${productRowsHtml}
-        <tr><td style="padding: 15px 0 0 0; font-weight: bold; font-size: 16px;">Tổng cộng</td><td align="right" style="padding: 15px 0 0 0; font-weight: bold; color: #d63384; font-size: 16px;">${formattedGrandTotal}đ</td></tr></tbody></table>
+        <tr><td style="padding: 0 40px 30px 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333333; text-align: center;"><h1 style="font-size: 28px; font-weight: bold; margin: 20px 0; color: #d63384;">🌸 Cảm ơn bạn đã chọn Mật Ong Hoa Vải! 🐝</h1><p style="font-size: 16px; line-height: 1.6; margin: 0 0 15px 0;">Xin chào ${data.customerInfo.name},</p><p style="font-size: 16px; line-height: 1.6; margin: 0;">Cảm ơn bạn đã tin tưởng và lựa chọn sản phẩm Mật Ong Hoa Vải thơm ngon từ LALA-LYCHEEE. Chúng tôi hy vọng bạn sẽ yêu thích vị ngọt thanh tự nhiên này.</p>
         ${signatureHtml}
-        </td></tr></table></td></tr>
+        </td></tr>
         <tr><td style="padding: 30px 40px; background-color: #f8f9fa; text-align: center; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 12px; color: #888888; border-radius: 0 0 12px 12px;"><p style="margin: 0 0 10px 0;">Bạn nhận được email này vì đã đặt hàng tại LALA-LYCHEEE.</p><p style="margin: 0;">© 2024 LALA-LYCHEEE. Đã đăng ký Bản quyền.</p></td></tr>
         </table></td></tr></table></body></html>`;
   };
 
   // TEMPLATE: THANK YOU (JAPANESE)
   const templateThankYou_JP = (data: TypeRequestBodyMail) => {
-    const productRowsHtml = data.order.products
-      .map((product) => {
-        const itemTotal = product.price * product.quantity;
-        const formatedTotal = new Intl.NumberFormat("ja-JP").format(itemTotal);
-        return `
-            <tr>
-                <td style="padding: 12px 0; border-bottom: 1px solid #e9ecef;">${product.name_jp} (x${product.quantity})</td>
-                <td align="right" style="padding: 12px 0; border-bottom: 1px solid #e9ecef;">${formatedTotal} VNĐ</td>
-            </tr>`;
-      })
-      .join("");
-    const formattedGrandTotal = new Intl.NumberFormat("ja-JP").format(
-      data.order.totalValue
-    );
     return `<!DOCTYPE html>
         <html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>生ライチはちみつをご購入いただきありがとうございます！</title><style>body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; } table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; } img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; } table { border-collapse: collapse !important; } body { height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }</style></head>
         <body style="margin: 0 !important; padding: 0 !important; background-color: #f1f1f1;"><table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f1f1f1;"><tr><td align="center" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="600" class="email-container" style="background-color: #ffffff; margin: 20px auto; border-radius: 12px; box-shadow: 0 6px 18px rgba(0,0,0,0.08);">
         <tr><td align="center" style="padding: 30px 0; background: linear-gradient(to bottom, #fde4f2, #ffffff); border-radius: 12px 12px 0 0;"><div style="font-size: 22px; margin-bottom: 10px;">🐝 &nbsp; 🌸 &nbsp; 🐝</div><img src="https://d3enplyig2yenj.cloudfront.net/logo" alt="LALA-LYCHEEE ロゴ" width="160" style="display: block; border-radius: 999px; margin: 0 auto;"><div style="font-size: 22px; margin-top: 10px;">&nbsp; &nbsp; &nbsp; 🌸 &nbsp; &nbsp; &nbsp; 🐝</div></td></tr>
-        <tr><td style="padding: 0 40px 30px 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333333; text-align: center;"><h1 style="font-size: 28px; font-weight: bold; margin: 20px 0; color: #d63384;">生ライチはちみつをご注文下さり誠にありがとうございます🍯</h1><p style="font-size: 16px; line-height: 1.6; margin: 0 0 15px 0;">${data.customerInfo.name}様</p><p style="font-size: 16px; line-height: 1.6; margin: 0;">LALA-LYCHEEEの美味しいライチ花はちみつをお選びいただき、誠にありがとうございます。この自然で繊細な甘さをお楽しみいただければ幸いです。</p></td></tr>
-        <tr><td style="padding: 0 40px 30px 40px;"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td style="padding: 20px; background-color: #f8f9fa; border-radius: 8px;"><table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; color: #555555;"><thead><tr><th align="left" style="padding-bottom: 10px; border-bottom: 1px solid #e0e0e0;">ご注文内容</th><th align="right" style="padding-bottom: 10px; border-bottom: 1px solid #e0e0e0;">価格</th></tr></thead><tbody>
-        ${productRowsHtml}
-        <tr><td style="padding: 15px 0 0 0; font-weight: bold; font-size: 16px;">合計</td><td align="right" style="padding: 15px 0 0 0; font-weight: bold; color: #d63384; font-size: 16px;">${formattedGrandTotal} VNĐ</td></tr></tbody></table>
+        <tr><td style="padding: 0 40px 30px 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333333; text-align: center;"><h1 style="font-size: 28px; font-weight: bold; margin: 20px 0; color: #d63384;">生ライチはちみつをご注文下さり誠にありがとうございます🍯</h1><p style="font-size: 16px; line-height: 1.6; margin: 0 0 15px 0;">${data.customerInfo.name}様</p><p style="font-size: 16px; line-height: 1.6; margin: 0;">LALA-LYCHEEEの美味しいライチ花はちみつをお選びいただき、誠にありがとうございます。この自然で繊細な甘さをお楽しみいただければ幸いです。</p>
+        ${signatureHtml}
+        </td></tr>
+        <tr><td style="padding: 30px 40px; background-color: #f8f9fa; text-align: center; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 12px; color: #888888; border-radius: 0 0 12px 12px;"><p style="margin: 0 0 10px 0;">このメールはLALA-LYCHEEEにてご注文下さった方のみにお送りしております。</p><p style="margin: 0;">© 2024 LALA-LYCHEEE. All Rights Reserved.</p></td></tr>
+        </table></td></tr></table></body></html>`;
+  };
+
+  // TEMPLATE: PAYMENT RECEIVED (VIETNAMESE)
+  const templatePaymentReceived_VN = (data: TypeRequestBodyMail) => {
+    return `<!DOCTYPE html>
+        <html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Xác nhận đã nhận thanh toán</title><link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet"><style>body { margin: 0; padding: 0; background-color: #fdf6f6; font-family: 'Quicksand', Arial, sans-serif; } .container { width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #dddddd; box-shadow: 0 4px 15px rgba(0,0,0,0.05); } .content { padding: 30px; color: #333333; line-height: 1.7; } .signature { padding: 20px; background-color: #fff8f8; color: #333333; font-size: 14px; } </style></head>
+        <body style="margin: 0; padding: 0; background-color: #fdf6f6; font-family: 'Quicksand', Arial, sans-serif;"><table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color:rgb(240, 242, 245);"><tr><td align="center" style="padding: 20px 10px;"><table class="container" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #dddddd; box-shadow: 0 4px 15px rgba(0,0,0,0.05);" border="0" cellspacing="0" cellpadding="0">
+        <tr><td style="padding: 30px 0; text-align: center; background-color: #ffffff;"><img src="https://d3enplyig2yenj.cloudfront.net/logo" alt="Logo LALA-LYCHEEE" style="display: block; max-width: 200px; height: auto; margin: 0 auto;"></td></tr>
+        <tr><td align="center" class="content" style="padding: 10px 40px 30px 40px;"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td style="background-color: rgba(255, 255, 255, 0.9); padding: 25px; border-radius: 8px; text-align: center;">
+        <h2 style="color: #28a745; margin-top: 0;">✅ Đã nhận được thanh toán</h2>
+        <p style="margin: 0 0 20px 0; color: #333333; font-size: 16px; line-height: 1.7;">Kính gửi <strong>${data.customerInfo.name}</strong>,</p>
+        <p style="margin: 0 0 15px 0; color: #333333; font-size: 16px;">Chúng tôi xác nhận đã nhận được thanh toán cho đơn hàng của bạn. LALA-LYCHEEE sẽ tiến hành chuẩn bị và giao hàng cho bạn trong thời gian sớm nhất.</p>
         ${signatureHtml}
         </td></tr></table></td></tr>
-        <tr><td style="padding: 30px 40px; background-color: #f8f9fa; text-align: center; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 12px; color: #888888; border-radius: 0 0 12px 12px;"><p style="margin: 0 0 10px 0;">このメールはLALA-LYCHEEEにてご注文下さった方のみにお送りしております。</p><p style="margin: 0;">© 2024 LALA-LYCHEEE. All Rights Reserved.</p></td></tr>
+        </table></td></tr></table></body></html>`;
+  };
+
+  // TEMPLATE: PAYMENT RECEIVED (JAPANESE)
+  const templatePaymentReceived_JP = (data: TypeRequestBodyMail) => {
+    return `<!DOCTYPE html>
+        <html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ご入金確認のお知らせ</title><link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet"><style>body { margin: 0; padding: 0; background-color: #fdf6f6; font-family: 'Quicksand', Arial, sans-serif; } .container { width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #dddddd; box-shadow: 0 4px 15px rgba(0,0,0,0.05); } .content { padding: 30px; color: #333333; line-height: 1.7; } .signature { padding: 20px; background-color: #fff8f8; color: #333333; font-size: 14px; } </style></head>
+        <body style="margin: 0; padding: 0; background-color: #fdf6f6; font-family: 'Quicksand', Arial, sans-serif;"><table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color:rgb(240, 242, 245);"><tr><td align="center" style="padding: 20px 10px;"><table class="container" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #dddddd; box-shadow: 0 4px 15px rgba(0,0,0,0.05);" border="0" cellspacing="0" cellpadding="0">
+        <tr><td style="padding: 30px 0; text-align: center; background-color: #ffffff;"><img src="https://d3enplyig2yenj.cloudfront.net/logo" alt="LALA-LYCHEEE ロゴ" style="display: block; max-width: 200px; height: auto; margin: 0 auto;"></td></tr>
+        <tr><td align="center" class="content" style="padding: 10px 40px 30px 40px;"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td style="background-color: rgba(255, 255, 255, 0.9); padding: 25px; border-radius: 8px; text-align: center;">
+        <h2 style="color: #28a745; margin-top: 0;">✅ ご入金を確認いたしました</h2>
+        <p style="margin: 0 0 20px 0; color: #333333; font-size: 16px; line-height: 1.7;"><strong>${data.customerInfo.name}</strong>様</p>
+        <p style="margin: 0 0 15px 0; color: #333333; font-size: 16px;">ご注文の代金のご入金が確認できましたことを、ご報告いたします。LALA-LYCHEEEでは、ただちに商品の準備を開始し、最短で発送いたします。</p>
+        ${signatureHtml}
+        </td></tr></table></td></tr>
         </table></td></tr></table></body></html>`;
   };
   // =================================================================
@@ -567,11 +600,11 @@ const OrderForm: React.FC = () => {
     customerName: "",
     customerEmail: "",
     products: generateInitialProducts(),
-    totalValue: "",
     recipientName: "",
     shippingAddress: "",
     recipientPhone: "",
     paymentMethod: "",
+    shippingFee: "",
   };
 
   const [formData, setFormData] = useState<OrderFormData>(initialFormData);
@@ -583,19 +616,27 @@ const OrderForm: React.FC = () => {
   const [isUserModified, setIsUserModified] = useState(false);
   const [activeTab, setActiveTab] = useState<"preview" | "edit">("preview");
 
-  // Effect to automatically calculate the total order value
-  useEffect(() => {
-    const total = Object.values(productOptions)
+  const subtotal = React.useMemo(() => {
+    return Object.values(productOptions)
       .flat()
       .reduce((acc, variant) => {
         const quantity = formData.products[variant.id]?.quantity || 0;
         return acc + Number(quantity) * variant.price;
       }, 0);
-    setFormData((prevData) => ({
-      ...prevData,
-      totalValue: total > 0 ? total : "",
-    }));
   }, [formData.products]);
+
+  const isFreeShipping = subtotal >= 2000000;
+  const shippingFee = isFreeShipping ? 0 : Number(formData.shippingFee) || 0;
+  const grandTotal = subtotal + shippingFee;
+
+  // Effect to automatically set free shipping
+  useEffect(() => {
+    if (isFreeShipping) {
+      if (formData.shippingFee !== 0) {
+        setFormData((prev) => ({ ...prev, shippingFee: 0 }));
+      }
+    }
+  }, [isFreeShipping, formData.shippingFee]);
 
   // NEW: Effect to automatically copy customer name to recipient name
   useEffect(() => {
@@ -664,7 +705,9 @@ const OrderForm: React.FC = () => {
       },
       order: {
         products: orderedProducts,
-        totalValue: Number(formData.totalValue) || 0,
+        subtotal: subtotal,
+        shippingFee: shippingFee,
+        grandTotal: grandTotal,
         paymentMethod: formData.paymentMethod || "cod",
       },
     };
@@ -689,17 +732,32 @@ const OrderForm: React.FC = () => {
         html_jp = templateShipped_JP(templateData);
         html_vn = templateShipped_VN(templateData);
         break;
+      case "payment_received":
+        html_jp = templatePaymentReceived_JP(templateData);
+        html_vn = templatePaymentReceived_VN(templateData);
+        break;
     }
 
     const combinedHtml = `${html_jp}\n\n<br><hr style="margin: 40px 0; border-color: #ccc;"><br>\n\n${html_vn}`;
     setEmailBody(combinedHtml);
-  }, [emailType, formData, isUserModified]);
+  }, [emailType, formData, isUserModified, subtotal, shippingFee, grandTotal]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    setIsUserModified(false);
+    if (name === "recipientName") {
+      setIsUserModified(true); // User is manually editing recipient name
+    }
+    if (name === "shippingFee") {
+      setFormData((prevData) => ({
+        ...prevData,
+        shippingFee: value === "" ? "" : Number(value),
+      }));
+    } else {
+      setFormData((prevData) => ({ ...prevData, [name]: value }));
+    }
   };
 
   const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -734,6 +792,7 @@ const OrderForm: React.FC = () => {
 
   const handleEmailTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsUserModified(false); // Reset flag to load new template
+    setActiveTab("preview"); // Switch to preview tab when template changes
     setEmailType(e.target.value as EmailType);
   };
 
@@ -947,13 +1006,14 @@ const OrderForm: React.FC = () => {
                     Chọn mẫu Email / メールのフォーマット文
                   </span>
                 </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {(
                     [
-                      "thankyou",
                       "confirmed",
+                      "payment_received",
                       "shipped",
                       "delivering",
+                      "thankyou",
                     ] as EmailType[]
                   ).map((type) => (
                     <div key={type}>
@@ -970,10 +1030,14 @@ const OrderForm: React.FC = () => {
                         htmlFor={type}
                         className="block w-full text-center p-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 cursor-pointer peer-checked:border-blue-500 peer-checked:text-blue-600 dark:peer-checked:text-blue-400 dark:peer-checked:border-blue-500 transition-all duration-300"
                       >
-                        {type === "thankyou" && "Cảm ơn"}
-                        {type === "confirmed" && "Xác nhận"}
-                        {type === "shipped" && "Đã giao VC"}
-                        {type === "delivering" && "Đang giao"}
+                        {type === "confirmed" && "Xác nhận　ご注文確認メール"}
+                        {type === "thankyou" &&
+                          "Cảm ơn ありがとうございますメール"}
+                        {type === "shipped" && "Đã giao VC 発送完了メール"}
+                        {type === "delivering" &&
+                          "Đang giao　本日配達予定お知らせメール"}
+                        {type === "payment_received" &&
+                          "Đã nhận tiền  お振込み確認済みメール"}
                       </label>
                     </div>
                   ))}
@@ -1146,37 +1210,71 @@ const OrderForm: React.FC = () => {
                 value={emailBody}
                 onChange={handleEmailBodyChange}
                 placeholder="Nội dung email sẽ được tạo tự động tại đây. Bạn có thể chỉnh sửa trực tiếp."
-                className="block w-full p-3 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 font-mono text-xs"
+                className="block w-full p-3 text-gray-900 dark:text-white bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 font-mono text-xs"
               />
             )}
           </div>
-
-          {/* Total Order Value */}
-          <div>
-            <label
-              htmlFor="totalValue"
-              className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block"
-            >
-              Tổng giá trị đơn hàng (VNĐ) / 合計金額
-            </label>
-            <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                <TotalValueIcon />
-              </span>
+          {/* Order Summary Section */}
+          <div className="space-y-4 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+              Tổng kết đơn hàng
+            </h3>
+            {/* Subtotal */}
+            <div className="flex justify-between items-center">
+              <label
+                htmlFor="subtotal"
+                className="text-sm font-medium text-gray-700 dark:text-gray-200"
+              >
+                Tạm tính
+              </label>
               <input
                 type="text"
-                id="totalValue"
-                name="totalValue"
-                value={
-                  formData.totalValue
-                    ? `${new Intl.NumberFormat("vi-VN").format(
-                        Number(formData.totalValue)
-                      )} VNĐ`
-                    : "0"
-                }
+                id="subtotal"
+                value={`${new Intl.NumberFormat("vi-VN").format(subtotal)} VNĐ`}
                 readOnly
-                placeholder="Tự động tính toán"
-                className="block w-full pl-10 pr-3 py-3 text-gray-900 dark:text-white bg-gray-200 dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-lg cursor-not-allowed"
+                className="w-1/2 text-right bg-transparent border-none text-gray-900 dark:text-white focus:ring-0"
+              />
+            </div>
+            {/* Shipping Fee */}
+            <div className="flex justify-between items-center">
+              <label
+                htmlFor="shippingFee"
+                className="text-sm font-medium text-gray-700 dark:text-gray-200"
+              >
+                Phí giao hàng
+              </label>
+              <input
+                type="number"
+                id="shippingFee"
+                name="shippingFee"
+                value={isFreeShipping ? 0 : formData.shippingFee}
+                disabled={isFreeShipping}
+                onChange={handleInputChange}
+                placeholder="Nhập phí"
+                className="w-1/2 text-right text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 disabled:bg-gray-200 disabled:cursor-not-allowed"
+              />
+            </div>
+            {isFreeShipping && (
+              <p className="text-right text-green-500 text-sm">
+                Miễn phí giao hàng
+              </p>
+            )}
+            {/* Grand Total */}
+            <div className="flex justify-between items-center pt-4 border-t border-gray-300 dark:border-gray-600">
+              <label
+                htmlFor="grandTotal"
+                className="text-lg font-bold text-gray-900 dark:text-white"
+              >
+                Tổng cộng
+              </label>
+              <input
+                type="text"
+                id="grandTotal"
+                value={`${new Intl.NumberFormat("vi-VN").format(
+                  grandTotal
+                )} VNĐ`}
+                readOnly
+                className="w-1/2 text-right bg-transparent border-none text-lg font-bold text-blue-600 dark:text-blue-400 focus:ring-0"
               />
             </div>
           </div>
