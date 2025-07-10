@@ -33,7 +33,7 @@ const bankAccountInfo = {
 };
 
 // Define the email template types
-type EmailType = "thankyou" | "confirmed" | "delivering" | "";
+type EmailType = "thankyou" | "confirmed" | "delivering" | "shipped" | "";
 
 // Define the type for the order form state
 interface OrderFormData {
@@ -273,6 +273,17 @@ export const Loader: React.FC<LoaderProps> = ({ isLoading }) => (
 const OrderForm: React.FC = () => {
   // #region EMAIL HTML TEMPLATES
   // =================================================================
+  const signatureHtml = `
+    <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: left;">
+        <p style="font-size: 14px; line-height: 1.6; color: #555555; margin: 0;">
+            --------------------------------------------------------------------<br>
+            LALA-LYCHEEE Company Limited<br>
+            Thon Tu Y, Xa Ha Dong, Thanh Pho Hai Phong<br>
+            0962-215-666<br>
+            <a href="mailto:lalalycheee1@gmail.com" style="color: #c59a9a; text-decoration: none;">lalalycheee1@gmail.com</a>
+        </p>
+    </div>
+    `;
 
   // TEMPLATE: CONFIRMED (VIETNAMESE)
   const confirmOrderCustomer_VN = (data: TypeRequestBodyMail) => {
@@ -337,6 +348,7 @@ const OrderForm: React.FC = () => {
         </table>
         ${paymentDetailsHtml_VN}
         <div class="address-info"><h3>Giao đến</h3><p><strong>${data.shippingInfo?.recipientName}</strong><br>${data.shippingInfo?.address}<br>${data.shippingInfo?.phone}</p></div>
+        ${signatureHtml}
         </td></tr>
         <tr><td class="footer"><p>Cần hỗ trợ? <a href="mailto:support@example.com">Liên hệ với chúng tôi</a>.</p><p style="margin-top: 15px;"><strong>LALA-LYCHEEE</strong><br>Thôn Tú Y, Xã Hà Đông, Thành Phố Hải Phòng</p></td></tr>
         </table></td></tr></table></body></html>`;
@@ -372,6 +384,11 @@ const OrderForm: React.FC = () => {
     const paymentMethodJp =
       data.order.paymentMethod === "cod" ? "代金引換" : "銀行振込";
 
+    const confirmationText =
+      data.order.paymentMethod === "transfer"
+        ? "お振込みが確認でき次第、商品を発送致します。お振込みが完了しましたら再度ご連絡差し上げますのでどうぞ宜しくお願い致します。"
+        : "準備ができ次第、発送致します。 商品の発送が完了しましたら再度ご連絡差し上げますのでどうぞ宜しくお願い致します。";
+
     const paymentDetailsHtml_JP =
       data.order.paymentMethod === "transfer"
         ? `
@@ -395,8 +412,7 @@ const OrderForm: React.FC = () => {
         <html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ご注文の確認 - LALA-LYCHEEE</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet"><style>body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; } table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; } img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; } table { border-collapse: collapse !important; } body { height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; background-color: #f7f7f7; font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif; } .container { width: 100%; max-width: 620px; margin: 0 auto; background-color: #ffffff; border-radius: 4px; overflow: hidden; } .header { padding: 30px; text-align: center; background-color: #fafafa; } .header img { max-width: 150px; } .content { padding: 40px 40px; } .content h1 { font-family: 'Playfair Display', serif; font-size: 28px; color: #2b2b2b; font-weight: 700; margin-top: 0; margin-bottom: 15px; text-align: center; } .content p { font-size: 16px; line-height: 1.7; color: #555555; text-align: center; margin-bottom: 30px; } .order-summary-table { width: 100%; margin: 30px 0; border-top: 1px solid #e0e0e0; } .order-summary-table td { padding: 18px 0; text-align: left; border-bottom: 1px solid #e0e0e0; } .order-summary-table tr:last-child td { border-bottom: 0; } .product-image { width: 65px; height: 65px; object-fit: cover; border-radius: 4px; } .product-name { color: #2b2b2b; font-weight: 700; font-size: 16px; } .product-qty { color: #555555; } .totals-table { width: 100%; margin-top: 20px; } .totals-table td { padding: 8px 0; color: #555555; font-size: 16px; } .totals-table .total-row td { font-weight: 700; font-size: 18px; color: #2b2b2b; padding-top: 15px; } .address-info { padding: 20px 0; margin-top: 20px; border-top: 1px solid #e0e0e0; } .address-info h3 { font-family: 'Playfair Display', serif; font-size: 18px; color: #2b2b2b; margin-top: 0; margin-bottom: 12px; font-weight: 700; } .address-info p { font-size: 15px; line-height: 1.7; margin: 0; color: #555555; text-align: left; } .footer { text-align: center; padding: 30px; font-size: 13px; color: #888888; background-color: #fafafa; } .footer a { color: #c59a9a; text-decoration: none; font-weight: 700; } @media screen and (max-width: 600px) { .content { padding: 30px 20px; } } </style></head>
         <body><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td align="center" style="background-color: #f7f7f7; padding: 20px;"><table border="0" cellpadding="0" cellspacing="0" class="container">
         <tr><td class="header"><img src="https://d3enplyig2yenj.cloudfront.net/logo" alt="LALA-LYCHEEE ロゴ" style="display: block; margin: 0 auto;"></td></tr>
-        <tr><td class="content"><h1>ご注文ありがとうございます</h1><p>準備ができ次第、発送致します。
-商品の発送が完了しましたら再度ご連絡差し上げますのでどうぞ宜しくお願い致します。</p>
+        <tr><td class="content"><h1>ご注文ありがとうございます</h1><p>${confirmationText}</p>
         <table class="order-summary-table" border="0" cellpadding="0" cellspacing="0">${productRowsHtml}</table>
         <table class="totals-table" border="0" cellpadding="0" cellspacing="0">
             <tr><td>お支払い方法</td><td align="right">${paymentMethodJp}</td></tr>
@@ -404,8 +420,41 @@ const OrderForm: React.FC = () => {
         </table>
         ${paymentDetailsHtml_JP}
         <div class="address-info"><h3>お届け先</h3><p><strong>${data.shippingInfo?.recipientName}</strong><br>${data.shippingInfo?.address}<br>${data.shippingInfo?.phone}</p></div>
+        ${signatureHtml}
         </td></tr>
         <tr><td class="footer"><p>ご不明点等ございましたら<a href="mailto:support@example.com">こちらまでお問合せ下さい。</a></p><p style="margin-top: 15px;"><strong>LALA-LYCHEEE</strong><br>Thon Tu Y, Xa Ha Dong, Thanh Pho Hai Phong</p></td></tr>
+        </table></td></tr></table></body></html>`;
+  };
+
+  // TEMPLATE: SHIPPED (VIETNAMESE)
+  const templateShipped_VN = (data: TypeRequestBodyMail) => {
+    return `<!DOCTYPE html>
+        <html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Đơn hàng đã được gửi đi</title><link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet"><style>body { margin: 0; padding: 0; background-color: #fdf6f6; font-family: 'Quicksand', Arial, sans-serif; } .container { width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #dddddd; box-shadow: 0 4px 15px rgba(0,0,0,0.05); } .content { padding: 30px; color: #333333; line-height: 1.7; } .signature { padding: 20px; background-color: #fff8f8; color: #333333; font-size: 14px; } </style></head>
+        <body style="margin: 0; padding: 0; background-color: #fdf6f6; font-family: 'Quicksand', Arial, sans-serif;"><table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color:rgb(240, 242, 245);"><tr><td align="center" style="padding: 20px 10px;"><table class="container" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #dddddd; box-shadow: 0 4px 15px rgba(0,0,0,0.05);" border="0" cellspacing="0" cellpadding="0">
+        <tr><td style="padding: 30px 0; text-align: center; background-color: #ffffff;"><img src="https://d3enplyig2yenj.cloudfront.net/logo" alt="Logo LALA-LYCHEEE" style="display: block; max-width: 200px; height: auto; margin: 0 auto;"></td></tr>
+        <tr><td align="center" class="content" style="padding: 10px 40px 30px 40px;"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td style="background-color: rgba(255, 255, 255, 0.9); padding: 25px; border-radius: 8px; text-align: center;">
+        <h2 style="color: #d9534f; margin-top: 0;">📦 Đơn hàng đã được giao cho vận chuyển!</h2>
+        <p style="margin: 0 0 20px 0; color: #333333; font-size: 16px; line-height: 1.7;">Kính gửi <strong>${data.customerInfo.name}</strong>,</p>
+        <p style="margin: 0 0 15px 0; color: #333333; font-size: 16px;">Đơn hàng của bạn đã được đóng gói cẩn thận và bàn giao cho đơn vị vận chuyển. Đơn hàng sẽ sớm đến tay bạn!</p>
+        ${signatureHtml}
+        </td></tr></table></td></tr>
+        <tr><td class="signature" style="padding: 30px 40px; background-color: #fff8f8; color: #333333; font-size: 14px; border-top: 1px solid #fceeee; text-align: center;"><p style="margin: 0;">Cảm ơn bạn đã mua sắm tại LALA-LYCHEEE!</p></td></tr>
+        </table></td></tr></table></body></html>`;
+  };
+
+  // TEMPLATE: SHIPPED (JAPANESE)
+  const templateShipped_JP = (data: TypeRequestBodyMail) => {
+    return `<!DOCTYPE html>
+        <html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ご注文の商品を発送いたしました</title><link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet"><style>body { margin: 0; padding: 0; background-color: #fdf6f6; font-family: 'Quicksand', Arial, sans-serif; } .container { width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #dddddd; box-shadow: 0 4px 15px rgba(0,0,0,0.05); } .content { padding: 30px; color: #333333; line-height: 1.7; } .signature { padding: 20px; background-color: #fff8f8; color: #333333; font-size: 14px; } </style></head>
+        <body style="margin: 0; padding: 0; background-color: #fdf6f6; font-family: 'Quicksand', Arial, sans-serif;"><table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color:rgb(240, 242, 245);"><tr><td align="center" style="padding: 20px 10px;"><table class="container" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #dddddd; box-shadow: 0 4px 15px rgba(0,0,0,0.05);" border="0" cellspacing="0" cellpadding="0">
+        <tr><td style="padding: 30px 0; text-align: center; background-color: #ffffff;"><img src="https://d3enplyig2yenj.cloudfront.net/logo" alt="LALA-LYCHEEE ロゴ" style="display: block; max-width: 200px; height: auto; margin: 0 auto;"></td></tr>
+        <tr><td align="center" class="content" style="padding: 10px 40px 30px 40px;"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td style="background-color: rgba(255, 255, 255, 0.9); padding: 25px; border-radius: 8px; text-align: center;">
+        <h2 style="color: #d9534f; margin-top: 0;">📦 ご注文の商品を発送いたしました！</h2>
+        <p style="margin: 0 0 20px 0; color: #333333; font-size: 16px; line-height: 1.7;"><strong>${data.customerInfo.name}</strong>様</p>
+        <p style="margin: 0 0 15px 0; color: #333333; font-size: 16px;">ご注文の商品が丁寧に梱包され、配送業者に引き渡されました。まもなく商品がお手元に届きますので、今しばらくお待ちください。</p>
+        ${signatureHtml}
+        </td></tr></table></td></tr>
+        <tr><td class="signature" style="padding: 30px 40px; background-color: #fff8f8; color: #333333; font-size: 14px; border-top: 1px solid #fceeee; text-align: center;"><p style="margin: 0;">LALA-LYCHEEEをご利用いただき、誠にありがとうございます。</p></td></tr>
         </table></td></tr></table></body></html>`;
   };
 
@@ -420,6 +469,7 @@ const OrderForm: React.FC = () => {
         <p style="margin: 0 0 20px 0; color: #333333; font-size: 16px; line-height: 1.7;">Kính gửi <strong>${data.customerInfo.name}</strong>,</p>
         <p style="margin: 0 0 15px 0; color: #333333; font-size: 16px;"><strong>Đơn hàng của bạn sẽ được giao đến bạn trong ngày hôm nay.</strong></p>
         <p style="margin: 0 0 25px 0; color: #333333; font-size: 16px;">Bạn vui lòng chuẩn bị và để ý điện thoại để nhận hàng từ shipper nhé!</p>
+        ${signatureHtml}
         </td></tr></table></td></tr>
         <tr><td class="signature" style="padding: 30px 40px; background-color: #fff8f8; color: #333333; font-size: 14px; border-top: 1px solid #fceeee; text-align: center;"><p style="margin: 0;">Cảm ơn bạn đã mua sắm tại LALA-LYCHEEE!</p></td></tr>
         </table><table width="100%" style="max-width: 600px;" border="0" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding: 20px 0; font-size: 12px; color: #aaaaaa;"><p style="margin: 0;">🐝🐝🐝</p><p style="margin: 10px 0 0 0;">Bạn nhận được email này vì đã đặt hàng tại LALA-LYCHEEE.</p></td></tr></table></td></tr></table></body></html>`;
@@ -432,10 +482,11 @@ const OrderForm: React.FC = () => {
         <body style="margin: 0; padding: 0; background-color: #fdf6f6; font-family: 'Quicksand', Arial, sans-serif;"><table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color:rgb(240, 242, 245);"><tr><td align="center" style="padding: 20px 10px;"><table class="container" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #dddddd; box-shadow: 0 4px 15px rgba(0,0,0,0.05);" border="0" cellspacing="0" cellpadding="0">
         <tr><td style="padding: 30px 0; text-align: center; background-color: #ffffff;"><img src="https://d3enplyig2yenj.cloudfront.net/logo" alt="LALA-LYCHEEE ロゴ" style="display: block; max-width: 200px; height: auto; margin: 0 auto;"></td></tr>
         <tr><td align="center" class="content" style="padding: 10px 40px 30px 40px;"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td style="background-color: rgba(255, 255, 255, 0.9); padding: 25px; border-radius: 8px; text-align: center;">
-        <h2 style="color: #d9534f; margin-top: 0;"></h2>
+        <h2 style="color: #d9534f; margin-top: 0;">🚚🚚🚚 ご注文の商品が発送されました！</h2>
         <p style="margin: 0 0 20px 0; color: #333333; font-size: 16px; line-height: 1.7;"><strong>${data.customerInfo.name}</strong>様</p>
         <p style="margin: 0 0 15px 0; color: #333333; font-size: 16px;"><strong>ご注文の商品が本日中にお手元に届く予定です。</strong></p>
         <p style="margin: 0 0 25px 0; color: #333333; font-size: 16px;">配送業者からの連絡をお待ちいただき、商品の受け取り準備をお願いいたします。</p>
+        ${signatureHtml}
         </td></tr></table></td></tr>
         <tr><td class="signature" style="padding: 30px 40px; background-color: #fff8f8; color: #333333; font-size: 14px; border-top: 1px solid #fceeee; text-align: center;"><p style="margin: 0;">LALA-LYCHEEEをご利用いただき、誠にありがとうございます。</p></td></tr>
         </table><table width="100%" style="max-width: 600px;" border="0" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding: 20px 0; font-size: 12px; color: #aaaaaa;"><p style="margin: 0;">🐝🐝🐝</p><p style="margin: 10px 0 0 0;">このメールはLALA-LYCHEEEでご注文された方にお送りしています。</p></td></tr></table></td></tr></table></body></html>`;
@@ -464,7 +515,9 @@ const OrderForm: React.FC = () => {
         <tr><td style="padding: 0 40px 30px 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333333; text-align: center;"><h1 style="font-size: 28px; font-weight: bold; margin: 20px 0; color: #d63384;">🌸 Cảm ơn bạn đã chọn Mật Ong Hoa Vải! 🐝</h1><p style="font-size: 16px; line-height: 1.6; margin: 0 0 15px 0;">Xin chào ${data.customerInfo.name},</p><p style="font-size: 16px; line-height: 1.6; margin: 0;">Cảm ơn bạn đã tin tưởng và lựa chọn sản phẩm Mật Ong Hoa Vải thơm ngon từ LALA-LYCHEEE. Chúng tôi hy vọng bạn sẽ yêu thích vị ngọt thanh tự nhiên này.</p></td></tr>
         <tr><td style="padding: 0 40px 30px 40px;"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td style="padding: 20px; background-color: #f8f9fa; border-radius: 8px;"><table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; color: #555555;"><thead><tr><th align="left" style="padding-bottom: 10px; border-bottom: 1px solid #e0e0e0;">Sản phẩm</th><th align="right" style="padding-bottom: 10px; border-bottom: 1px solid #e0e0e0;">Giá</th></tr></thead><tbody>
         ${productRowsHtml}
-        <tr><td style="padding: 15px 0 0 0; font-weight: bold; font-size: 16px;">Tổng cộng</td><td align="right" style="padding: 15px 0 0 0; font-weight: bold; color: #d63384; font-size: 16px;">${formattedGrandTotal}đ</td></tr></tbody></table></td></tr></table></td></tr>
+        <tr><td style="padding: 15px 0 0 0; font-weight: bold; font-size: 16px;">Tổng cộng</td><td align="right" style="padding: 15px 0 0 0; font-weight: bold; color: #d63384; font-size: 16px;">${formattedGrandTotal}đ</td></tr></tbody></table>
+        ${signatureHtml}
+        </td></tr></table></td></tr>
         <tr><td style="padding: 30px 40px; background-color: #f8f9fa; text-align: center; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 12px; color: #888888; border-radius: 0 0 12px 12px;"><p style="margin: 0 0 10px 0;">Bạn nhận được email này vì đã đặt hàng tại LALA-LYCHEEE.</p><p style="margin: 0;">© 2024 LALA-LYCHEEE. Đã đăng ký Bản quyền.</p></td></tr>
         </table></td></tr></table></body></html>`;
   };
@@ -486,37 +539,16 @@ const OrderForm: React.FC = () => {
       data.order.totalValue
     );
     return `<!DOCTYPE html>
-        <html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ライチ花はちみつをご購入いただきありがとうございます！</title><style>body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; } table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; } img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; } table { border-collapse: collapse !important; } body { height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }</style></head>
+        <html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>生ライチはちみつをご購入いただきありがとうございます！</title><style>body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; } table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; } img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; } table { border-collapse: collapse !important; } body { height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }</style></head>
         <body style="margin: 0 !important; padding: 0 !important; background-color: #f1f1f1;"><table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f1f1f1;"><tr><td align="center" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="600" class="email-container" style="background-color: #ffffff; margin: 20px auto; border-radius: 12px; box-shadow: 0 6px 18px rgba(0,0,0,0.08);">
         <tr><td align="center" style="padding: 30px 0; background: linear-gradient(to bottom, #fde4f2, #ffffff); border-radius: 12px 12px 0 0;"><div style="font-size: 22px; margin-bottom: 10px;">🐝 &nbsp; 🌸 &nbsp; 🐝</div><img src="https://d3enplyig2yenj.cloudfront.net/logo" alt="LALA-LYCHEEE ロゴ" width="160" style="display: block; border-radius: 999px; margin: 0 auto;"><div style="font-size: 22px; margin-top: 10px;">&nbsp; &nbsp; &nbsp; 🌸 &nbsp; &nbsp; &nbsp; 🐝</div></td></tr>
-        <tr><td style="padding: 0 40px 30px 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333333; text-align: center;"><h1 style="font-size: 28px; font-weight: bold; margin: 20px 0; color: #d63384;">
-        
-        生ライチはちみつをご注文下さり誠にありがとうございます🍯
-
-        
-        </h1><p style="font-size: 16px; line-height: 1.6; margin: 0 0 15px 0;">${data.customerInfo.name}様</p><p style="font-size: 16px; line-height: 1.6; margin: 0;">
-        
-        
-
-        
-        </p></td></tr>
-        <tr><td style="padding: 0 40px 30px 40px;"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td style="padding: 20px; background-color: #f8f9fa; border-radius: 8px;"><table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; color: #555555;"><thead><tr><th align="left" style="padding-bottom: 10px; border-bottom: 1px solid #e0e0e0;">
-        
-        
-        ご注文内容
-
-        </th><th align="right" style="padding-bottom: 10px; border-bottom: 1px solid #e0e0e0;">価格</th></tr></thead><tbody>
+        <tr><td style="padding: 0 40px 30px 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333333; text-align: center;"><h1 style="font-size: 28px; font-weight: bold; margin: 20px 0; color: #d63384;">生ライチはちみつをご注文下さり誠にありがとうございます🍯</h1><p style="font-size: 16px; line-height: 1.6; margin: 0 0 15px 0;">${data.customerInfo.name}様</p><p style="font-size: 16px; line-height: 1.6; margin: 0;">LALA-LYCHEEEの美味しいライチ花はちみつをお選びいただき、誠にありがとうございます。この自然で繊細な甘さをお楽しみいただければ幸いです。</p></td></tr>
+        <tr><td style="padding: 0 40px 30px 40px;"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td style="padding: 20px; background-color: #f8f9fa; border-radius: 8px;"><table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; color: #555555;"><thead><tr><th align="left" style="padding-bottom: 10px; border-bottom: 1px solid #e0e0e0;">ご注文内容</th><th align="right" style="padding-bottom: 10px; border-bottom: 1px solid #e0e0e0;">価格</th></tr></thead><tbody>
         ${productRowsHtml}
-        <tr><td style="padding: 15px 0 0 0; font-weight: bold; font-size: 16px;">合計</td><td align="right" style="padding: 15px 0 0 0; font-weight: bold; color: #d63384; font-size: 16px;">${formattedGrandTotal} VNĐ</td></tr></tbody></table></td></tr></table></td></tr>
-        <tr><td style="padding: 30px 40px; background-color: #f8f9fa; text-align: center; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 12px; color: #888888; border-radius: 0 0 12px 12px;"><p style="margin: 0 0 10px 0;">
-        
-
-        このメールはLALA-LYCHEEEにてご注文下さった方のみにお送りしております。
-
-        
-        
-        
-        </p><p style="margin: 0;">© 2024 LALA-LYCHEEE. All Rights Reserved.</p></td></tr>
+        <tr><td style="padding: 15px 0 0 0; font-weight: bold; font-size: 16px;">合計</td><td align="right" style="padding: 15px 0 0 0; font-weight: bold; color: #d63384; font-size: 16px;">${formattedGrandTotal} VNĐ</td></tr></tbody></table>
+        ${signatureHtml}
+        </td></tr></table></td></tr>
+        <tr><td style="padding: 30px 40px; background-color: #f8f9fa; text-align: center; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 12px; color: #888888; border-radius: 0 0 12px 12px;"><p style="margin: 0 0 10px 0;">このメールはLALA-LYCHEEEにてご注文下さった方のみにお送りしております。</p><p style="margin: 0;">© 2024 LALA-LYCHEEE. All Rights Reserved.</p></td></tr>
         </table></td></tr></table></body></html>`;
   };
   // =================================================================
@@ -548,6 +580,8 @@ const OrderForm: React.FC = () => {
   const [statusMessage, setStatusMessage] = useState<string>("");
   const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUserModified, setIsUserModified] = useState(false);
+  const [activeTab, setActiveTab] = useState<"preview" | "edit">("preview");
 
   // Effect to automatically calculate the total order value
   useEffect(() => {
@@ -565,14 +599,19 @@ const OrderForm: React.FC = () => {
 
   // NEW: Effect to automatically copy customer name to recipient name
   useEffect(() => {
-    setFormData((prevData) => ({
-      ...prevData,
-      recipientName: prevData.customerName,
-    }));
-  }, [formData.customerName]);
+    if (!isUserModified) {
+      // Only copy if recipient name hasn't been manually edited
+      setFormData((prevData) => ({
+        ...prevData,
+        recipientName: prevData.customerName,
+      }));
+    }
+  }, [formData.customerName, isUserModified]);
 
   // Effect to automatically generate HTML email content for preview
   useEffect(() => {
+    if (isUserModified) return; // Don't regenerate if user is editing
+
     if (!emailType) {
       setEmailBody("");
       return;
@@ -646,11 +685,15 @@ const OrderForm: React.FC = () => {
         html_jp = templateAlertOrderNow_JP(templateData);
         html_vn = templateAlertOrderNow_VN(templateData);
         break;
+      case "shipped":
+        html_jp = templateShipped_JP(templateData);
+        html_vn = templateShipped_VN(templateData);
+        break;
     }
 
     const combinedHtml = `${html_jp}\n\n<br><hr style="margin: 40px 0; border-color: #ccc;"><br>\n\n${html_vn}`;
     setEmailBody(combinedHtml);
-  }, [emailType, formData]);
+  }, [emailType, formData, isUserModified]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -661,6 +704,7 @@ const OrderForm: React.FC = () => {
 
   const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    setIsUserModified(false); // Allow template regeneration when changing options
     if (name === "paymentMethod") {
       setFormData((prev) => ({
         ...prev,
@@ -671,8 +715,14 @@ const OrderForm: React.FC = () => {
     }
   };
 
+  const handleEmailBodyChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setIsUserModified(true); // Flag that user has started editing
+    setEmailBody(e.target.value);
+  };
+
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    setIsUserModified(false); // Allow template regeneration
     setFormData((prevData) => ({
       ...prevData,
       products: {
@@ -680,6 +730,11 @@ const OrderForm: React.FC = () => {
         [name]: { quantity: value === "" ? "" : parseInt(value, 10) },
       },
     }));
+  };
+
+  const handleEmailTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsUserModified(false); // Reset flag to load new template
+    setEmailType(e.target.value as EmailType);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -744,6 +799,8 @@ const OrderForm: React.FC = () => {
       setFormData(initialFormData);
       setEmailType("");
       setEmailBody("");
+      setIsUserModified(false);
+      setActiveTab("preview");
       setTimeout(() => setStatusMessage(""), 5000);
     } catch (error) {
       console.error("Gửi thất bại:", error);
@@ -890,32 +947,36 @@ const OrderForm: React.FC = () => {
                     Chọn mẫu Email / メールのフォーマット文
                   </span>
                 </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {(["thankyou", "confirmed", "delivering"] as EmailType[]).map(
-                    (type) => (
-                      <div key={type}>
-                        <input
-                          type="radio"
-                          id={type}
-                          name="emailType"
-                          value={type}
-                          checked={emailType === type}
-                          onChange={(e) =>
-                            setEmailType(e.target.value as EmailType)
-                          }
-                          className="sr-only peer"
-                        />
-                        <label
-                          htmlFor={type}
-                          className="block w-full text-center p-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 cursor-pointer peer-checked:border-blue-500 peer-checked:text-blue-600 dark:peer-checked:text-blue-400 dark:peer-checked:border-blue-500 transition-all duration-300"
-                        >
-                          {type === "thankyou" && "Cảm ơn"}
-                          {type === "confirmed" && "Xác nhận"}
-                          {type === "delivering" && "Đang giao"}
-                        </label>
-                      </div>
-                    )
-                  )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {(
+                    [
+                      "thankyou",
+                      "confirmed",
+                      "shipped",
+                      "delivering",
+                    ] as EmailType[]
+                  ).map((type) => (
+                    <div key={type}>
+                      <input
+                        type="radio"
+                        id={type}
+                        name="emailType"
+                        value={type}
+                        checked={emailType === type}
+                        onChange={handleEmailTypeChange}
+                        className="sr-only peer"
+                      />
+                      <label
+                        htmlFor={type}
+                        className="block w-full text-center p-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 cursor-pointer peer-checked:border-blue-500 peer-checked:text-blue-600 dark:peer-checked:text-blue-400 dark:peer-checked:border-blue-500 transition-all duration-300"
+                      >
+                        {type === "thankyou" && "Cảm ơn"}
+                        {type === "confirmed" && "Xác nhận"}
+                        {type === "shipped" && "Đã giao VC"}
+                        {type === "delivering" && "Đang giao"}
+                      </label>
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -1042,19 +1103,52 @@ const OrderForm: React.FC = () => {
             </div>
           </div>
 
-          {/* Email Body Preview */}
+          {/* Email Body Preview/Editor */}
           <div>
-            <label
-              htmlFor="emailBody"
-              className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block"
-            >
-              Nội dung Email / メール内容
-            </label>
-            <div
-              id="emailBodyPreview"
-              className="block w-full p-1 h-[40rem] overflow-y-auto text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300"
-              dangerouslySetInnerHTML={{ __html: emailBody }}
-            />
+            <div className="border-b border-gray-200 dark:border-gray-700 mb-4">
+              <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("preview")}
+                  className={`${
+                    activeTab === "preview"
+                      ? "border-blue-500 text-blue-600"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                >
+                  Xem trước
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("edit")}
+                  className={`${
+                    activeTab === "edit"
+                      ? "border-blue-500 text-blue-600"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                >
+                  Sửa HTML
+                </button>
+              </nav>
+            </div>
+
+            {activeTab === "preview" ? (
+              <div
+                id="emailBodyPreview"
+                className="w-full p-1 h-[40rem] overflow-y-auto bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg"
+                dangerouslySetInnerHTML={{ __html: emailBody }}
+              />
+            ) : (
+              <textarea
+                id="emailBody"
+                name="emailBody"
+                rows={20}
+                value={emailBody}
+                onChange={handleEmailBodyChange}
+                placeholder="Nội dung email sẽ được tạo tự động tại đây. Bạn có thể chỉnh sửa trực tiếp."
+                className="block w-full p-3 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 font-mono text-xs"
+              />
+            )}
           </div>
 
           {/* Total Order Value */}
