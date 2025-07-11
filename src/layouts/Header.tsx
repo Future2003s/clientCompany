@@ -1,158 +1,184 @@
 "use client";
-import React, { useState, useEffect, useRef, Fragment } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const navLinks = [
   { href: "/", label: "Trang Chủ" },
   {
     label: "Sản Phẩm",
     subItems: [
-      { href: "/products", label: "Vải Thanh Hà" },
-      { href: "/products", label: "Nước Cốt Vải" },
-      { href: "/products", label: "Mật Ong" },
+      { href: "/products/vai-thanh-ha", label: "Vải Tươi Thanh Hà" },
+      { href: "/products/nuoc-cot-vai", label: "Nước Cốt Vải" },
+      { href: "/products/mat-ong", label: "Mật Ong Hoa Vải" },
+      { href: "/products/all", label: "Tất Cả Sản Phẩm" },
     ],
   },
-  { href: "/about", label: "Về Chúng Tôi" },
-  { href: "/contact", label: "Liên Hệ" },
-  { href: "/short", label: "SHORT VIDEO" },
+  { href: "/story", label: "Câu Chuyện" },
   {
-    // href không cần thiết cho mục cha có subItems
     label: "Chức Năng",
     subItems: [
       { href: "/payment", label: "Thanh Toán" },
       { href: "/login", label: "Đăng Nhập" },
       { href: "/register", label: "Đăng Ký" },
-      { href: "/quantri", label: "Quản Trị" },
+      { href: "/admin", label: "Quản Trị" },
     ],
   },
 ];
 
 const Logo = "https://d3enplyig2yenj.cloudfront.net/logo";
 
-// --- Các Icon SVG ---
-const ChevronDownIcon = ({ isOpen }: { isOpen: boolean }) => (
+const ChevronDownIcon = ({ className }: { className?: string }) => (
   <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="20"
-    height="20"
+    width="16"
+    height="16"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
-    // FIX: Xoay icon dựa trên trạng thái `isOpen`
-    className={`transition-transform duration-300 ${
-      isOpen ? "rotate-180" : ""
-    }`}
+    className={className}
   >
     <path d="m6 9 6 6 6-6" />
   </svg>
 );
 
-const ShoppingCartIcon = () => (
+const ShoppingCartIcon = ({ className }: { className?: string }) => (
   <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
+    width="22"
+    height="22"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    className={className}
   >
-    {" "}
-    <circle cx="8" cy="21" r="1" /> <circle cx="19" cy="21" r="1" />{" "}
-    <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.16" />{" "}
+    <circle cx="8" cy="21" r="1" />
+    <circle cx="19" cy="21" r="1" />
+    <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.16" />
   </svg>
 );
 
-const MenuIcon = () => (
+const UserIcon = ({ className }: { className?: string }) => (
   <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="28"
-    height="28"
+    width="22"
+    height="22"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    className={className}
   >
-    {" "}
-    <line x1="4" x2="20" y1="12" y2="12" />{" "}
-    <line x1="4" x2="20" y1="6" y2="6" />{" "}
-    <line x1="4" x2="20" y1="18" y2="18" />{" "}
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
   </svg>
 );
 
-const XIcon = () => (
+const MenuIcon = ({ className }: { className?: string }) => (
   <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="28"
-    height="28"
+    width="26"
+    height="26"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    className={className}
   >
-    {" "}
-    <path d="M18 6 6 18" /> <path d="m6 6 12 12" />{" "}
+    <line x1="4" x2="20" y1="12" y2="12" />
+    <line x1="4" x2="20" y1="6" y2="6" />
+    <line x1="4" x2="20" y1="18" y2="18" />
   </svg>
 );
 
-// --- Các Component UI ---
+const XIcon = ({ className }: { className?: string }) => (
+  <svg
+    width="26"
+    height="26"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="M18 6 6 18" />
+    <path d="m6 6 12 12" />
+  </svg>
+);
 
-// Link tùy chỉnh với hiệu ứng
-const CustomLink = ({
-  href,
-  children,
-  className,
-}: {
-  href: string;
-  children: React.ReactNode;
-  className?: string;
-}) => {
-  return (
-    <a
-      href={href}
-      className={`text-gray-800 hover:text-red-600 transition-colors duration-300 ${className}`}
-    >
-      {" "}
-      {children}{" "}
-    </a>
-  );
-};
+// --- Component Họa tiết trang trí ---
+const DecorativeDivider = () => (
+  <div className="relative -mt-16 sm:-mt-20 z-20 flex justify-center">
+    <div className="bg-rose-50 px-4">
+      <svg
+        width="200"
+        height="50"
+        viewBox="0 0 250 50"
+        className="text-rose-800 opacity-20"
+      >
+        {/* Lychee Branch */}
+        <path
+          d="M60 25 C 80 10, 100 10, 120 25"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          fill="none"
+        />
+        <circle cx="120" cy="25" r="5" fill="currentColor" stroke="none" />
+        <circle cx="123" cy="22" r="1" fill="white" />
+        <path
+          d="M120 25 Q 115 35, 110 30"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          fill="none"
+        />
+        <path
+          d="M120 25 Q 125 35, 130 30"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          fill="none"
+        />
 
-// Menu dropdown cho desktop
-const DesktopProductDropdown = ({
-  subItems,
-}: {
-  subItems: { href: string; label: string }[];
-}) => {
-  return (
-    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-48 bg-white/50 backdrop-blur-lg rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 z-20 border border-white/20">
-      {" "}
-      <div className="py-2">
-        {" "}
-        {subItems.map((item) => (
-          <CustomLink
-            key={item.label}
-            href={item.href}
-            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-white/20 hover:text-red-600"
-          >
-            {" "}
-            {item.label}{" "}
-          </CustomLink>
-        ))}{" "}
-      </div>{" "}
+        {/* Bee */}
+        <ellipse cx="150" cy="20" rx="4" ry="2.5" fill="currentColor" />
+        <path d="M150 18 L 150 22" stroke="white" strokeWidth="1" />
+        <path
+          d="M148 17 Q 145 15, 148 13"
+          stroke="currentColor"
+          strokeWidth="1"
+          fill="none"
+        />
+        <path
+          d="M152 17 Q 155 15, 152 13"
+          stroke="currentColor"
+          strokeWidth="1"
+          fill="none"
+        />
+
+        {/* Honeycomb */}
+        <path
+          d="M180 25 l 5 -3 l 5 3 v 6 l -5 3 l -5 -3 v -6"
+          stroke="currentColor"
+          strokeWidth="1"
+          fill="none"
+        />
+        <path
+          d="M190 22 l 5 -3 l 5 3 v 6 l -5 3 l -5 -3 v -6"
+          stroke="currentColor"
+          strokeWidth="1"
+          fill="none"
+        />
+      </svg>
     </div>
-  );
-};
+  </div>
+);
 
-// Menu cho mobile
+// --- Component Mobile Nav ---
 const MobileNav = ({
   isOpen,
   onClose,
@@ -160,98 +186,70 @@ const MobileNav = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  // FIX: Thay đổi state để lưu label của menu đang mở, thay vì chỉ true/false
-  const [openSubMenuLabel, setOpenSubMenuLabel] = useState<string | null>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  // FIX: Hàm xử lý việc mở/đóng từng sub-menu riêng biệt
-  const handleSubMenuToggle = (label: string) => {
-    // Nếu menu được nhấn đang mở, thì đóng nó lại. Ngược lại, mở nó ra.
-    setOpenSubMenuLabel(openSubMenuLabel === label ? null : label);
-  };
-
-  useEffect(() => {
-    const handleEsc = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    };
-    window.addEventListener("keydown", handleEsc);
-    return () => {
-      window.removeEventListener("keydown", handleEsc);
-    };
-  }, [onClose]);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   return (
     <div
-      className={`fixed inset-0 z-50 transition-opacity duration-300 ease-in-out lg:hidden ${
-        isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-      }`}
+      className={`fixed inset-0 z-50 lg:hidden ${isOpen ? "block" : "hidden"}`}
     >
       <div
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/20 backdrop-blur-sm"
         onClick={onClose}
-      />
+      ></div>
       <div
-        ref={menuRef}
-        className={`absolute top-0 right-0 h-full w-full max-w-sm bg-white shadow-xl transition-transform duration-300 ease-in-out ${
+        className={`absolute top-0 right-0 h-full w-full max-w-xs bg-white shadow-xl transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex justify-between items-center p-4 border-b">
-          <h2 className="text-xl font-bold text-red-700">Menu</h2>
-          <button
-            onClick={onClose}
-            className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
-            aria-label="Đóng menu"
-          >
-            {" "}
-            <XIcon />{" "}
+        <div className="flex justify-between items-center p-4 border-b border-gray-100">
+          <span className="font-bold text-rose-800">Menu</span>
+          <button onClick={onClose} className="p-2 -mr-2">
+            <XIcon className="text-slate-500" />
           </button>
         </div>
         <nav className="p-4">
-          <ul className="space-y-2">
+          <ul className="space-y-1">
             {navLinks.map((link) => (
               <li key={link.label}>
                 {link.subItems ? (
                   <>
                     <button
-                      // FIX: Gọi hàm xử lý mới với label của link hiện tại
-                      onClick={() => handleSubMenuToggle(link.label)}
-                      className="w-full flex justify-between items-center py-3 text-lg font-semibold text-gray-800 hover:text-red-600 transition-colors"
+                      onClick={() =>
+                        setActiveDropdown(
+                          activeDropdown === link.label ? null : link.label
+                        )
+                      }
+                      className="w-full flex justify-between items-center py-3 text-base font-semibold text-slate-700"
                     >
                       <span>{link.label}</span>
-                      {/* FIX: Truyền trạng thái mở/đóng vào icon để xoay nó */}
                       <ChevronDownIcon
-                        isOpen={openSubMenuLabel === link.label}
+                        className={`transition-transform duration-300 ${
+                          activeDropdown === link.label ? "rotate-180" : ""
+                        }`}
                       />
                     </button>
-                    {/* FIX: Chỉ hiển thị sub-menu nếu label của nó khớp với state */}
-                    {openSubMenuLabel === link.label && (
-                      <ul className="pl-4 mt-2 space-y-2 border-l-2 border-red-100">
+                    {activeDropdown === link.label && (
+                      <ul className="pl-4 mt-1 space-y-1 border-l-2 border-rose-100">
                         {link.subItems.map((item) => (
                           <li key={item.label}>
-                            {" "}
-                            <CustomLink
+                            <a
                               href={item.href}
-                              className="block py-2 text-md text-gray-600 hover:text-red-600"
+                              className="block py-2 text-sm text-slate-600 hover:text-rose-700"
                             >
-                              {" "}
-                              {item.label}{" "}
-                            </CustomLink>{" "}
+                              {item.label}
+                            </a>
                           </li>
                         ))}
                       </ul>
                     )}
                   </>
                 ) : (
-                  <CustomLink
-                    href={link.href!}
-                    className="block py-3 text-lg font-semibold text-gray-800 hover:text-red-600"
+                  <a
+                    href={link.href}
+                    className="block py-3 text-base font-semibold text-slate-700"
                   >
-                    {" "}
-                    {link.label}{" "}
-                  </CustomLink>
+                    {link.label}
+                  </a>
                 )}
               </li>
             ))}
@@ -262,79 +260,112 @@ const MobileNav = ({
   );
 };
 
-// --- Component Header Chính ---
-export default function Header() {
+const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isHeaderScrolled, setIsHeaderScrolled] = useState(false);
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const [isAtTop, setIsAtTop] = useState(true);
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsHeaderScrolled(window.scrollY > 20);
+      const currentScrollY = window.scrollY;
+      setIsAtTop(currentScrollY < 50);
+      if (isMobileMenuOpen) {
+        setIsHeaderVisible(true);
+        return;
+      }
+      if (currentScrollY > lastScrollY.current && currentScrollY > 200) {
+        setIsHeaderVisible(false);
+      } else {
+        setIsHeaderVisible(true);
+      }
+      lastScrollY.current = currentScrollY;
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isMobileMenuOpen]);
 
   return (
     <>
       <header
-        className={`fixed w-full top-0 z-40 transition-all duration-300 ease-in-out border-b ${
-          isHeaderScrolled
-            ? "bg-white/70 backdrop-blur-lg shadow-lg h-20 border-white/20"
-            : "bg-white/30 backdrop-blur-md h-24 border-transparent"
-        }`}
+        className={`fixed w-full top-0 z-40 transition-all duration-500 ease-in-out bg-white/80 backdrop-blur-lg ${
+          isHeaderVisible ? "translate-y-0" : "-translate-y-full"
+        } ${!isAtTop ? "shadow-md" : ""}`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
-          <div className="flex items-center justify-between h-full">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <CustomLink href="/" className="flex items-center gap-3">
-              <div className="relative w-17 h-17">
-                <img
-                  src={Logo}
-                  alt="LALA-LYCHEEE Logo"
-                  className="w-full h-full object-contain rounded-full"
-                />
-              </div>
-              <span className="text-4xl font-extrabold tracking-wider bg-gradient-to-r from-red-500 via-pink-500 to-orange-400 text-transparent bg-clip-text italic">
-                Lala-lycheee
+            <a href="/" className="flex items-center gap-2 flex-shrink-0">
+              <img
+                src={Logo}
+                alt="LALA-LYCHEEE Logo"
+                className="h-12 w-12 object-contain rounded-full"
+              />
+              <span className="text-2xl font-bold text-slate-800 tracking-tighter hidden sm:block">
+                LALA-LYCHEEE
               </span>
-            </CustomLink>
+            </a>
 
             {/* Navigation Links (Desktop) */}
-            <nav className="hidden lg:flex items-center gap-8">
-              {navLinks.map((link) =>
-                link.subItems ? (
-                  <div key={link.label} className="relative group">
-                    <span className="flex items-center gap-1 cursor-pointer py-2 text-md font-medium text-gray-800 hover:text-red-600 transition-colors duration-300">
+            <nav className="hidden lg:flex items-center gap-10">
+              {navLinks.map((link) => (
+                <div key={link.label} className="relative group">
+                  {link.subItems ? (
+                    <>
+                      <span className="flex items-center gap-1.5 cursor-pointer py-3 text-base font-medium text-slate-600 hover:text-rose-700">
+                        {link.label}
+                        <ChevronDownIcon className="transition-transform duration-300 group-hover:rotate-180" />
+                      </span>
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-56 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 -translate-y-2 z-20 border border-gray-100">
+                        <div className="py-2">
+                          {link.subItems.map((item) => (
+                            <a
+                              key={item.label}
+                              href={item.href}
+                              className="block w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-rose-50 hover:text-rose-700"
+                            >
+                              {item.label}
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <a
+                      href={link.href!}
+                      className="py-3 text-base font-medium text-slate-600 hover:text-rose-700"
+                    >
                       {link.label}
-                      {/* Truyền `isOpen` là false vì đây là desktop, chỉ dùng cho mobile */}
-                      <ChevronDownIcon isOpen={false} />
-                    </span>
-                    <DesktopProductDropdown subItems={link.subItems} />
-                  </div>
-                ) : (
-                  <CustomLink
-                    key={link.href}
-                    href={link.href!}
-                    className="text-md font-medium"
-                  >
-                    {link.label}
-                  </CustomLink>
-                )
-              )}
+                    </a>
+                  )}
+                  <span className="absolute bottom-0 left-0 block h-[1.5px] w-full bg-rose-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></span>
+                </div>
+              ))}
             </nav>
 
             {/* Icons & Mobile Menu Trigger */}
             <div className="flex items-center gap-3">
-              <button
+              <a
+                href="/account"
+                aria-label="Tài khoản"
+                className="p-2 text-slate-600 hover:text-rose-700 hover:bg-rose-50 rounded-full transition-all duration-300"
+              >
+                <UserIcon />
+              </a>
+              <a
+                href="/cart"
                 aria-label="Giỏ hàng"
-                className="p-2 text-gray-700 hover:text-red-600 hover:bg-white/30 rounded-full transition-colors"
+                className="relative p-2 text-slate-600 hover:text-rose-700 hover:bg-rose-50 rounded-full transition-all duration-300"
               >
                 <ShoppingCartIcon />
-              </button>
+                <span className="absolute top-1 right-1 flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
+                </span>
+              </a>
               <button
                 onClick={() => setIsMobileMenuOpen(true)}
-                className="p-2 text-gray-700 hover:text-red-600 hover:bg-white/30 rounded-full transition-colors lg:hidden"
+                className="p-2 text-slate-600 hover:text-rose-700 hover:bg-rose-50 rounded-full transition-colors lg:hidden"
                 aria-label="Mở menu"
               >
                 <MenuIcon />
@@ -343,12 +374,12 @@ export default function Header() {
           </div>
         </div>
       </header>
-
-      {/* Mobile Navigation Component */}
       <MobileNav
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}
       />
     </>
   );
-}
+};
+
+export default Header;
