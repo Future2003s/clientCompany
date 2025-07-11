@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 
-// Define product types and their price variants, including bilingual names
+// Define product types and their price variants, including bilingual names and images
 const productOptions = {
   "165g / 小": [
     {
@@ -9,6 +9,7 @@ const productOptions = {
       name: "Loại 165g giá 160.000",
       name_jp: "生ライチはちみつ（小）",
       price: 160000,
+      imageUrl: "https://d3enplyig2yenj.cloudfront.net/san_pham_nho.jpg",
     },
   ],
   "435g / 大": [
@@ -17,6 +18,7 @@ const productOptions = {
       name: "Loại 435g giá 380.000",
       name_jp: "生ライチはちみつ（大）",
       price: 380000,
+      imageUrl: "https://d3enplyig2yenj.cloudfront.net/san_pham_lon.jpg",
     },
   ],
 };
@@ -66,6 +68,7 @@ interface TypeRequestBodyMail {
       name_jp: string;
       price: number;
       quantity: number;
+      imageUrl: string;
     }[];
     subtotal: number;
     shippingFee: number;
@@ -129,20 +132,6 @@ const QuantityIcon = () => (
       strokeLinecap="round"
       strokeLinejoin="round"
       d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"
-    />
-  </svg>
-);
-const TotalValueIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-5 w-5 text-gray-400"
-    viewBox="0 0 20 20"
-    fill="currentColor"
-  >
-    <path
-      fillRule="evenodd"
-      d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 4a1 1 0 000 2h6a1 1 0 100-2H7zm0 4a1 1 0 100 2h6a1 1 0 100-2H7zm-1 4a1 1 0 011-1h2a1 1 0 110 2H7a1 1 0 01-1-1z"
-      clipRule="evenodd"
     />
   </svg>
 );
@@ -304,7 +293,7 @@ const OrderForm: React.FC = () => {
                 <td>
                 <table border="0" cellpadding="0" cellspacing="0">
                     <tr>
-                    <td><img src="https://placehold.co/65x65/fafafa/c59a9a?text=Sản+phẩm" alt="Hình ảnh sản phẩm" class="product-image"></td>
+                    <td><img src="${product.imageUrl}" alt="${product.name}" class="product-image"></td>
                     <td style="padding-left: 20px;">
                         <span class="product-name">${product.name}</span><br>
                         <span class="product-qty">Số lượng: ${product.quantity}</span>
@@ -382,7 +371,7 @@ const OrderForm: React.FC = () => {
                 <td>
                 <table border="0" cellpadding="0" cellspacing="0">
                     <tr>
-                    <td><img src="https://placehold.co/65x65/fafafa/c59a9a?text=製品" alt="製品画像" class="product-image"></td>
+                    <td><img src="${product.imageUrl}" alt="${product.name_jp}" class="product-image"></td>
                     <td style="padding-left: 20px;">
                         <span class="product-name">${product.name_jp}</span><br>
                         <span class="product-qty">数量: ${product.quantity}</span>
@@ -416,7 +405,7 @@ const OrderForm: React.FC = () => {
         : "準備ができ次第、発送致します。 商品の発送が完了しましたら再度ご連絡差し上げますのでどうぞ宜しくお願い致します。";
 
     const extraNotesJP = `
-            <div style="font-size: 14px; color: #555555; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+            <div style="text-align: left; font-size: 14px; color: #555555; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
                 <p>※万が一、商品が破損していたり液漏れが発生していたり、異なった商品が届いた場合には大変お手数ですがすぐにご連絡頂きますようお願い申し上げます。<br>その際には破損した商品の画像をお撮り頂き、そちらを合わせてお送り頂けますと幸いです。<br>ただし、誠に恐れ入りますがお客様都合での返品・交換はお受けできかねますので予めご了承下さい。</p>
                 <p>※暑い時期は気温の関係もあり、生はちみつの酵素の発酵が活発化しており液漏れしやすくなっております。<br>対策としては、20℃以下の冷暗所もしくは冷蔵庫での保管がおすすめです。<br>もし、はちみつが白く結晶化してしまった場合は50℃以下のお湯で湯煎していただければ、酵素や栄養素が失われることなく生はちみつとしてお召し上がり頂けますのでお試しください。</p>
                 <p>※飛行機での輸送に関しましても強い衝撃や連続した揺れが加わると気圧の関係もあり液漏れする可能性がございます。飛行機で輸送される際は緩衝材で包み袋に入れ、スーツケースの真ん中に入れるなど十分ご注意下さいますようお願い申し上げます。</p>
@@ -502,7 +491,7 @@ const OrderForm: React.FC = () => {
         <body style="margin: 0; padding: 0; background-color: #fdf6f6; font-family: 'Quicksand', Arial, sans-serif;"><table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color:rgb(240, 242, 245);"><tr><td align="center" style="padding: 20px 10px;"><table class="container" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #dddddd; box-shadow: 0 4px 15px rgba(0,0,0,0.05);" border="0" cellspacing="0" cellpadding="0">
         <tr><td style="padding: 30px 0; text-align: center; background-color: #ffffff;"><img src="https://d3enplyig2yenj.cloudfront.net/logo" alt="Logo LALA-LYCHEEE" style="display: block; max-width: 200px; height: auto; margin: 0 auto;"></td></tr>
         <tr><td align="center" class="content" style="padding: 10px 40px 30px 40px;"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td style="background-color: rgba(255, 255, 255, 0.9); padding: 25px; border-radius: 8px; text-align: center;">
-        <h2 style="color: #d9534f; margin-top: 0;">🚚🚚🚚 Đơn hàng đang trên đường đến!</h2>
+        <h2 style="color: #d9534f; margin-top: 0;">�🚚🚚 Đơn hàng đang trên đường đến!</h2>
         <p style="margin: 0 0 20px 0; color: #333333; font-size: 16px; line-height: 1.7;">Kính gửi <strong>${data.customerInfo.name}</strong>,</p>
         <p style="margin: 0 0 15px 0; color: #333333; font-size: 16px;"><strong>Đơn hàng của bạn sẽ được giao đến bạn trong ngày hôm nay.</strong></p>
         <p style="margin: 0 0 25px 0; color: #333333; font-size: 16px;">Bạn vui lòng chuẩn bị và để ý điện thoại để nhận hàng từ shipper nhé!</p>
@@ -526,7 +515,7 @@ const OrderForm: React.FC = () => {
         ${signatureHtml}
         </td></tr></table></td></tr>
         <tr><td class="signature" style="padding: 30px 40px; background-color: #fff8f8; color: #333333; font-size: 14px; border-top: 1px solid #fceeee; text-align: center;"><p style="margin: 0;">LALA-LYCHEEEをご利用いただき、誠にありがとうございます。</p></td></tr>
-        </table><table width="100%" style="max-width: 600px;" border="0" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding: 20px 0; font-size: 12px; color: #aaaaaa;"><p style="margin: 0;">🐝�🐝</p><p style="margin: 10px 0 0 0;">このメールはLALA-LYCHEEEでご注文された方にお送りしています。</p></td></tr></table></td></tr></table></body></html>`;
+        </table><table width="100%" style="max-width: 600px;" border="0" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding: 20px 0; font-size: 12px; color: #aaaaaa;"><p style="margin: 0;">🐝🐝🐝</p><p style="margin: 10px 0 0 0;">このメールはLALA-LYCHEEEでご注文された方にお送りしています。</p></td></tr></table></td></tr></table></body></html>`;
   };
 
   // TEMPLATE: THANK YOU (VIETNAMESE)
@@ -670,6 +659,7 @@ const OrderForm: React.FC = () => {
           name_jp: productDetails.name_jp,
           price: productDetails.price,
           quantity: Number(quantity),
+          imageUrl: productDetails.imageUrl,
         };
       });
 
@@ -750,14 +740,17 @@ const OrderForm: React.FC = () => {
     if (name === "recipientName") {
       setIsUserModified(true); // User is manually editing recipient name
     }
-    if (name === "shippingFee") {
-      setFormData((prevData) => ({
-        ...prevData,
-        shippingFee: value === "" ? "" : Number(value),
-      }));
-    } else {
-      setFormData((prevData) => ({ ...prevData, [name]: value }));
-    }
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleShippingFeeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value;
+    const numericValue = parseInt(rawValue.replace(/[^0-9]/g, ""), 10);
+    setIsUserModified(false);
+    setFormData((prev) => ({
+      ...prev,
+      shippingFee: isNaN(numericValue) ? "" : numericValue,
+    }));
   };
 
   const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -875,6 +868,19 @@ const OrderForm: React.FC = () => {
     }, 1500);
     return () => clearTimeout(timer);
   }, []);
+
+  const formatVNCurrency = (
+    value: number | string | null | undefined
+  ): string => {
+    if (value === null || value === undefined || value === "") {
+      return "";
+    }
+    const num = Number(String(value).replace(/[^0-9]/g, ""));
+    if (isNaN(num)) {
+      return "";
+    }
+    return new Intl.NumberFormat("vi-VN").format(num);
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
@@ -1044,7 +1050,6 @@ const OrderForm: React.FC = () => {
                 </div>
               </div>
 
-              {/* Conditional Shipping and Payment Information Section */}
               {emailType === "confirmed" && (
                 <div className="space-y-4 rounded-lg border border-blue-300 dark:border-blue-700 p-4 bg-blue-50 dark:bg-gray-700/50 transition-all duration-500 ease-in-out">
                   <h3 className="text-lg font-medium text-gray-900 dark:text-white">
@@ -1243,16 +1248,27 @@ const OrderForm: React.FC = () => {
               >
                 Phí giao hàng
               </label>
-              <input
-                type="number"
-                id="shippingFee"
-                name="shippingFee"
-                value={isFreeShipping ? 0 : formData.shippingFee}
-                disabled={isFreeShipping}
-                onChange={handleInputChange}
-                placeholder="Nhập phí"
-                className="w-1/2 text-right text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 disabled:bg-gray-200 disabled:cursor-not-allowed"
-              />
+              <div className="relative w-1/2">
+                <input
+                  type="text"
+                  id="shippingFee"
+                  name="shippingFee"
+                  value={
+                    isFreeShipping
+                      ? "Miễn phí"
+                      : formatVNCurrency(formData.shippingFee)
+                  }
+                  disabled={isFreeShipping}
+                  onChange={handleShippingFeeChange}
+                  placeholder="Nhập phí"
+                  className="w-full text-right text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 disabled:bg-gray-200 disabled:cursor-not-allowed pr-12"
+                />
+                {!isFreeShipping && (
+                  <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500">
+                    VNĐ
+                  </span>
+                )}
+              </div>
             </div>
             {isFreeShipping && (
               <p className="text-right text-green-500 text-sm">
