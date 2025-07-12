@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 
+const Logo = "https://d3enplyig2yenj.cloudfront.net/logo";
+
 const navLinks = [
   { href: "/", label: "Trang Chủ" },
   {
@@ -24,8 +26,6 @@ const navLinks = [
   },
 ];
 
-const Logo = "https://d3enplyig2yenj.cloudfront.net/logo";
-
 const ChevronDownIcon = ({ className }: { className?: string }) => (
   <svg
     width="16"
@@ -41,7 +41,6 @@ const ChevronDownIcon = ({ className }: { className?: string }) => (
     <path d="m6 9 6 6 6-6" />
   </svg>
 );
-
 const ShoppingCartIcon = ({ className }: { className?: string }) => (
   <svg
     width="22"
@@ -59,7 +58,6 @@ const ShoppingCartIcon = ({ className }: { className?: string }) => (
     <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.16" />
   </svg>
 );
-
 const UserIcon = ({ className }: { className?: string }) => (
   <svg
     width="22"
@@ -76,7 +74,6 @@ const UserIcon = ({ className }: { className?: string }) => (
     <circle cx="12" cy="7" r="4" />
   </svg>
 );
-
 const MenuIcon = ({ className }: { className?: string }) => (
   <svg
     width="26"
@@ -94,7 +91,6 @@ const MenuIcon = ({ className }: { className?: string }) => (
     <line x1="4" x2="20" y1="18" y2="18" />
   </svg>
 );
-
 const XIcon = ({ className }: { className?: string }) => (
   <svg
     width="26"
@@ -111,7 +107,6 @@ const XIcon = ({ className }: { className?: string }) => (
     <path d="m6 6 12 12" />
   </svg>
 );
-
 // --- Component Họa tiết trang trí ---
 const DecorativeDivider = () => (
   <div className="relative -mt-16 sm:-mt-20 z-20 flex justify-center">

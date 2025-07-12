@@ -68,8 +68,7 @@ type Experience = {
 const heroSlides: Slide[] = [
   {
     id: 1,
-    imageUrl:
-      "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8ZnJ1aXRzfGVufDB8fDB8fHww",
+    imageUrl: "https://d3enplyig2yenj.cloudfront.net/banner_1.jpg",
     title: (
       <>
         Tinh hoa từ <span className="text-rose-300">Trái Vải</span>
@@ -82,8 +81,7 @@ const heroSlides: Slide[] = [
   },
   {
     id: 2,
-    imageUrl:
-      "https://images.unsplash.com/photo-1519996529931-28324d5a630e?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZnJ1aXRzfGVufDB8fDB8fHww",
+    imageUrl: "https://d3enplyig2yenj.cloudfront.net/banner_2.jpg",
     title: (
       <>
         Bộ Sưu Tập <span className="text-rose-300">Quà Tặng Mới</span>
@@ -95,8 +93,7 @@ const heroSlides: Slide[] = [
   },
   {
     id: 3,
-    imageUrl:
-      "https://plus.unsplash.com/premium_photo-1671379041175-782d15092945?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZnJ1aXRzfGVufDB8fDB8fHww",
+    imageUrl: "https://d3enplyig2yenj.cloudfront.net/banner_3.jpg",
     title: (
       <>
         Trà Vải <span className="text-rose-300">Thượng Hạng</span>
@@ -111,8 +108,8 @@ const heroSlides: Slide[] = [
 const featuredProducts: Product[] = [
   {
     id: 1,
-    name: "Nước Ép Vải Nguyên Chất",
-    description: "Tinh khiết từ 100% vải thiều Lục Ngạn tươi ngon.",
+    name: "Thu Hoạch Trái Vải Tươi",
+    description: "Mọi người cùng nhau - vui vẻ thu hoạch.",
     imageUrl:
       "https://images.unsplash.com/photo-1659482633309-ccd1e316c592?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OTZ8fGZydWl0c3xlbnwwfHwwfHx8MA%3D%3D",
     price: "120.000đ",
@@ -121,9 +118,9 @@ const featuredProducts: Product[] = [
   },
   {
     id: 2,
-    name: "Trà Vải Hoa Lài",
+    name: "Thu Hoạch Trái Vải Tươi",
     description:
-      "Sự kết hợp tinh tế giữa vị ngọt của vải và hương thơm của hoa lài.",
+      "Sự kết hợp tinh tế giữa vị ngọt của vải và ánh sáng của mặt trời.",
     imageUrl:
       "https://images.unsplash.com/photo-1622219750989-f24af3d4a7ca?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OTh8fGZydWl0c3xlbnwwfHwwfHx8MA%3D%3D",
     price: "95.000đ",
@@ -145,53 +142,48 @@ const featuredProducts: Product[] = [
 const collectionSlides: CollectionSlide[] = [
   {
     id: 1,
-    imageUrl:
-      "https://media.istockphoto.com/id/1173730128/vi/anh/v%E1%BA%A3i-thi%E1%BB%81u-t%C6%B0%C6%A1i-v%E1%BB%9Bi-l%C3%A1-%C4%91%C6%B0%E1%BB%A3c-c%C3%B4-l%E1%BA%ADp-tr%C3%AAn-n%E1%BB%81n-tr%E1%BA%AFng.jpg?s=612x612&w=0&k=20&c=RXrHN0bJei_i6xzX48OSPYTO8iTaNMb8JopjCZKLNoY=",
-    title: "Vị Ngọt Mùa Hè",
-    category: "NƯỚC ÉP",
+    imageUrl: "https://d3enplyig2yenj.cloudfront.net/suu_tap_1.jpg",
+    title: "Thu Hoạch Vải",
+    category: "Năng lượng tích cực cùng mọi người thu hoạch.",
   },
   {
     id: 2,
-    imageUrl:
-      "https://media.istockphoto.com/id/1397822213/vi/anh/m%E1%BB%99t-ch%C3%B9m-v%E1%BA%A3i-thi%E1%BB%81u-%C4%91%E1%BB%8F-v%C3%A0-l%C3%A1-xanh-b%E1%BB%8B-c%C3%B4-l%E1%BA%ADp-tr%C3%AAn-n%E1%BB%81n-tr%E1%BA%AFng-dicut-v%E1%BB%9Bi-con-%C4%91%C6%B0%E1%BB%9Dng-c%E1%BA%AFt.jpg?s=612x612&w=0&k=20&c=6b3KXhiIL0y9FVIj00x3QDLQSeGBsvy1dEd1Luzb2OU=",
-    title: "Hương Trà Tinh Tế",
-    category: "TRÀ VẢI",
+    imageUrl: "https://d3enplyig2yenj.cloudfront.net/suu_tap_2.jpg",
+    title: "Tinh Tế Trong Từng Công Đoạn",
+    category: "Thu Hoạch Vải",
   },
   {
     id: 3,
-    imageUrl:
-      "https://media.istockphoto.com/id/1215940588/vi/anh/v%E1%BA%A3i-thi%E1%BB%81u-tr%C3%AAn-n%E1%BB%81n-tr%E1%BA%AFng.jpg?s=612x612&w=0&k=20&c=5KjyOAyRkZWV5wv5TuUeb47nI5fjmSO2xJr1frrJ_eY=",
-    title: "Quà Tặng Doanh Nghiệp",
-    category: "QUÀ TẶNG",
+    imageUrl: "https://d3enplyig2yenj.cloudfront.net/suu_tap_3.jpg",
+    title: "Kết Hợp Với Ánh Nắng Mặt Trời",
+    category: "Thu Hoạch Vải",
   },
   {
     id: 4,
-    imageUrl:
-      "https://media.istockphoto.com/id/1215936896/vi/anh/v%E1%BA%A3i-thi%E1%BB%81u-v%E1%BB%9Bi-l%C3%A1-b%E1%BB%8B-c%C3%B4-l%E1%BA%ADp-tr%C3%AAn-n%E1%BB%81n-tr%E1%BA%AFng-tr%C3%A1i-c%C3%A2y-nhi%E1%BB%87t-%C4%91%E1%BB%9Bi.jpg?s=612x612&w=0&k=20&c=LKs41L5JGDnTTziK16RJnn6Y2eJn2OEW0MdvCG8zt9U=",
-    title: "Mứt Vải Truyền Thống",
-    category: "MỨT & KẸO",
+    imageUrl: "https://d3enplyig2yenj.cloudfront.net/suu_tap_4.jpg",
+    title: "",
+    category: "Thu Hoạch Vải",
   },
   {
     id: 5,
-    imageUrl:
-      "https://media.istockphoto.com/id/811852932/vi/anh/v%E1%BA%A3i-tr%C3%AAn-n%E1%BB%81n-tr%E1%BA%AFng.jpg?s=612x612&w=0&k=20&c=7F8SAKQRGoDWt36Z19CbaWl2w4FaMb--b2_R3o3SZ8o=",
-    title: "Phiên Bản Giới Hạn",
-    category: "ĐẶC BIỆT",
+    imageUrl: "https://d3enplyig2yenj.cloudfront.net/suu_tap_5.jpg",
+    title: "",
+    category: "Thu Hoạch Vải",
   },
 ];
 
 const partners: Partner[] = [
   {
     id: 1,
-    name: "Gourmet Foods",
+    name: "Tomibun Market",
     logoUrl:
-      "https://placehold.co/200x100/f1f5f9/94a3b8?text=Gourmet+Foods&font=serif",
+      "https://www.tomibun.vn/upload/img/products/06112021/untitled-1.png",
   },
   {
     id: 2,
-    name: "Luxury Hotels",
+    name: "EM HÀ NỘI",
     logoUrl:
-      "https://placehold.co/200x100/f1f5f9/94a3b8?text=Luxury+Hotels&font=serif",
+      "https://www.emhanoi.com/wp-content/uploads/2022/12/%E8%B3%87%E7%94%A2-1.png",
   },
   {
     id: 3,
@@ -330,7 +322,11 @@ const useScroll = () => {
   return isScrolled;
 };
 
-const useIntersectionObserver = (options: IntersectionObserverInit) => {
+interface CustomIntersectionObserverInit extends IntersectionObserverInit {
+  triggerOnce?: boolean;
+}
+
+const useIntersectionObserver = (options: CustomIntersectionObserverInit) => {
   const [entry, setEntry] = useState<IntersectionObserverEntry>();
   const [node, setNode] = useState<HTMLElement | null>(null);
   const observer = useRef<IntersectionObserver | null>(null);
@@ -365,7 +361,7 @@ const FadeInWhenVisible: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <div
-      ref={ref as React.RefObject<HTMLDivElement>}
+      ref={ref}
       className={`transition-all duration-1000 ease-in-out ${
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
       }`}
@@ -1256,11 +1252,12 @@ const TestimonialsSection: React.FC = () => {
   );
 };
 
+// Đối Tác Carousel
 const PartnerCarouselSection: React.FC = () => {
   const radius = 280;
   const angle = 360 / partners.length;
   return (
-    <section className="py-24 bg-rose-50/50">
+    <section className="py-24 bg-amber-100">
       <FadeInWhenVisible>
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
@@ -1325,88 +1322,6 @@ const CtaSection: React.FC = () => (
       </form>
     </div>
   </section>
-);
-
-const Footer: React.FC = () => (
-  <footer className="bg-slate-800 text-slate-300">
-    <div className="container mx-auto px-6 py-16">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-        <div className="col-span-1 md:col-span-2 lg:col-span-2">
-          <h3 className="font-serif text-xl font-bold text-white mb-4">
-            LALA-LYCHEE
-          </h3>
-          <p className="text-slate-400 max-w-md">
-            Mang tinh hoa trái vải Việt Nam đến với thế giới qua những sản phẩm
-            đẳng cấp và chỉn chu.
-          </p>
-        </div>
-        <div>
-          <h4 className="font-bold text-white mb-4">Khám Phá</h4>
-          <ul className="space-y-2">
-            <li>
-              <a
-                href="#experience"
-                className="hover:text-white transition-colors"
-              >
-                Trải Nghiệm
-              </a>
-            </li>
-            <li>
-              <a
-                href="#products"
-                className="hover:text-white transition-colors"
-              >
-                Sản Phẩm
-              </a>
-            </li>
-            <li>
-              <a
-                href="#collections"
-                className="hover:text-white transition-colors"
-              >
-                Bộ Sưu Tập
-              </a>
-            </li>
-            <li>
-              <a href="#craft" className="hover:text-white transition-colors">
-                Quy Trình
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-white transition-colors">
-                Cửa Hàng
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div>
-          <h4 className="font-bold text-white mb-4">Hỗ Trợ</h4>
-          <ul className="space-y-2">
-            <li>
-              <a href="#contact" className="hover:text-white transition-colors">
-                Liên Hệ
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-white transition-colors">
-                FAQs
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-white transition-colors">
-                Chính Sách
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div className="mt-12 border-t border-slate-700 pt-8 text-center text-slate-500 text-sm">
-        <p>
-          &copy; {new Date().getFullYear()} LALA-LYCHEE. All Rights Reserved.
-        </p>
-      </div>
-    </div>
-  </footer>
 );
 
 const CursorEffect: React.FC = () => {
@@ -1597,22 +1512,20 @@ export default function Page() {
       `}</style>
       <div className="bg-white font-sans antialiased">
         <CursorEffect />
-        <Header />
-        <main>
+        <section>
           <HeroSliderWithWipe />
           <div className="group">
             <MarqueeBannerSection />
           </div>
+          <PartnerCarouselSection />
           <InteractiveShowcaseSection />
           <AboutSection />
           <FeaturedProductsSection />
           <CollectionSliderSection />
           <OurCraftSection />
           <TestimonialsSection />
-          <PartnerCarouselSection />
           <CtaSection />
-        </main>
-        <Footer />
+        </section>
         <ScrollToTopButton />
       </div>
     </>
