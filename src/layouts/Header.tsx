@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 const Logo = "https://d3enplyig2yenj.cloudfront.net/logo";
@@ -7,11 +8,12 @@ const navLinks = [
   { href: "/", label: "Trang Chủ" },
   {
     label: "Sản Phẩm",
+    href: "/products",
     subItems: [
-      { href: "/products/vai-thanh-ha", label: "Vải Tươi Thanh Hà" },
-      { href: "/products/nuoc-cot-vai", label: "Nước Cốt Vải" },
-      { href: "/products/mat-ong", label: "Mật Ong Hoa Vải" },
-      { href: "/products/all", label: "Tất Cả Sản Phẩm" },
+      { href: "/products", label: "Vải Tươi Thanh Hà" },
+      { href: "/products", label: "Nước Cốt Vải" },
+      { href: "/products", label: "Mật Ong Hoa Vải" },
+      { href: "/products", label: "Tất Cả Sản Phẩm" },
     ],
   },
   { href: "/story", label: "Câu Chuyện" },
@@ -290,7 +292,7 @@ const Header = () => {
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <a href="/" className="flex items-center gap-2 flex-shrink-0">
+            <Link href="/" className="flex items-center gap-2 flex-shrink-0">
               <img
                 src={Logo}
                 alt="LALA-LYCHEEE Logo"
@@ -299,7 +301,7 @@ const Header = () => {
               <span className="text-2xl font-bold text-slate-800 tracking-tighter hidden sm:block">
                 LALA-LYCHEEE
               </span>
-            </a>
+            </Link>
 
             {/* Navigation Links (Desktop) */}
             <nav className="hidden lg:flex items-center gap-10">
@@ -314,24 +316,24 @@ const Header = () => {
                       <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-56 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 -translate-y-2 z-20 border border-gray-100">
                         <div className="py-2">
                           {link.subItems.map((item) => (
-                            <a
+                            <Link
                               key={item.label}
                               href={item.href}
                               className="block w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-rose-50 hover:text-rose-700"
                             >
                               {item.label}
-                            </a>
+                            </Link>
                           ))}
                         </div>
                       </div>
                     </>
                   ) : (
-                    <a
+                    <Link
                       href={link.href!}
                       className="py-3 text-base font-medium text-slate-600 hover:text-rose-700"
                     >
                       {link.label}
-                    </a>
+                    </Link>
                   )}
                   <span className="absolute bottom-0 left-0 block h-[1.5px] w-full bg-rose-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></span>
                 </div>
@@ -340,14 +342,14 @@ const Header = () => {
 
             {/* Icons & Mobile Menu Trigger */}
             <div className="flex items-center gap-3">
-              <a
+              <Link
                 href="/account"
                 aria-label="Tài khoản"
                 className="p-2 text-slate-600 hover:text-rose-700 hover:bg-rose-50 rounded-full transition-all duration-300"
               >
                 <UserIcon />
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/cart"
                 aria-label="Giỏ hàng"
                 className="relative p-2 text-slate-600 hover:text-rose-700 hover:bg-rose-50 rounded-full transition-all duration-300"
@@ -357,7 +359,7 @@ const Header = () => {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
                 </span>
-              </a>
+              </Link>
               <button
                 onClick={() => setIsMobileMenuOpen(true)}
                 className="p-2 text-slate-600 hover:text-rose-700 hover:bg-rose-50 rounded-full transition-colors lg:hidden"

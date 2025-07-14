@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useRef } from "react";
-
 // --- ICONS (SVG Components) ---
 const SendIcon = () => (
   <svg
@@ -422,6 +421,6 @@ const SystemEmailer: React.FC = () => {
   );
 };
 
-export default function App() {
+export default function Page() {
   return <SystemEmailer />;
 }

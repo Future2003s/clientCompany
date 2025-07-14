@@ -11,14 +11,11 @@ import {
   ChevronRight,
   ChevronLeft,
   ArrowUp,
-  Heart,
-  XCircle,
 } from "lucide-react";
 
-// --- GHI CHÚ CẬP NHẬT V20 ---
-// 1. [THAY THẾ] Thay thế mục "Bộ Sưu Tập" cũ bằng mục "Cuốn Sách Ảnh" mới.
-// 2. [CẢI THIỆN] Thêm hiệu ứng xếp chồng dọc, người dùng có thể cuộn chuột hoặc vuốt để lật qua các ảnh.
-// 3. [TỐI ƯU] Giữ lại các chức năng và bố cục đã hoàn thiện ở các phiên bản trước.
+// --- GHI CHÚ CẬP NHẬT V15 ---
+// 1. [SỬA LỖI] Mục "Khách Hàng Nói Gì?": Thêm lại chức năng kéo-thả bằng chuột và vuốt trên màn hình cảm ứng để điều hướng.
+// 2. [TỐI ƯU] Dọn dẹp và sửa một số lỗi nhỏ trong mã nguồn để đảm bảo tính ổn định.
 
 // --- TYPE DEFINITIONS (ĐỊNH NGHĨA KIỂU DỮ LIỆU) ---
 type Product = {
@@ -385,6 +382,113 @@ const FadeInWhenVisible: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
+const Header: React.FC = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const isScrolled = useScroll();
+  const navLinks = [
+    { name: "Trải Nghiệm", href: "#experience" },
+    { name: "Sản Phẩm", href: "#products" },
+    { name: "Bộ Sưu Tập", href: "#collections" },
+    { name: "Quy Trình", href: "#craft" },
+    { name: "Sự Tin Tưởng", href: "#social-proof" },
+  ];
+
+  return (
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled ? "bg-white/95 shadow-md backdrop-blur-lg" : "bg-transparent"
+      }`}
+    >
+      <div className="container mx-auto px-6 py-3">
+        <div className="flex items-center justify-between">
+          <a
+            href="#"
+            className={`flex items-center space-x-2 text-2xl font-serif font-bold transition-colors ${
+              isScrolled ? "text-slate-800" : "text-white"
+            }`}
+          >
+            <Leaf className="text-rose-500" />
+            <span>LALA-LYCHEE</span>
+          </a>
+          <nav className="hidden md:flex items-center space-x-8">
+            {navLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                className={`transition-colors duration-300 ${
+                  isScrolled
+                    ? "text-slate-600 hover:text-rose-500"
+                    : "text-white/80 hover:text-white"
+                }`}
+              >
+                {link.name}
+              </a>
+            ))}
+          </nav>
+          <div className="flex items-center space-x-4">
+            <button
+              className={`hidden md:block rounded-full transition-all duration-300 transform shadow-lg hover:shadow-xl hover:scale-105 font-semibold text-base ${
+                isScrolled
+                  ? "bg-gradient-to-r from-rose-500 to-red-500 text-white px-6 py-3"
+                  : "bg-white/20 backdrop-blur-sm border border-white/50 text-white px-6 py-3"
+              }`}
+            >
+              Mua Ngay
+            </button>
+            <ShoppingBag
+              className={`cursor-pointer transition-colors ${
+                isScrolled
+                  ? "text-slate-600 hover:text-rose-500"
+                  : "text-white hover:text-rose-300"
+              }`}
+            />
+            <button className="md:hidden" onClick={() => setIsMenuOpen(true)}>
+              <Menu
+                className={`${isScrolled ? "text-slate-600" : "text-white"}`}
+              />
+            </button>
+          </div>
+        </div>
+      </div>
+      {isMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-50 md:hidden"
+          onClick={() => setIsMenuOpen(false)}
+        >
+          <div
+            className="fixed top-0 right-0 h-full w-2/3 max-w-sm bg-white p-6 shadow-xl animate-in slide-in-from-right duration-300"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="font-serif text-xl font-bold text-slate-800">
+                Menu
+              </h2>
+              <button onClick={() => setIsMenuOpen(false)}>
+                <X className="text-slate-500" />
+              </button>
+            </div>
+            <nav className="flex flex-col space-y-6">
+              {navLinks.map((link) => (
+                <a
+                  key={link.name}
+                  href={link.href}
+                  className="text-slate-700 text-lg hover:text-rose-500"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {link.name}
+                </a>
+              ))}
+            </nav>
+            <button className="w-full mt-8 bg-gradient-to-r from-rose-500 to-red-500 text-white px-4 py-4 rounded-full text-lg font-bold hover:shadow-xl transition-all duration-300">
+              Mua Ngay
+            </button>
+          </div>
+        </div>
+      )}
+    </header>
+  );
+};
+
 const InteractiveHeroSlider: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -525,7 +629,7 @@ const InteractiveHeroSlider: React.FC = () => {
               >
                 <img
                   src={slide.imageUrl}
-                  alt={slide.subtitle}
+                  alt={slide.title as string}
                   className={`w-16 h-20 md:w-20 md:h-24 object-cover transition-all duration-300 ease-in-out ${
                     currentIndex === index
                       ? "md:w-24 md:h-32"
@@ -866,8 +970,64 @@ const FeaturedProductsSection: React.FC = () => {
   );
 };
 
-const CollectionSection: React.FC = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+const CollectionSliderSection: React.FC = () => {
+  const [currentIndex, setCurrentIndex] = useState(
+    Math.floor(collectionSlides.length / 2)
+  );
+  const dragStartX = useRef(0);
+  const isDragging = useRef(false);
+  const [rotation, setRotation] = useState({ x: 0, y: 0 });
+
+  const nextSlide = useCallback(
+    () => setCurrentIndex((prev) => (prev + 1) % collectionSlides.length),
+    [collectionSlides.length]
+  );
+  const prevSlide = useCallback(
+    () =>
+      setCurrentIndex(
+        (prev) => (prev - 1 + collectionSlides.length) % collectionSlides.length
+      ),
+    [collectionSlides.length]
+  );
+
+  const handleDragStart = (clientX: number) => {
+    isDragging.current = true;
+    dragStartX.current = clientX;
+  };
+
+  const handleDragEnd = (clientX: number) => {
+    if (!isDragging.current) return;
+    isDragging.current = false;
+    const dragDistance = dragStartX.current - clientX;
+    if (dragDistance > 50) {
+      nextSlide();
+    } else if (dragDistance < -50) {
+      prevSlide();
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isDragging.current) return;
+    const { clientX, clientY, currentTarget } = e;
+    const { left, top, width, height } = currentTarget.getBoundingClientRect();
+    const x = (clientX - left - width / 2) / (width / 2);
+    const y = (clientY - top - height / 2) / (height / 2);
+    setRotation({ x: -y * 5, y: x * 5 });
+  };
+
+  const handleMouseLeave = () => {
+    isDragging.current = false;
+    setRotation({ x: 0, y: 0 });
+  };
+
+  const onMouseDown = (e: React.MouseEvent<HTMLDivElement>) =>
+    handleDragStart(e.clientX);
+  const onTouchStart = (e: React.TouchEvent<HTMLDivElement>) =>
+    handleDragStart(e.touches[0].clientX);
+  const onMouseUp = (e: React.MouseEvent<HTMLDivElement>) =>
+    handleDragEnd(e.clientX);
+  const onTouchEnd = (e: React.TouchEvent<HTMLDivElement>) =>
+    handleDragEnd(e.changedTouches[0].clientX);
 
   return (
     <section id="collections" className="py-24 bg-white overflow-hidden">
@@ -882,206 +1042,75 @@ const CollectionSection: React.FC = () => {
               bạn.
             </p>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left Column: Stack */}
-            <div className="space-y-4">
-              {collectionSlides.map((slide, index) => (
-                <div
-                  key={slide.id}
-                  className={`p-6 rounded-xl cursor-pointer transition-all duration-300 border-2 ${
-                    currentIndex === index
-                      ? "bg-rose-50 border-rose-500 shadow-lg"
-                      : "bg-slate-50 border-transparent hover:border-rose-200 hover:bg-white"
-                  }`}
-                  onClick={() => setCurrentIndex(index)}
-                >
-                  <p className="text-sm font-bold tracking-widest uppercase text-rose-400">
-                    {slide.category}
-                  </p>
-                  <h3 className="text-2xl font-serif font-bold mt-1 text-slate-800">
-                    {slide.title}
-                  </h3>
-                </div>
-              ))}
-            </div>
-
-            {/* Right Column: Image Display */}
-            <div className="relative w-full h-[600px] flex items-center justify-center">
+          <div
+            className="relative w-full max-w-6xl mx-auto h-[500px] flex items-center justify-center coverflow-container cursor-grab active:cursor-grabbing"
+            onMouseDown={onMouseDown}
+            onMouseUp={onMouseUp}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
+          >
+            <div
+              className="relative w-full h-full flex items-center justify-center transition-transform duration-300 ease-out"
+              style={{
+                transformStyle: "preserve-3d",
+                transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
+              }}
+            >
               {collectionSlides.map((slide, index) => {
+                const offset = index - currentIndex;
+                const isVisible = Math.abs(offset) <= 2;
+                const transformStyle = {
+                  transform: `rotateY(${offset * -25}deg) translateX(${
+                    offset * 30
+                  }%) scale(${1 - Math.abs(offset) * 0.15})`,
+                  zIndex: collectionSlides.length - Math.abs(offset),
+                  opacity: isVisible ? 1 : 0,
+                  transition: "transform 0.5s ease-out, opacity 0.5s ease-out",
+                };
                 return (
                   <div
                     key={slide.id}
-                    className={`absolute w-full h-full transition-opacity duration-700 ease-in-out ${
-                      currentIndex === index ? "opacity-100" : "opacity-0"
-                    }`}
+                    className="absolute w-full md:w-1/2 lg:w-1/3 h-full pointer-events-none"
+                    style={transformStyle}
                   >
-                    <img
-                      src={slide.imageUrl}
-                      alt={slide.title}
-                      onError={handleImageError}
-                      className="w-full h-full object-cover rounded-2xl shadow-2xl"
-                    />
+                    <div className="relative w-full h-full rounded-xl overflow-hidden shadow-2xl">
+                      <img
+                        src={slide.imageUrl}
+                        alt={slide.title}
+                        onError={handleImageError}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                      <div className="absolute bottom-0 left-0 p-6 text-white">
+                        <p className="text-sm font-bold tracking-widest uppercase text-rose-200">
+                          {slide.category}
+                        </p>
+                        <h3 className="text-2xl font-serif font-bold mt-1">
+                          {slide.title}
+                        </h3>
+                      </div>
+                    </div>
                   </div>
                 );
               })}
             </div>
           </div>
-        </div>
-      </FadeInWhenVisible>
-    </section>
-  );
-};
-
-const CardStackSection: React.FC = () => {
-  const [cards, setCards] = useState(collectionSlides);
-  const [dragInfo, setDragInfo] = useState({
-    isDragging: false,
-    startX: 0,
-    currentX: 0,
-  });
-  const [exitDirection, setExitDirection] = useState<"left" | "right" | null>(
-    null
-  );
-
-  const handleSwipe = (direction: "left" | "right") => {
-    setExitDirection(direction);
-    setTimeout(() => {
-      setCards((prev) => {
-        const newCards = prev.slice(1);
-        if (newCards.length === 0) {
-          return collectionSlides;
-        }
-        return newCards;
-      });
-      setExitDirection(null);
-    }, 300); // Match animation duration
-  };
-
-  const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
-    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
-    setDragInfo({ isDragging: true, startX: clientX, currentX: clientX });
-  };
-
-  const handleDragMove = (e: React.MouseEvent | React.TouchEvent) => {
-    if (!dragInfo.isDragging) return;
-    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
-    setDragInfo((prev) => ({ ...prev, currentX: clientX }));
-  };
-
-  const handleDragEnd = () => {
-    if (!dragInfo.isDragging) return;
-
-    const deltaX = dragInfo.currentX - dragInfo.startX;
-    if (Math.abs(deltaX) > 100) {
-      // Swipe threshold
-      handleSwipe(deltaX > 0 ? "right" : "left");
-    }
-
-    setDragInfo({ isDragging: false, startX: 0, currentX: 0 });
-  };
-
-  const topCardStyle = () => {
-    if (exitDirection === "left")
-      return { transform: "translateX(-150%) rotate(-20deg)", opacity: 0 };
-    if (exitDirection === "right")
-      return { transform: "translateX(150%) rotate(20deg)", opacity: 0 };
-
-    if (dragInfo.isDragging) {
-      const deltaX = dragInfo.currentX - dragInfo.startX;
-      const rotation = deltaX / 20;
-      return {
-        transform: `translateX(${deltaX}px) rotate(${rotation}deg)`,
-        transition: "none",
-      };
-    }
-    return {};
-  };
-
-  return (
-    <section id="card-stack" className="py-24 bg-rose-50/50">
-      <FadeInWhenVisible>
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-slate-800">
-              Khám Phá Bộ Sưu Tập
-            </h2>
-            <p className="mt-3 text-lg text-slate-500 max-w-2xl mx-auto">
-              Vuốt hoặc bấm nút để khám phá những hình ảnh đẹp nhất từ chúng
-              tôi.
-            </p>
-          </div>
-
-          <div
-            className="relative w-full max-w-sm mx-auto h-[500px] cursor-grab active:cursor-grabbing"
-            onMouseDown={handleDragStart}
-            onMouseMove={handleDragMove}
-            onMouseUp={handleDragEnd}
-            onMouseLeave={handleDragEnd}
-            onTouchStart={handleDragStart}
-            onTouchMove={handleDragMove}
-            onTouchEnd={handleDragEnd}
-          >
-            {cards.length > 0 ? (
-              cards
-                .slice(0, 3)
-                .reverse()
-                .map((card, index) => {
-                  const isTop = index === cards.length - 1;
-                  return (
-                    <div
-                      key={card.id}
-                      className="absolute w-full h-full rounded-2xl shadow-2xl bg-white transition-all duration-300 ease-in-out"
-                      style={
-                        isTop
-                          ? {
-                              ...topCardStyle(),
-                              zIndex: 10 - index,
-                            }
-                          : {
-                              transform: `scale(${
-                                1 - (cards.length - 1 - index) * 0.05
-                              }) translateY(${
-                                (cards.length - 1 - index) * -10
-                              }px)`,
-                              zIndex: 10 - index,
-                              opacity: 1 - (cards.length - 1 - index) * 0.2,
-                            }
-                      }
-                    >
-                      <img
-                        src={card.imageUrl}
-                        alt={card.title}
-                        className="w-full h-full object-cover rounded-2xl"
-                        onError={handleImageError}
-                      />
-                      <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent rounded-b-2xl text-white">
-                        <h3 className="text-2xl font-bold font-serif">
-                          {card.title}
-                        </h3>
-                        <p className="text-sm opacity-80">{card.category}</p>
-                      </div>
-                    </div>
-                  );
-                })
-            ) : (
-              <div className="text-center text-slate-500">
-                Đã xem hết! Bộ sưu tập sẽ được làm mới.
-              </div>
-            )}
-          </div>
-
-          <div className="flex justify-center items-center gap-8 mt-8">
+          <div className="flex justify-center items-center mt-8 space-x-4">
             <button
-              onClick={() => handleSwipe("left")}
-              className="bg-white rounded-full p-4 shadow-lg text-rose-500 hover:bg-rose-100 transition-colors transform hover:scale-110"
+              onClick={prevSlide}
+              className="p-3 rounded-full bg-rose-100 hover:bg-rose-200 text-rose-600 transition"
+              aria-label="Bộ sưu tập trước"
             >
-              <XCircle size={32} />
+              <ChevronLeft />
             </button>
             <button
-              onClick={() => handleSwipe("right")}
-              className="bg-white rounded-full p-4 shadow-lg text-green-500 hover:bg-green-100 transition-colors transform hover:scale-110"
+              onClick={nextSlide}
+              className="p-3 rounded-full bg-rose-100 hover:bg-rose-200 text-rose-600 transition"
+              aria-label="Bộ sưu tập tiếp theo"
             >
-              <Heart size={32} />
+              <ChevronRight />
             </button>
           </div>
         </div>
@@ -1261,7 +1290,7 @@ const SocialProofSection: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             {/* Testimonials Column */}
             <div id="testimonials">
-              <h3 className="font-serif text-2xl font-bold text-slate-700 text-center mb-8">
+              <h3 className="font-serif text-2xl font-bold text-slate-700 text-center mb-10">
                 Khách Hàng Nói Gì?
               </h3>
               <div
@@ -1386,6 +1415,88 @@ const CtaSection: React.FC = () => (
   </section>
 );
 
+const Footer: React.FC = () => (
+  <footer className="bg-slate-800 text-slate-300">
+    <div className="container mx-auto px-6 py-16">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="col-span-1 md:col-span-2 lg:col-span-2">
+          <h3 className="font-serif text-xl font-bold text-white mb-4">
+            LALA-LYCHEE
+          </h3>
+          <p className="text-slate-400 max-w-md">
+            Mang tinh hoa trái vải Việt Nam đến với thế giới qua những sản phẩm
+            đẳng cấp và chỉn chu.
+          </p>
+        </div>
+        <div>
+          <h4 className="font-bold text-white mb-4">Khám Phá</h4>
+          <ul className="space-y-2">
+            <li>
+              <a
+                href="#experience"
+                className="hover:text-white transition-colors"
+              >
+                Trải Nghiệm
+              </a>
+            </li>
+            <li>
+              <a
+                href="#products"
+                className="hover:text-white transition-colors"
+              >
+                Sản Phẩm
+              </a>
+            </li>
+            <li>
+              <a
+                href="#collections"
+                className="hover:text-white transition-colors"
+              >
+                Bộ Sưu Tập
+              </a>
+            </li>
+            <li>
+              <a href="#craft" className="hover:text-white transition-colors">
+                Quy Trình
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:text-white transition-colors">
+                Cửa Hàng
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4 className="font-bold text-white mb-4">Hỗ Trợ</h4>
+          <ul className="space-y-2">
+            <li>
+              <a href="#contact" className="hover:text-white transition-colors">
+                Liên Hệ
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:text-white transition-colors">
+                FAQs
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:text-white transition-colors">
+                Chính Sách
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div className="mt-12 border-t border-slate-700 pt-8 text-center text-slate-500 text-sm">
+        <p>
+          &copy; {new Date().getFullYear()} LALA-LYCHEE. All Rights Reserved.
+        </p>
+      </div>
+    </div>
+  </footer>
+);
+
 const CursorEffect: React.FC = () => {
   const [points, setPoints] = useState<{ x: number; y: number; id: number }[]>(
     []
@@ -1469,8 +1580,7 @@ const ScrollToTopButton: React.FC = () => {
   );
 };
 
-// --- MAIN APP COMPONENT (COMPONENT CHÍNH) ---
-export default function App() {
+export default function Page() {
   return (
     <>
       <style>{`
@@ -1573,7 +1683,7 @@ export default function App() {
       `}</style>
       <div className="bg-white font-sans antialiased">
         <CursorEffect />
-        <main>
+        <section>
           <InteractiveHeroSlider />
           <div className="group">
             <MarqueeBannerSection />
@@ -1581,12 +1691,11 @@ export default function App() {
           <AboutSection />
           <InteractiveShowcaseSection />
           <FeaturedProductsSection />
-          <CardStackSection />
-          <CollectionSection />
+          <CollectionSliderSection />
           <OurCraftSection />
           <SocialProofSection />
           <CtaSection />
-        </main>
+        </section>
         <ScrollToTopButton />
       </div>
     </>
