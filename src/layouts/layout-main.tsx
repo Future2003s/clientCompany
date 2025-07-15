@@ -9,7 +9,7 @@ function LayoutMain({ children }: { children: React.ReactNode }) {
   // check page admin
   const isAdminPage = pathname.startsWith("/quantri");
   return (
-    <div className="flex flex-col justify-between">
+    <div>
       {!isAdminPage && <Header />}
       <main>{children}</main>
       {!isAdminPage && <Footer />}

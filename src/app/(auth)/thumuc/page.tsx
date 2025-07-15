@@ -2,7 +2,6 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 
 // --- CÁC ICON (Sử dụng SVG nội tuyến để dễ dàng sử dụng) ---
-// Trong dự án thực tế, bạn nên dùng thư viện như lucide-react
 const Folder = (props: any) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -193,6 +192,7 @@ interface FileSystemItem {
   owner: string;
   children?: string[]; // ID của các mục con
   parentId?: string;
+  url?: string; // URL để xem trước tệp
 }
 
 const initialItems: Record<string, FileSystemItem> = {
@@ -223,6 +223,7 @@ const initialItems: Record<string, FileSystemItem> = {
     modified: "11/07/2025",
     owner: "Nguyễn Văn A",
     parentId: "1",
+    url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
   },
   "1-2": {
     id: "1-2",
@@ -304,7 +305,7 @@ const FileIcon = ({ type }: { type: FileType }) => {
 };
 
 // --- COMPONENT CHÍNH ---
-export default function Page() {
+export default function App() {
   const [allItems, setAllItems] =
     useState<Record<string, FileSystemItem>>(initialItems);
   const [currentPath, setCurrentPath] = useState<string[]>(["root"]);
@@ -319,6 +320,7 @@ export default function Page() {
   const [newFolderName, setNewFolderName] = useState("");
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [tempName, setTempName] = useState("");
+  const [isDragging, setIsDragging] = useState(false);
 
   const contextMenuRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -354,7 +356,7 @@ export default function Page() {
   }, []);
 
   const handleItemClick = (item: FileSystemItem) => {
-    if (renamingId === item.id) return; // Không làm gì khi đang đổi tên
+    if (renamingId === item.id) return;
     if (item.type === "folder") {
       setCurrentPath((prev) => [...prev, item.id]);
     } else {
@@ -401,28 +403,65 @@ export default function Page() {
     fileInputRef.current?.click();
   };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    const newFileId = `file-${Date.now()}`;
-    const newFile: FileSystemItem = {
-      id: newFileId,
-      name: file.name,
-      type: "pdf",
-      size: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
-      modified: new Date().toLocaleDateString("vi-VN"),
-      owner: "Bạn",
-      parentId: currentFolderId,
-    };
+  const processFiles = (files: FileList) => {
+    if (!files || files.length === 0) return;
+
+    let newItems: any = {};
+    let newChildrenIds: any = [];
+
+    Array.from(files).forEach((file) => {
+      const newFileId = `file-${Date.now()}-${Math.random()}`;
+      const newFile: FileSystemItem = {
+        id: newFileId,
+        name: file.name,
+        type: "pdf", // Giả lập, có thể xác định loại tệp thực tế
+        size: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
+        modified: new Date().toLocaleDateString("vi-VN"),
+        owner: "Bạn",
+        parentId: currentFolderId,
+      };
+      newItems[newFileId] = newFile;
+      newChildrenIds.push(newFileId);
+    });
+
     setAllItems((prev) => ({
       ...prev,
-      [newFileId]: newFile,
+      ...newItems,
       [currentFolderId]: {
         ...prev[currentFolderId],
-        children: [...(prev[currentFolderId].children || []), newFileId],
+        children: [
+          ...(prev[currentFolderId].children || []),
+          ...newChildrenIds,
+        ],
       },
     }));
+  };
+
+  const handleFileUploadFromInput = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    processFiles(event.target.files as any);
     if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    processFiles(e.dataTransfer.files);
   };
 
   const handleStartRename = () => {
@@ -450,7 +489,7 @@ export default function Page() {
   };
 
   return (
-    <div className="mt-25">
+    <>
       {/* Modal xem trước tệp */}
       {previewFile && (
         <div
@@ -458,12 +497,15 @@ export default function Page() {
           onClick={() => setPreviewFile(null)}
         >
           <div
-            className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-xl w-full max-w-lg"
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-4xl h-full max-h-[90vh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                Chi tiết tệp
+            <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+              <h2
+                className="text-xl font-semibold text-gray-900 dark:text-white truncate"
+                title={previewFile.name}
+              >
+                {previewFile.name}
               </h2>
               <button
                 onClick={() => setPreviewFile(null)}
@@ -472,27 +514,41 @@ export default function Page() {
                 <X className="w-6 h-6 text-gray-600 dark:text-gray-300" />
               </button>
             </div>
-            <div className="space-y-2 text-gray-700 dark:text-gray-300">
-              <p>
-                <strong>Tên:</strong> {previewFile.name}
-              </p>
-              <p>
-                <strong>Loại:</strong> {previewFile.type}
-              </p>
-              <p>
-                <strong>Kích thước:</strong> {previewFile.size}
-              </p>
-              <p>
-                <strong>Sửa đổi lần cuối:</strong> {previewFile.modified}
-              </p>
-              <p>
-                <strong>Sở hữu:</strong> {previewFile.owner}
-              </p>
+            <div className="flex-grow p-4">
+              {previewFile.type === "pdf" && previewFile.url ? (
+                <iframe
+                  src={previewFile.url}
+                  className="w-full h-full"
+                  title={previewFile.name}
+                ></iframe>
+              ) : (
+                <div className="space-y-2 text-gray-700 dark:text-gray-300">
+                  <p>
+                    <strong>Loại:</strong> {previewFile.type}
+                  </p>
+                  <p>
+                    <strong>Kích thước:</strong> {previewFile.size}
+                  </p>
+                  <p>
+                    <strong>Sửa đổi lần cuối:</strong> {previewFile.modified}
+                  </p>
+                  <p>
+                    <strong>Sở hữu:</strong> {previewFile.owner}
+                  </p>
+                  <p className="pt-4 text-gray-500">
+                    Không thể xem trước loại tệp này.
+                  </p>
+                </div>
+              )}
             </div>
-            <div className="mt-6 flex justify-end">
-              <button className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition">
+            <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end">
+              <a
+                href={previewFile.url}
+                download={previewFile.name}
+                className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
+              >
                 Tải xuống
-              </button>
+              </a>
             </div>
           </div>
         </div>
@@ -560,7 +616,25 @@ export default function Page() {
         </div>
       )}
 
-      <div className="bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">
+      <div
+        className="bg-gray-50 dark:bg-gray-900 min-h-screen font-sans relative"
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+      >
+        {/* Lớp phủ khi kéo thả */}
+        {isDragging && (
+          <div className="absolute inset-0 bg-blue-500/20 border-4 border-dashed border-blue-500 rounded-2xl flex justify-center items-center z-50 pointer-events-none m-4">
+            <div className="text-center">
+              <UploadCloud className="w-24 h-24 text-blue-600 mx-auto animate-bounce" />
+              <p className="mt-4 text-xl font-semibold text-blue-700">
+                Thả tệp vào đây để tải lên
+              </p>
+            </div>
+          </div>
+        )}
+
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <header className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
             <div>
@@ -589,8 +663,9 @@ export default function Page() {
               <input
                 type="file"
                 ref={fileInputRef}
-                onChange={handleFileUpload}
+                onChange={handleFileUploadFromInput}
                 className="hidden"
+                multiple
               />
             </div>
           </header>
@@ -694,6 +769,6 @@ export default function Page() {
           )}
         </div>
       </div>
-    </div>
+    </>
   );
 }

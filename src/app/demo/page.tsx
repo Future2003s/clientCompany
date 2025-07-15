@@ -1,6 +1,4 @@
 "use client";
-// App.tsx
-// Để sử dụng, bạn cần cài đặt lucide-react: npm install lucide-react
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   Leaf,
@@ -11,11 +9,9 @@ import {
   ChevronRight,
   ChevronLeft,
   ArrowUp,
+  Heart,
+  XCircle,
 } from "lucide-react";
-
-// --- GHI CHÚ CẬP NHẬT V15 ---
-// 1. [SỬA LỖI] Mục "Khách Hàng Nói Gì?": Thêm lại chức năng kéo-thả bằng chuột và vuốt trên màn hình cảm ứng để điều hướng.
-// 2. [TỐI ƯU] Dọn dẹp và sửa một số lỗi nhỏ trong mã nguồn để đảm bảo tính ổn định.
 
 // --- TYPE DEFINITIONS (ĐỊNH NGHĨA KIỂU DỮ LIỆU) ---
 type Product = {
@@ -157,25 +153,25 @@ const collectionSlides: CollectionSlide[] = [
     id: 2,
     imageUrl: "https://d3enplyig2yenj.cloudfront.net/suu_tap_2.jpg",
     title: "Tinh Tế Trong Từng Công Đoạn",
-    category: "Thu Hoạch Vải",
+    category: "Lựa chọn những trái vải tốt nhất.",
   },
   {
     id: 3,
     imageUrl: "https://d3enplyig2yenj.cloudfront.net/suu_tap_3.jpg",
     title: "Kết Hợp Với Ánh Nắng Mặt Trời",
-    category: "Thu Hoạch Vải",
+    category: "Phơi khô tự nhiên để giữ trọn hương vị.",
   },
   {
     id: 4,
     imageUrl: "https://d3enplyig2yenj.cloudfront.net/suu_tap_4.jpg",
-    title: "Thành Quả",
-    category: "Thu Hoạch Vải",
+    title: "Thành Quả Ngọt Ngào",
+    category: "Những trái vải khô mọng, sẵn sàng để chế biến.",
   },
   {
     id: 5,
     imageUrl: "https://d3enplyig2yenj.cloudfront.net/suu_tap_5.jpg",
     title: "Đóng Gói",
-    category: "Thu Hoạch Vải",
+    category: "Sản phẩm được đóng gói tỉ mỉ và sang trọng.",
   },
 ];
 
@@ -629,7 +625,7 @@ const InteractiveHeroSlider: React.FC = () => {
               >
                 <img
                   src={slide.imageUrl}
-                  alt={slide.title as string}
+                  alt={slide.subtitle}
                   className={`w-16 h-20 md:w-20 md:h-24 object-cover transition-all duration-300 ease-in-out ${
                     currentIndex === index
                       ? "md:w-24 md:h-32"
@@ -970,64 +966,8 @@ const FeaturedProductsSection: React.FC = () => {
   );
 };
 
-const CollectionSliderSection: React.FC = () => {
-  const [currentIndex, setCurrentIndex] = useState(
-    Math.floor(collectionSlides.length / 2)
-  );
-  const dragStartX = useRef(0);
-  const isDragging = useRef(false);
-  const [rotation, setRotation] = useState({ x: 0, y: 0 });
-
-  const nextSlide = useCallback(
-    () => setCurrentIndex((prev) => (prev + 1) % collectionSlides.length),
-    [collectionSlides.length]
-  );
-  const prevSlide = useCallback(
-    () =>
-      setCurrentIndex(
-        (prev) => (prev - 1 + collectionSlides.length) % collectionSlides.length
-      ),
-    [collectionSlides.length]
-  );
-
-  const handleDragStart = (clientX: number) => {
-    isDragging.current = true;
-    dragStartX.current = clientX;
-  };
-
-  const handleDragEnd = (clientX: number) => {
-    if (!isDragging.current) return;
-    isDragging.current = false;
-    const dragDistance = dragStartX.current - clientX;
-    if (dragDistance > 50) {
-      nextSlide();
-    } else if (dragDistance < -50) {
-      prevSlide();
-    }
-  };
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (isDragging.current) return;
-    const { clientX, clientY, currentTarget } = e;
-    const { left, top, width, height } = currentTarget.getBoundingClientRect();
-    const x = (clientX - left - width / 2) / (width / 2);
-    const y = (clientY - top - height / 2) / (height / 2);
-    setRotation({ x: -y * 5, y: x * 5 });
-  };
-
-  const handleMouseLeave = () => {
-    isDragging.current = false;
-    setRotation({ x: 0, y: 0 });
-  };
-
-  const onMouseDown = (e: React.MouseEvent<HTMLDivElement>) =>
-    handleDragStart(e.clientX);
-  const onTouchStart = (e: React.TouchEvent<HTMLDivElement>) =>
-    handleDragStart(e.touches[0].clientX);
-  const onMouseUp = (e: React.MouseEvent<HTMLDivElement>) =>
-    handleDragEnd(e.clientX);
-  const onTouchEnd = (e: React.TouchEvent<HTMLDivElement>) =>
-    handleDragEnd(e.changedTouches[0].clientX);
+const CollectionSection: React.FC = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   return (
     <section id="collections" className="py-24 bg-white overflow-hidden">
@@ -1042,75 +982,206 @@ const CollectionSliderSection: React.FC = () => {
               bạn.
             </p>
           </div>
-          <div
-            className="relative w-full max-w-6xl mx-auto h-[500px] flex items-center justify-center coverflow-container cursor-grab active:cursor-grabbing"
-            onMouseDown={onMouseDown}
-            onMouseUp={onMouseUp}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            onTouchStart={onTouchStart}
-            onTouchEnd={onTouchEnd}
-          >
-            <div
-              className="relative w-full h-full flex items-center justify-center transition-transform duration-300 ease-out"
-              style={{
-                transformStyle: "preserve-3d",
-                transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
-              }}
-            >
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left Column: Stack */}
+            <div className="space-y-4">
+              {collectionSlides.map((slide, index) => (
+                <div
+                  key={slide.id}
+                  className={`p-6 rounded-xl cursor-pointer transition-all duration-300 border-2 ${
+                    currentIndex === index
+                      ? "bg-rose-50 border-rose-500 shadow-lg"
+                      : "bg-slate-50 border-transparent hover:border-rose-200 hover:bg-white"
+                  }`}
+                  onClick={() => setCurrentIndex(index)}
+                >
+                  <p className="text-sm font-bold tracking-widest uppercase text-rose-400">
+                    {slide.category}
+                  </p>
+                  <h3 className="text-2xl font-serif font-bold mt-1 text-slate-800">
+                    {slide.title}
+                  </h3>
+                </div>
+              ))}
+            </div>
+
+            {/* Right Column: Image Display */}
+            <div className="relative w-full h-[600px] flex items-center justify-center">
               {collectionSlides.map((slide, index) => {
-                const offset = index - currentIndex;
-                const isVisible = Math.abs(offset) <= 2;
-                const transformStyle = {
-                  transform: `rotateY(${offset * -25}deg) translateX(${
-                    offset * 30
-                  }%) scale(${1 - Math.abs(offset) * 0.15})`,
-                  zIndex: collectionSlides.length - Math.abs(offset),
-                  opacity: isVisible ? 1 : 0,
-                  transition: "transform 0.5s ease-out, opacity 0.5s ease-out",
-                };
                 return (
                   <div
                     key={slide.id}
-                    className="absolute w-full md:w-1/2 lg:w-1/3 h-full pointer-events-none"
-                    style={transformStyle}
+                    className={`absolute w-full h-full transition-opacity duration-700 ease-in-out ${
+                      currentIndex === index ? "opacity-100" : "opacity-0"
+                    }`}
                   >
-                    <div className="relative w-full h-full rounded-xl overflow-hidden shadow-2xl">
-                      <img
-                        src={slide.imageUrl}
-                        alt={slide.title}
-                        onError={handleImageError}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                      <div className="absolute bottom-0 left-0 p-6 text-white">
-                        <p className="text-sm font-bold tracking-widest uppercase text-rose-200">
-                          {slide.category}
-                        </p>
-                        <h3 className="text-2xl font-serif font-bold mt-1">
-                          {slide.title}
-                        </h3>
-                      </div>
-                    </div>
+                    <img
+                      src={slide.imageUrl}
+                      alt={slide.title}
+                      onError={handleImageError}
+                      className="w-full h-full object-cover rounded-2xl shadow-2xl"
+                    />
                   </div>
                 );
               })}
             </div>
           </div>
-          <div className="flex justify-center items-center mt-8 space-x-4">
+        </div>
+      </FadeInWhenVisible>
+    </section>
+  );
+};
+
+const CardStackSection: React.FC = () => {
+  const [cards, setCards] = useState(collectionSlides);
+  const [dragInfo, setDragInfo] = useState({
+    isDragging: false,
+    startX: 0,
+    currentX: 0,
+  });
+  const [exitDirection, setExitDirection] = useState<"left" | "right" | null>(
+    null
+  );
+
+  const handleSwipe = (direction: "left" | "right") => {
+    setExitDirection(direction);
+    setTimeout(() => {
+      setCards((prev) => {
+        const newCards = prev.slice(1);
+        if (newCards.length === 0) {
+          return collectionSlides;
+        }
+        return newCards;
+      });
+      setExitDirection(null);
+    }, 300); // Match animation duration
+  };
+
+  const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
+    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+    setDragInfo({ isDragging: true, startX: clientX, currentX: clientX });
+  };
+
+  const handleDragMove = (e: React.MouseEvent | React.TouchEvent) => {
+    if (!dragInfo.isDragging) return;
+    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+    setDragInfo((prev) => ({ ...prev, currentX: clientX }));
+  };
+
+  const handleDragEnd = () => {
+    if (!dragInfo.isDragging) return;
+
+    const deltaX = dragInfo.currentX - dragInfo.startX;
+    if (Math.abs(deltaX) > 100) {
+      // Swipe threshold
+      handleSwipe(deltaX > 0 ? "right" : "left");
+    }
+
+    setDragInfo({ isDragging: false, startX: 0, currentX: 0 });
+  };
+
+  const topCardStyle = () => {
+    if (exitDirection === "left")
+      return { transform: "translateX(-150%) rotate(-20deg)", opacity: 0 };
+    if (exitDirection === "right")
+      return { transform: "translateX(150%) rotate(20deg)", opacity: 0 };
+
+    if (dragInfo.isDragging) {
+      const deltaX = dragInfo.currentX - dragInfo.startX;
+      const rotation = deltaX / 20;
+      return {
+        transform: `translateX(${deltaX}px) rotate(${rotation}deg)`,
+        transition: "none",
+      };
+    }
+    return {};
+  };
+
+  return (
+    <section id="card-stack" className="py-24 bg-rose-50/50">
+      <FadeInWhenVisible>
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="font-serif text-3xl md:text-4xl font-bold text-slate-800">
+              Khám Phá Bộ Sưu Tập
+            </h2>
+            <p className="mt-3 text-lg text-slate-500 max-w-2xl mx-auto">
+              Vuốt hoặc bấm nút để khám phá những hình ảnh đẹp nhất từ chúng
+              tôi.
+            </p>
+          </div>
+
+          <div
+            className="relative w-full max-w-sm mx-auto h-[500px] cursor-grab active:cursor-grabbing"
+            onMouseDown={handleDragStart}
+            onMouseMove={handleDragMove}
+            onMouseUp={handleDragEnd}
+            onMouseLeave={handleDragEnd}
+            onTouchStart={handleDragStart}
+            onTouchMove={handleDragMove}
+            onTouchEnd={handleDragEnd}
+          >
+            {cards.length > 0 ? (
+              cards
+                .slice(0, 3)
+                .reverse()
+                .map((card, index) => {
+                  const isTop = index === cards.length - 1;
+                  return (
+                    <div
+                      key={card.id}
+                      className="absolute w-full h-full rounded-2xl shadow-2xl bg-white transition-all duration-300 ease-in-out"
+                      style={
+                        isTop
+                          ? {
+                              ...topCardStyle(),
+                              zIndex: 10 - index,
+                            }
+                          : {
+                              transform: `scale(${
+                                1 - (cards.length - 1 - index) * 0.05
+                              }) translateY(${
+                                (cards.length - 1 - index) * -10
+                              }px)`,
+                              zIndex: 10 - index,
+                              opacity: 1 - (cards.length - 1 - index) * 0.1,
+                            }
+                      }
+                    >
+                      <img
+                        src={card.imageUrl}
+                        alt={card.title}
+                        className="w-full h-full object-cover rounded-2xl"
+                        onError={handleImageError}
+                      />
+                      <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent rounded-b-2xl text-white">
+                        <h3 className="text-2xl font-bold font-serif">
+                          {card.title}
+                        </h3>
+                        <p className="text-sm opacity-80">{card.category}</p>
+                      </div>
+                    </div>
+                  );
+                })
+            ) : (
+              <div className="text-center text-slate-500">
+                Đã xem hết! Bộ sưu tập sẽ được làm mới.
+              </div>
+            )}
+          </div>
+
+          <div className="flex justify-center items-center gap-8 mt-8">
             <button
-              onClick={prevSlide}
-              className="p-3 rounded-full bg-rose-100 hover:bg-rose-200 text-rose-600 transition"
-              aria-label="Bộ sưu tập trước"
+              onClick={() => handleSwipe("left")}
+              className="bg-white rounded-full p-4 shadow-lg text-rose-500 hover:bg-rose-100 transition-colors transform hover:scale-110"
             >
-              <ChevronLeft />
+              <XCircle size={32} />
             </button>
             <button
-              onClick={nextSlide}
-              className="p-3 rounded-full bg-rose-100 hover:bg-rose-200 text-rose-600 transition"
-              aria-label="Bộ sưu tập tiếp theo"
+              onClick={() => handleSwipe("right")}
+              className="bg-white rounded-full p-4 shadow-lg text-green-500 hover:bg-green-100 transition-colors transform hover:scale-110"
             >
-              <ChevronRight />
+              <Heart size={32} />
             </button>
           </div>
         </div>
@@ -1290,7 +1361,7 @@ const SocialProofSection: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             {/* Testimonials Column */}
             <div id="testimonials">
-              <h3 className="font-serif text-2xl font-bold text-slate-700 text-center mb-10">
+              <h3 className="font-serif text-2xl font-bold text-slate-700 text-center mb-8">
                 Khách Hàng Nói Gì?
               </h3>
               <div
@@ -1580,7 +1651,8 @@ const ScrollToTopButton: React.FC = () => {
   );
 };
 
-export default function Page() {
+// --- MAIN APP COMPONENT (COMPONENT CHÍNH) ---
+export default function App() {
   return (
     <>
       <style>{`
@@ -1683,7 +1755,8 @@ export default function Page() {
       `}</style>
       <div className="bg-white font-sans antialiased">
         <CursorEffect />
-        <section>
+        <Header />
+        <main>
           <InteractiveHeroSlider />
           <div className="group">
             <MarqueeBannerSection />
@@ -1691,11 +1764,13 @@ export default function Page() {
           <AboutSection />
           <InteractiveShowcaseSection />
           <FeaturedProductsSection />
-          <CollectionSliderSection />
+          <CardStackSection />
+          <CollectionSection />
           <OurCraftSection />
           <SocialProofSection />
           <CtaSection />
-        </section>
+        </main>
+        <Footer />
         <ScrollToTopButton />
       </div>
     </>
