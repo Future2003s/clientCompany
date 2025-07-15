@@ -122,7 +122,8 @@ const SystemEmailer: React.FC = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setAttachments((prev) => [...prev, ...Array.from(e.target.files)]);
+      const result = e.target.files;
+      setAttachments((prev) => [...prev, ...Array.from(result)]);
     }
   };
 

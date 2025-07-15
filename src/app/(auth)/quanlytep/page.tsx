@@ -3,7 +3,7 @@ import React, { useState, useMemo, useEffect, useRef } from "react";
 
 // --- CÁC ICON (Sử dụng SVG nội tuyến để dễ dàng sử dụng) ---
 // Trong dự án thực tế, bạn nên dùng thư viện như lucide-react
-const Folder = (props) => (
+const Folder = (props: any) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"
@@ -19,7 +19,7 @@ const Folder = (props) => (
     <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.23A2 2 0 0 0 8.27 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
   </svg>
 );
-const FileText = (props) => (
+const FileText = (props: any) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"
@@ -39,7 +39,7 @@ const FileText = (props) => (
     <line x1="10" y1="9" x2="8" y2="9" />
   </svg>
 );
-const FileImage = (props) => (
+const FileImage = (props: any) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"
@@ -58,7 +58,7 @@ const FileImage = (props) => (
     <path d="m20 17-1.09-1.09a2 2 0 0 0-2.82 0L10 22" />
   </svg>
 );
-const FileVideo = (props) => (
+const FileVideo = (props: any) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"
@@ -76,7 +76,7 @@ const FileVideo = (props) => (
     <path d="m10 11 5 3-5 3v-6Z" />
   </svg>
 );
-const Search = (props) => (
+const Search = (props: any) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"
@@ -93,7 +93,7 @@ const Search = (props) => (
     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
   </svg>
 );
-const UploadCloud = (props) => (
+const UploadCloud = (props: any) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"
@@ -111,7 +111,7 @@ const UploadCloud = (props) => (
     <path d="m16 16-4-4-4 4"></path>
   </svg>
 );
-const PlusSquare = (props) => (
+const PlusSquare = (props: any) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"
@@ -129,7 +129,7 @@ const PlusSquare = (props) => (
     <path d="M12 8v8" />
   </svg>
 );
-const ChevronRight = (props) => (
+const ChevronRight = (props: any) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"
@@ -145,7 +145,7 @@ const ChevronRight = (props) => (
     <path d="m9 18 6-6-6-6" />
   </svg>
 );
-const MoreVertical = (props) => (
+const MoreVertical = (props: any) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"
@@ -163,7 +163,7 @@ const MoreVertical = (props) => (
     <circle cx="12" cy="19" r="1" />
   </svg>
 );
-const X = (props) => (
+const X = (props: any) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"
