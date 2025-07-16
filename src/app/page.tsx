@@ -71,7 +71,8 @@ type Experience = {
 const heroSlides: Slide[] = [
   {
     id: 1,
-    imageUrl: "https://d3enplyig2yenj.cloudfront.net/banner_1.jpg",
+    imageUrl:
+      "https://res.cloudinary.com/duw5dconp/image/upload/v1752657773/banner_1_xqhehz.jpg",
     title: (
       <>
         Tinh hoa từ <span className="text-rose-300">Trái Vải</span>
@@ -84,7 +85,8 @@ const heroSlides: Slide[] = [
   },
   {
     id: 2,
-    imageUrl: "https://d3enplyig2yenj.cloudfront.net/banner_2.jpg",
+    imageUrl:
+      "https://res.cloudinary.com/duw5dconp/image/upload/v1752657773/banner_2_uswdjc.jpg",
     title: (
       <>
         Bộ Sưu Tập <span className="text-rose-300">Quà Tặng Mới</span>
@@ -96,7 +98,21 @@ const heroSlides: Slide[] = [
   },
   {
     id: 3,
-    imageUrl: "https://d3enplyig2yenj.cloudfront.net/banner_3.jpg",
+    imageUrl:
+      "https://res.cloudinary.com/duw5dconp/image/upload/v1752657773/banner_3_n36dif.jpg",
+    title: (
+      <>
+        Trà Vải <span className="text-rose-300">Thượng Hạng</span>
+      </>
+    ),
+    subtitle: "Trải nghiệm hương vị độc đáo, đánh thức mọi giác quan.",
+    ctaText: "Thử ngay",
+    ctaLink: "#products",
+  },
+  {
+    id: 4,
+    imageUrl:
+      "https://res.cloudinary.com/duw5dconp/image/upload/v1752657773/banner_4_dmohbb.jpg",
     title: (
       <>
         Trà Vải <span className="text-rose-300">Thượng Hạng</span>
@@ -145,31 +161,36 @@ const featuredProducts: Product[] = [
 const collectionSlides: CollectionSlide[] = [
   {
     id: 1,
-    imageUrl: "https://d3enplyig2yenj.cloudfront.net/suu_tap_1.jpg",
+    imageUrl:
+      "https://res.cloudinary.com/duw5dconp/image/upload/v1752658344/DO_VAI_l6xevs.jpg",
     title: "Thu Hoạch Vải",
     category: "Năng lượng tích cực cùng mọi người thu hoạch.",
   },
   {
     id: 2,
-    imageUrl: "https://d3enplyig2yenj.cloudfront.net/suu_tap_2.jpg",
+    imageUrl:
+      "https://res.cloudinary.com/duw5dconp/image/upload/v1752658344/HAI_VAI_sxr3qj.jpg",
     title: "Tinh Tế Trong Từng Công Đoạn",
     category: "Lựa chọn những trái vải tốt nhất.",
   },
   {
     id: 3,
-    imageUrl: "https://d3enplyig2yenj.cloudfront.net/suu_tap_3.jpg",
+    imageUrl:
+      "https://res.cloudinary.com/duw5dconp/image/upload/v1752658345/HAI_VAI_ANH_NANG_naxaqz.jpg",
     title: "Kết Hợp Với Ánh Nắng Mặt Trời",
     category: "Phơi khô tự nhiên để giữ trọn hương vị.",
   },
   {
     id: 4,
-    imageUrl: "https://d3enplyig2yenj.cloudfront.net/suu_tap_4.jpg",
+    imageUrl:
+      "https://res.cloudinary.com/duw5dconp/image/upload/v1752658344/THAM_VAI_eirspj.jpg",
     title: "Thành Quả Ngọt Ngào",
     category: "Những trái vải khô mọng, sẵn sàng để chế biến.",
   },
   {
     id: 5,
-    imageUrl: "https://d3enplyig2yenj.cloudfront.net/suu_tap_5.jpg",
+    imageUrl:
+      "https://res.cloudinary.com/duw5dconp/image/upload/v1752658344/DO_VAI_2_j4boul.jpg",
     title: "Đóng Gói",
     category: "Sản phẩm được đóng gói tỉ mỉ và sang trọng.",
   },
@@ -375,113 +396,6 @@ const FadeInWhenVisible: React.FC<{ children: React.ReactNode }> = ({
     >
       {children}
     </div>
-  );
-};
-
-const Header: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const isScrolled = useScroll();
-  const navLinks = [
-    { name: "Trải Nghiệm", href: "#experience" },
-    { name: "Sản Phẩm", href: "#products" },
-    { name: "Bộ Sưu Tập", href: "#collections" },
-    { name: "Quy Trình", href: "#craft" },
-    { name: "Sự Tin Tưởng", href: "#social-proof" },
-  ];
-
-  return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-white/95 shadow-md backdrop-blur-lg" : "bg-transparent"
-      }`}
-    >
-      <div className="container mx-auto px-6 py-3">
-        <div className="flex items-center justify-between">
-          <a
-            href="#"
-            className={`flex items-center space-x-2 text-2xl font-serif font-bold transition-colors ${
-              isScrolled ? "text-slate-800" : "text-white"
-            }`}
-          >
-            <Leaf className="text-rose-500" />
-            <span>LALA-LYCHEE</span>
-          </a>
-          <nav className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                className={`transition-colors duration-300 ${
-                  isScrolled
-                    ? "text-slate-600 hover:text-rose-500"
-                    : "text-white/80 hover:text-white"
-                }`}
-              >
-                {link.name}
-              </a>
-            ))}
-          </nav>
-          <div className="flex items-center space-x-4">
-            <button
-              className={`hidden md:block rounded-full transition-all duration-300 transform shadow-lg hover:shadow-xl hover:scale-105 font-semibold text-base ${
-                isScrolled
-                  ? "bg-gradient-to-r from-rose-500 to-red-500 text-white px-6 py-3"
-                  : "bg-white/20 backdrop-blur-sm border border-white/50 text-white px-6 py-3"
-              }`}
-            >
-              Mua Ngay
-            </button>
-            <ShoppingBag
-              className={`cursor-pointer transition-colors ${
-                isScrolled
-                  ? "text-slate-600 hover:text-rose-500"
-                  : "text-white hover:text-rose-300"
-              }`}
-            />
-            <button className="md:hidden" onClick={() => setIsMenuOpen(true)}>
-              <Menu
-                className={`${isScrolled ? "text-slate-600" : "text-white"}`}
-              />
-            </button>
-          </div>
-        </div>
-      </div>
-      {isMenuOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-50 md:hidden"
-          onClick={() => setIsMenuOpen(false)}
-        >
-          <div
-            className="fixed top-0 right-0 h-full w-2/3 max-w-sm bg-white p-6 shadow-xl animate-in slide-in-from-right duration-300"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="font-serif text-xl font-bold text-slate-800">
-                Menu
-              </h2>
-              <button onClick={() => setIsMenuOpen(false)}>
-                <X className="text-slate-500" />
-              </button>
-            </div>
-            <nav className="flex flex-col space-y-6">
-              {navLinks.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  className="text-slate-700 text-lg hover:text-rose-500"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {link.name}
-                </a>
-              ))}
-            </nav>
-            <button className="w-full mt-8 bg-gradient-to-r from-rose-500 to-red-500 text-white px-4 py-4 rounded-full text-lg font-bold hover:shadow-xl transition-all duration-300">
-              Mua Ngay
-            </button>
-          </div>
-        </div>
-      )}
-    </header>
   );
 };
 

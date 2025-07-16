@@ -1,8 +1,10 @@
 "use client";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
-const Logo = "https://d3enplyig2yenj.cloudfront.net/logo";
+const Logo =
+  "https://res.cloudinary.com/duw5dconp/image/upload/v1752656796/logo_wrcmsg.png";
 
 const navLinks = [
   { href: "/", label: "Trang Chủ" },
