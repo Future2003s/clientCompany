@@ -833,7 +833,7 @@ const OrderForm: React.FC = () => {
     // NOTE: This fetch call is a placeholder.
     // You should replace it with your actual backend endpoint.
     try {
-      const result = await fetch("https://api.lalalycheee.vn/v1/api/sendMail", {
+      const result = await fetch("http://localhost:4000/v1/api/sendMail", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

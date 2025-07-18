@@ -1,32 +1,56 @@
-import type { NextPage } from "next";
+"use client";
+import {
+  RegisterRequest,
+  RegisterRequestType,
+} from "@/app/shemaValidation/auth.schema";
+import { envConfig } from "@/config";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
+import React from "react";
+import { useForm } from "react-hook-form";
 
-// Component Icon SVG cho gọn gàng
-const LycheeIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-8 w-8 text-white"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-    strokeWidth={2}
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M10 20.5a.5.5 0 00.5.5h3a.5.5 0 00.5-.5v-1.28a1 1 0 01.3-.7l5.2-5.2a5.5 5.5 0 00-7.78-7.78l-5.2 5.2a1 1 0 01-.7.3v1.28a.5.5 0 00.5.5h3v-1a.5.5 0 01.5-.5h2a.5.5 0 01.5.5v1z"
-    />
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M15.5 5.5a2 2 0 100-4 2 2 0 000 4z"
-    />
-  </svg>
-);
+type TypeDataRegister = {
+  fullName: string;
+  email: string;
+  password: string;
+};
 
-const SignUpPage: NextPage = () => {
+const SignUpPage = (): React.JSX.Element => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterRequestType>({
+    resolver: zodResolver(RegisterRequest),
+  });
+
+  const registerMutation = useMutation({
+    mutationFn: async (data: TypeDataRegister) => {
+      const res = await fetch("http://localhost:8081/api/auth/createUser", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+
+      const result = await res.json();
+      if (!res.ok) {
+        console.log("LỖI GỌI API");
+      }
+
+      return result;
+    },
+  });
+
+  const handleDataRegister = async (data: TypeDataRegister) => {
+    console.log(data);
+    const result = await registerMutation.mutate(data);
+    console.log(result);
+  };
+
   return (
-    // Container chính với nền gradient và các khối phát sáng
     <section className="relative min-h-screen w-full flex items-center justify-center p-4 overflow-hidden bg-gray-900">
       {/* Nền động */}
       <div className="absolute inset-0 bg-gradient-to-br from-red-600 via-pink-500 to-purple-700">
@@ -41,7 +65,7 @@ const SignUpPage: NextPage = () => {
         <div className="text-center mb-8">
           <div className="inline-block p-3 bg-white/20 rounded-full mb-3">
             <img
-              src={"https://d3enplyig2yenj.cloudfront.net/logo"}
+              src={envConfig.NEXT_PUBLIC_URL_LOGO}
               height={"100rem"}
               width={"100rem"}
               className="rounded-[999px]"
@@ -56,7 +80,7 @@ const SignUpPage: NextPage = () => {
         </div>
 
         {/* Form đăng ký */}
-        <form action="#" method="POST">
+        <form onSubmit={handleSubmit(handleDataRegister)}>
           {/* Ô nhập Họ và Tên */}
           <div className="mb-5">
             <label
@@ -68,11 +92,14 @@ const SignUpPage: NextPage = () => {
             <input
               type="text"
               id="fullname"
-              name="fullname"
               className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 text-sm focus:ring-pink-500 focus:border-pink-500 transition duration-300"
+              {...register("fullName")}
               placeholder="Nguyễn Văn A"
-              required
             />
+
+            <span className="text-red-600 font-bold mt-2">
+              {errors.fullName?.message}
+            </span>
           </div>
           {/* Ô nhập Email */}
           <div className="mb-5">
@@ -85,11 +112,14 @@ const SignUpPage: NextPage = () => {
             <input
               type="email"
               id="email"
-              name="email"
+              {...register("email")}
               className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 text-sm focus:ring-pink-500 focus:border-pink-500 transition duration-300"
               placeholder="bạn@email.com"
-              required
             />
+
+            <span className="text-red-600 font-bold mt-2">
+              {errors.email?.message}
+            </span>
           </div>
 
           {/* Ô nhập Mật khẩu */}
@@ -103,29 +133,13 @@ const SignUpPage: NextPage = () => {
             <input
               type="password"
               id="password"
-              name="password"
+              {...register("password")}
               className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 text-sm focus:ring-pink-500 focus:border-pink-500 transition duration-300"
-              placeholder="••••••••"
-              required
+              placeholder="Enter Password"
             />
-          </div>
-
-          {/* Ô nhập Xác nhận Mật khẩu */}
-          <div className="mb-6">
-            <label
-              htmlFor="confirmPassword"
-              className="block mb-2 text-sm font-medium text-white/90"
-            >
-              Xác nhận Mật khẩu
-            </label>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 text-sm focus:ring-pink-500 focus:border-pink-500 transition duration-300"
-              placeholder="••••••••"
-              required
-            />
+            <span className="text-red-600 font-bold mt-2">
+              {errors.password?.message}
+            </span>
           </div>
 
           {/* Nút Đăng ký */}

@@ -1,10 +1,7 @@
 "use client";
-import Image from "next/image";
+import { envConfig } from "@/config";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-
-const Logo =
-  "https://res.cloudinary.com/duw5dconp/image/upload/v1752656796/logo_wrcmsg.png";
 
 const navLinks = [
   { href: "/", label: "Trang Chủ" },
@@ -296,11 +293,11 @@ const Header = () => {
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 flex-shrink-0">
               <img
-                src={Logo}
+                src={envConfig.NEXT_PUBLIC_URL_LOGO}
                 alt="LALA-LYCHEEE Logo"
-                className="h-12 w-12 object-contain rounded-full"
+                className="h-15 w-15 object-contain rounded-full"
               />
-              <span className="text-2xl font-bold text-slate-800 tracking-tighter hidden sm:block">
+              <span className="text-3xl font-bold tracking-tighter hidden sm:block bg-gradient-to-r from-red-500 to-pink-500 bg-clip-text text-transparent ">
                 LALA-LYCHEEE
               </span>
             </Link>

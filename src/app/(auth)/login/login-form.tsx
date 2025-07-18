@@ -1,16 +1,17 @@
 "use client";
 import Link from "next/link";
-import React from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeSlashIcon } from "@/icons/icons.global";
 import { EyeIcon } from "lucide-react";
 import { authSchema, LoginBodyType } from "@/app/shemaValidation/auth.schema";
 import { useLoginMutation } from "@/queries/useAuth";
+import { envConfig } from "@/config";
 
 function LoginForm() {
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const {
     register,
     formState: { errors },
@@ -47,7 +48,7 @@ function LoginForm() {
         <div className="text-center mb-8">
           <div className="inline-block p-3 bg-white/20 rounded-full mb-3">
             <img
-              src={"https://d3enplyig2yenj.cloudfront.net/logo"}
+              src={envConfig.NEXT_PUBLIC_URL_LOGO}
               height={"100rem"}
               width={"100rem"}
               className="rounded-[999px]"

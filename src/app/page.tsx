@@ -1400,88 +1400,6 @@ const CtaSection: React.FC = () => (
   </section>
 );
 
-const Footer: React.FC = () => (
-  <footer className="bg-slate-800 text-slate-300">
-    <div className="container mx-auto px-6 py-16">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-        <div className="col-span-1 md:col-span-2 lg:col-span-2">
-          <h3 className="font-serif text-xl font-bold text-white mb-4">
-            LALA-LYCHEE
-          </h3>
-          <p className="text-slate-400 max-w-md">
-            Mang tinh hoa trái vải Việt Nam đến với thế giới qua những sản phẩm
-            đẳng cấp và chỉn chu.
-          </p>
-        </div>
-        <div>
-          <h4 className="font-bold text-white mb-4">Khám Phá</h4>
-          <ul className="space-y-2">
-            <li>
-              <a
-                href="#experience"
-                className="hover:text-white transition-colors"
-              >
-                Trải Nghiệm
-              </a>
-            </li>
-            <li>
-              <a
-                href="#products"
-                className="hover:text-white transition-colors"
-              >
-                Sản Phẩm
-              </a>
-            </li>
-            <li>
-              <a
-                href="#collections"
-                className="hover:text-white transition-colors"
-              >
-                Bộ Sưu Tập
-              </a>
-            </li>
-            <li>
-              <a href="#craft" className="hover:text-white transition-colors">
-                Quy Trình
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-white transition-colors">
-                Cửa Hàng
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div>
-          <h4 className="font-bold text-white mb-4">Hỗ Trợ</h4>
-          <ul className="space-y-2">
-            <li>
-              <a href="#contact" className="hover:text-white transition-colors">
-                Liên Hệ
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-white transition-colors">
-                FAQs
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-white transition-colors">
-                Chính Sách
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div className="mt-12 border-t border-slate-700 pt-8 text-center text-slate-500 text-sm">
-        <p>
-          &copy; {new Date().getFullYear()} LALA-LYCHEE. All Rights Reserved.
-        </p>
-      </div>
-    </div>
-  </footer>
-);
-
 const CursorEffect: React.FC = () => {
   const [points, setPoints] = useState<{ x: number; y: number; id: number }[]>(
     []
@@ -1674,13 +1592,13 @@ export default function App() {
           <div className="group">
             <MarqueeBannerSection />
           </div>
-          <AboutSection />
           <InteractiveShowcaseSection />
+          <SocialProofSection />
+          <AboutSection />
           <FeaturedProductsSection />
           <CardStackSection />
           <CollectionSection />
           <OurCraftSection />
-          <SocialProofSection />
           <CtaSection />
         </main>
         <ScrollToTopButton />

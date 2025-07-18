@@ -13,6 +13,7 @@ import {
   Plus,
   Minus,
 } from "lucide-react";
+import { useForm } from "react-hook-form";
 
 // --- TYPESCRIPT INTERFACES ---
 interface Product {
@@ -451,9 +452,15 @@ const CheckoutPage: React.FC<{
   const shippingFee = 30000;
   const total = subtotal + shippingFee;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onOrderComplete();
+  const { register, handleSubmit } = useForm();
+
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   onOrderComplete();
+  // };
+
+  const handleData = (data: any) => {
+    console.log(data);
   };
 
   return (
@@ -470,7 +477,7 @@ const CheckoutPage: React.FC<{
           <h1 className="text-2xl font-bold text-sky-900 mb-6">
             Thông tin giao hàng
           </h1>
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit(handleData)} className="space-y-5">
             <div className="relative">
               <label className="block text-sm font-medium text-sky-800 mb-1">
                 Họ và tên
@@ -478,9 +485,9 @@ const CheckoutPage: React.FC<{
               <User className="absolute left-3 top-9 text-gray-400" size={20} />
               <input
                 type="text"
-                required
                 className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-sky-500 focus:border-sky-500 bg-white text-sky-900 placeholder:text-gray-500"
                 placeholder="Nguyễn Văn A"
+                {...register("name")}
               />
             </div>
             <div className="relative">
@@ -493,7 +500,7 @@ const CheckoutPage: React.FC<{
               />
               <input
                 type="tel"
-                required
+                {...register("phone_number")}
                 className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-sky-500 focus:border-sky-500 bg-white text-sky-900 placeholder:text-gray-500"
                 placeholder="09xxxxxxxx"
               />
@@ -508,7 +515,7 @@ const CheckoutPage: React.FC<{
               />
               <input
                 type="text"
-                required
+                {...register("address")}
                 className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-sky-500 focus:border-sky-500 bg-white text-sky-900 placeholder:text-gray-500"
                 placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố"
               />
@@ -517,7 +524,7 @@ const CheckoutPage: React.FC<{
               type="submit"
               className="w-full bg-sky-600 text-white font-bold py-3 px-4 rounded-lg mt-6 hover:bg-sky-700 transition-all duration-300 flex items-center justify-center space-x-2 shadow-lg hover:shadow-sky-400/50"
             >
-              <span>Hoàn tất đơn hàng</span>
+              Hoàn tất đơn hàng
             </button>
           </form>
         </div>
