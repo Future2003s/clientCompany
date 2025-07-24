@@ -38,11 +38,11 @@ function LoginForm() {
 
   return (
     <main className="relative min-h-screen w-full flex items-center justify-center p-4 overflow-hidden bg-gray-900">
-      <div className="absolute inset-0 bg-gradient-to-br from-red-600 via-pink-500 to-purple-700">
+      {/* <div className="absolute inset-0 bg-gradient-to-br from-red-600 via-pink-500 to-purple-700">
         <div className="glow-blob w-96 h-96 bg-red-400 -top-20 -left-20"></div>
         <div className="glow-blob w-80 h-80 bg-pink-400 -bottom-20 -right-10"></div>
         <div className="glow-blob w-72 h-72 bg-purple-400 top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2"></div>
-      </div>
+      </div> */}
 
       <div className="relative z-10 bg-white/10 backdrop-blur-xl shadow-2xl rounded-2xl p-8 md:p-12 w-full max-w-md border border-white/20">
         <div className="text-center mb-8">

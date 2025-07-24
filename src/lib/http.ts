@@ -1,59 +1,90 @@
+"use strict";
+
 import { envConfig } from "@/config";
 
-type CustomOptions = RequestInit & {
-  baseUrl?: string | undefined;
+type ParamHttpError = {
+  status: number;
+  payload: any;
+  message?: string;
 };
 
-const ENTITY_ERROR: number = 442;
-const AUTHENTICATION_ERROR_STATUS: number = 401;
+interface CustomOptions extends RequestInit {
+  baseUrl?: string;
+}
 
-type EntityErrorPayload = {
-  message: string;
-  errors: {
-    field: string;
-    message: string;
-  }[];
-};
-
-class HttpError extends Error {
+export class HttpError extends Error {
   private readonly status: number;
-  private readonly payload: any;
-  constructor({ status, payload }: { status: number; payload: any }) {
-    super("Http Error");
+
+  private readonly payload: {
+    message: string;
+    [key: string]: any;
+  };
+
+  constructor({ message = "Lỗi HTTP", status, payload }: ParamHttpError) {
+    super(message);
     this.status = status;
     this.payload = payload;
   }
 }
 
-const request = async <Response>(
-  method: "GET" | "POST" | "PUT" | "DELETE",
-  url: string,
-  options?: CustomOptions
-) => {
-  console.log(envConfig.NEXT_PUBLIC_API_END_POINT);
-  const fullURL = `${envConfig.NEXT_PUBLIC_API_END_POINT}/v1/api${url}`;
-  const res = await fetch(fullURL, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    method: method,
-    body: JSON.stringify(options?.body),
-  });
-  if (!res.ok) {
-    throw Error("Http Error");
-  }
-  return await res.json();
-};
+enum METHOD {
+  POST = "POST",
+  GET = "GET",
+  PUT = "PUT",
+  PATCH = "PATCH",
+}
 
-export const http = {
-  post<Response>(
-    url: string,
-    body: any,
-    options?: Omit<CustomOptions, "body"> | undefined
-  ) {
-    return request<Response>("POST", url, {
-      ...options,
-      body,
-    });
-  },
+export const isClient = typeof window !== undefined;
+
+const request = async (method: METHOD, url: string, options: CustomOptions) => {
+  let body: FormData | string | undefined = undefined;
+
+  if (options?.body instanceof FormData) {
+    body = options.body;
+  } else if (options.body) {
+    body = JSON.stringify(options.body);
+  }
+
+  const baseHeades: {
+    [key: string]: string;
+  } =
+    body instanceof FormData
+      ? {}
+      : {
+          "Content-Type": "application/json",
+        };
+
+  if (isClient) {
+    const accessToken = localStorage.getItem("accessToken");
+    // TODO: sử dụng accessToken cho request nếu cần
+    if (accessToken) {
+      baseHeades.Authorization = `Bearer ${accessToken}`;
+    }
+  }
+
+  const baseUrl: string =
+    options?.baseUrl === undefined
+      ? envConfig.NEXT_PUBLIC_URL
+      : options.baseUrl;
+
+  const fullUrl: string = url.startsWith("/")
+    ? `${baseUrl}${url}`
+    : `${baseUrl}/${url}`;
+
+  const res = await fetch(fullUrl, {
+    method: method,
+    body: body,
+    ...options,
+    headers: {
+      ...baseHeades,
+      ...options?.headers,
+    } as any,
+  });
+
+  const payload: Response = await res.json();
+
+  const data: { status: number; payload: Response } = {
+    status: payload.status,
+    payload,
+  };
 };
