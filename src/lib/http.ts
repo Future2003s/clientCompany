@@ -36,55 +36,80 @@ enum METHOD {
 
 export const isClient = typeof window !== undefined;
 
-const request = async (method: METHOD, url: string, options: CustomOptions) => {
-  let body: FormData | string | undefined = undefined;
+enum HTTP_METHOD {
+  POST = "POST",
+  GET = "GET",
+  PUT = "PUT",
+  PATCH = "PATCH",
+}
 
-  if (options?.body instanceof FormData) {
-    body = options.body;
-  } else if (options.body) {
-    body = JSON.stringify(options.body);
-  }
+/**
+ * Create request handler
+ * Request handler là một hàm để gửi request đến server
+ * T là kiểu dữ liệu trả về từ server
+ * method là phương thức gửi request
+ * url là đường dẫn gửi request
+ * options là các options của request
+ */
+const request = async <Response>(
+  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
+  url: string,
+  options: CustomOptions
+) => {
+  const body = options.body ? JSON.stringify(options.body) : undefined;
 
-  const baseHeades: {
-    [key: string]: string;
-  } =
-    body instanceof FormData
-      ? {}
-      : {
-          "Content-Type": "application/json",
-        };
+  const baseHeaders = {
+    "Content-Type": "application/json",
+  };
 
-  if (isClient) {
-    const accessToken = localStorage.getItem("accessToken");
-    // TODO: sử dụng accessToken cho request nếu cần
-    if (accessToken) {
-      baseHeades.Authorization = `Bearer ${accessToken}`;
-    }
-  }
+  /**
+   * nếu không truyền baseUrl
+   */
 
-  const baseUrl: string =
-    options?.baseUrl === undefined
-      ? envConfig.NEXT_PUBLIC_URL
+  const baseUrl =
+    options.baseUrl === undefined
+      ? envConfig.NEXT_PUBLIC_API_END_POINT
       : options.baseUrl;
 
-  const fullUrl: string = url.startsWith("/")
+  const fullUrl = url.startsWith("/")
     ? `${baseUrl}${url}`
     : `${baseUrl}/${url}`;
 
   const res = await fetch(fullUrl, {
-    method: method,
-    body: body,
-    ...options,
+    method,
+    body,
     headers: {
-      ...baseHeades,
-      ...options?.headers,
-    } as any,
+      ...baseHeaders,
+      ...options.headers,
+    },
   });
 
-  const payload: Response = await res.json();
+  if (!res.ok) {
+    throw new Error("Lỗi khi gửi request");
+  }
 
-  const data: { status: number; payload: Response } = {
+  const payload = await res.json();
+
+  const data = {
     status: payload.status,
     payload,
   };
+
+  return data;
 };
+
+const http = {
+  get: <T>(url: string, options: Omit<CustomOptions, "body">) => {
+    return request<T>("GET", url, options);
+  },
+  post: <Response>(url: string, body: any, options?: CustomOptions) => {
+    return request<Response>("POST", url, { ...options, body });
+  },
+  put: (url: string, options: CustomOptions) => request("PUT", url, options),
+  patch: (url: string, options: CustomOptions) =>
+    request("PATCH", url, options),
+  delete: (url: string, options: CustomOptions) =>
+    request("DELETE", url, options),
+};
+
+export default http;

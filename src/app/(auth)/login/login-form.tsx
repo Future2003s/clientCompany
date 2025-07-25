@@ -6,8 +6,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeSlashIcon } from "@/icons/icons.global";
 import { EyeIcon } from "lucide-react";
 import { authSchema, LoginBodyType } from "@/app/shemaValidation/auth.schema";
-import { useLoginMutation } from "@/queries/useAuth";
 import { envConfig } from "@/config";
+import { authApiRequest } from "@/apiRequests/auth";
+import toast from "react-hot-toast";
 
 function LoginForm() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -18,17 +19,19 @@ function LoginForm() {
     handleSubmit,
   } = useForm<LoginBodyType>({ resolver: zodResolver(authSchema) });
 
-  const loginMutation = useLoginMutation();
-
   const onSubmit = async (data: LoginBodyType) => {
     setIsSubmitting(true);
-    if (loginMutation.isPending) {
-      return;
-    }
-
-    const result = loginMutation.mutate(data);
-    console.log(result);
     try {
+      const result = await authApiRequest.login(data);
+
+      await authApiRequest.auth({
+        sessionToken: result.payload.data.token.access_token,
+      });
+
+      await fetch("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify(result),
+      });
     } catch (error) {
       console.error("Lỗi khi đăng nhập:", error);
     } finally {
@@ -37,12 +40,12 @@ function LoginForm() {
   };
 
   return (
-    <main className="relative min-h-screen w-full flex items-center justify-center p-4 overflow-hidden bg-gray-900">
-      {/* <div className="absolute inset-0 bg-gradient-to-br from-red-600 via-pink-500 to-purple-700">
+    <main className="relative min-h-screen w-full flex items-center justi fy-center p-4 overflow-hidden bg-gray-900">
+      <div className="absolute inset-0 bg-gradient-to-br from-red-600 via-pink-500 to-purple-700">
         <div className="glow-blob w-96 h-96 bg-red-400 -top-20 -left-20"></div>
         <div className="glow-blob w-80 h-80 bg-pink-400 -bottom-20 -right-10"></div>
         <div className="glow-blob w-72 h-72 bg-purple-400 top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2"></div>
-      </div> */}
+      </div>
 
       <div className="relative z-10 bg-white/10 backdrop-blur-xl shadow-2xl rounded-2xl p-8 md:p-12 w-full max-w-md border border-white/20">
         <div className="text-center mb-8">
