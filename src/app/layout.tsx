@@ -5,7 +5,8 @@ import { NextFont } from "next/dist/compiled/@next/font";
 import AppProvider from "@/context/app-provider";
 import LayoutMain from "@/layouts/layout-main";
 import { Toaster } from "react-hot-toast";
-import AppContextProvider from "@/context/app-context";
+import { AppProviderContext } from "@/context/app-context";
+import { cookies } from "next/headers";
 
 const fontSans: NextFont = Quicksand({
   subsets: ["latin"],
@@ -17,18 +18,24 @@ export const metadata: Metadata = {
   description: "CÔNG TY TNHH LALA-LYCHEEE",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+
+  const sessionToken = cookieStore.get("sessionToken");
+
   return (
     <html lang="vi" suppressHydrationWarning>
       <body className={`${fontSans.className}`} suppressHydrationWarning>
         <AppProvider>
-          <AppContextProvider>
+          <AppProviderContext
+            initialSessionToken={sessionToken?.value as string}
+          >
             <LayoutMain>{children}</LayoutMain>
-          </AppContextProvider>
+          </AppProviderContext>
           <Toaster />
         </AppProvider>
       </body>

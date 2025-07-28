@@ -9,10 +9,14 @@ import { authSchema, LoginBodyType } from "@/app/shemaValidation/auth.schema";
 import { envConfig } from "@/config";
 import { authApiRequest } from "@/apiRequests/auth";
 import toast from "react-hot-toast";
+import { useAppProviderContext } from "@/context/app-context";
 
 function LoginForm() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  const { sessionToken, setSessionToken } = useAppProviderContext();
+
   const {
     register,
     formState: { errors },
@@ -22,16 +26,20 @@ function LoginForm() {
   const onSubmit = async (data: LoginBodyType) => {
     setIsSubmitting(true);
     try {
+      // Client
       const result = await authApiRequest.login(data);
 
-      await authApiRequest.auth({
-        sessionToken: result.payload.data.token.access_token,
-      });
-
-      await fetch("/api/auth/login", {
+      //**
+      // Server
+      //  */
+      const res = await fetch("/api/auth/login", {
         method: "POST",
         body: JSON.stringify(result),
       });
+
+      const resultServer = await res.json();
+
+      setSessionToken(resultServer.payload.payload.data.access_token);
     } catch (error) {
       console.error("Lỗi khi đăng nhập:", error);
     } finally {
