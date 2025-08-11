@@ -1,8 +1,8 @@
-import http from "@/lib/http";
+import { http } from "@/lib/http";
 
 const accountApiRequest = {
   me: (sessionToken: string) => {
-    return http.get<any>("/api/account/me", {
+    return http.get("/api/account/me", {
       headers: {
         Authorization: `Bearer ${sessionToken}`,
       },

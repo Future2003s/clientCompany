@@ -2,7 +2,7 @@ import {
   LoginBodyType,
   RegisterRequestType,
 } from "@/app/shemaValidation/auth.schema";
-import http from "@/lib/http";
+import { http } from "@/lib/http";
 import { LoginResType } from "@/types/types";
 
 export const authApiRequest = {
@@ -11,6 +11,11 @@ export const authApiRequest = {
   },
   login: (body: LoginBodyType) => {
     return http.post<LoginResType>("/api/auth/login", body);
+  },
+  sLogin: (body: any) => {
+    return http.post("/api/auth/login", {
+      baseUrl: "",
+    });
   },
   auth: (body: { sessionToken: string }) => {
     return http.post<LoginResType>("/api/auth", body, {

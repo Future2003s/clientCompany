@@ -1,73 +1,56 @@
-"use strict";
-
 import { envConfig } from "@/config";
+import { get } from "http";
 
-type ParamHttpError = {
-  status: number;
-  payload: any;
-  message?: string;
-};
+// handle error when Throw Data API
+class HttpError extends Error {
+  private readonly statusCode: number;
+  private readonly payload: any;
 
-interface CustomOptions extends RequestInit {
-  baseUrl?: string;
-}
-
-export class HttpError extends Error {
-  private readonly status: number;
-
-  private readonly payload: {
-    message: string;
-    [key: string]: any;
-  };
-
-  constructor({ message = "Lỗi HTTP", status, payload }: ParamHttpError) {
-    super(message);
-    this.status = status;
+  constructor({ statusCode, payload }: { statusCode: number; payload: any }) {
+    super("Http Error !");
+    this.statusCode = statusCode;
     this.payload = payload;
   }
 }
 
-enum METHOD {
-  POST = "POST",
-  GET = "GET",
-  PUT = "PUT",
-  PATCH = "PATCH",
-}
-
-export const isClient = typeof window !== undefined;
-
-enum HTTP_METHOD {
-  POST = "POST",
-  GET = "GET",
-  PUT = "PUT",
-  PATCH = "PATCH",
-}
-
 /**
- * Create request handler
- * Request handler là một hàm để gửi request đến server
- * T là kiểu dữ liệu trả về từ server
- * method là phương thức gửi request
- * url là đường dẫn gửi request
- * options là các options của request
+ * fetch(URL,{
+ *   headers: {
+ *     "Content-Type":"application/json"
+ *   },
+ *   method:"POST",
+ *   body:JSON.stringify(data)
+ *  })
  */
-const request = async <Response>(
+
+interface CustomRequestsInit extends RequestInit {
+  baseUrl?: string;
+}
+
+const request = async (
   method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
   url: string,
-  options: CustomOptions
+  options?: CustomRequestsInit | undefined
 ) => {
-  const body = options.body ? JSON.stringify(options.body) : undefined;
+  const body: string | undefined = options?.body
+    ? JSON.stringify(options.body)
+    : undefined;
 
   const baseHeaders = {
     "Content-Type": "application/json",
   };
 
+  // base url gọi api từ server
+  // và base url là chuỗi rỗng từ next server
+  // nếu base url = ''
   /**
-   * nếu không truyền baseUrl
+   * options:CustomRequests {
+   *     baseUrl:''
+   *   }
+   *
    */
-
   const baseUrl =
-    options.baseUrl === undefined
+    options?.baseUrl === undefined
       ? envConfig.NEXT_PUBLIC_API_END_POINT
       : options.baseUrl;
 
@@ -76,40 +59,35 @@ const request = async <Response>(
     : `${baseUrl}/${url}`;
 
   const res = await fetch(fullUrl, {
-    method,
-    body,
     headers: {
       ...baseHeaders,
-      ...options.headers,
+      ...options?.headers,
     },
+    body,
+    method,
   });
 
+  const data = await res.json();
+
   if (!res.ok) {
-    throw new Error("Lỗi khi gửi request");
+    return new HttpError({
+      statusCode: res.status,
+      payload: data,
+    });
   }
-
-  const payload = await res.json();
-
-  const data = {
-    status: payload.status,
-    payload,
-  };
 
   return data;
 };
 
-const http = {
-  get: <T>(url: string, options: Omit<CustomOptions, "body">) => {
-    return request<T>("GET", url, options);
+export const http = {
+  get(url: string, options: Omit<CustomRequestsInit, "body">) {
+    return request("GET", url);
   },
-  post: <Response>(url: string, body: any, options?: CustomOptions) => {
-    return request<Response>("POST", url, { ...options, body });
+  post<TypeRequestBody>(
+    url: string,
+    body: any,
+    options?: Omit<CustomRequestsInit, "body">
+  ) {
+    return request("POST", url, { ...options, body });
   },
-  put: (url: string, options: CustomOptions) => request("PUT", url, options),
-  patch: (url: string, options: CustomOptions) =>
-    request("PATCH", url, options),
-  delete: (url: string, options: CustomOptions) =>
-    request("DELETE", url, options),
 };
-
-export default http;

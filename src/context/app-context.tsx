@@ -1,29 +1,26 @@
 "use client";
-import { createContext, useState, ReactNode, useContext } from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 
-const AppContext = createContext({
+const AppContextProvider = createContext({
   sessionToken: "",
-  setSessionToken: (sessionToken: string) => {},
+  setSessionToken: {},
 });
 
-export const useAppProviderContext = () => {
-  const context = useContext(AppContext);
-
-  return context;
+export const useAppContextProvider = () => {
+  return useContext(AppContextProvider);
 };
 
-export const AppProviderContext = ({
+export default function AppContext({
   children,
   initialSessionToken,
 }: {
   children: ReactNode;
-  initialSessionToken: string | undefined;
-}) => {
-  const [sessionToken, setSessionToken] = useState<string>("");
-
+  initialSessionToken: string;
+}) {
+  const [sessionToken, setSessionToken] = useState(initialSessionToken);
   return (
-    <AppContext.Provider value={{ sessionToken, setSessionToken }}>
+    <AppContextProvider.Provider value={{ sessionToken, setSessionToken }}>
       {children}
-    </AppContext.Provider>
+    </AppContextProvider.Provider>
   );
-};
+}

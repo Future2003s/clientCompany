@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,15 +9,15 @@ import { authSchema, LoginBodyType } from "@/app/shemaValidation/auth.schema";
 import { envConfig } from "@/config";
 import { authApiRequest } from "@/apiRequests/auth";
 import toast from "react-hot-toast";
-import { useAppProviderContext } from "@/context/app-context";
+import { useMutation } from "@tanstack/react-query";
+import { Router } from "next/router";
+import { useRouter } from "next/navigation";
 
 function LoginForm() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const router = useRouter();
-  const searchParams = useSearchParams();
 
-  const { sessionToken, setSessionToken } = useAppProviderContext();
+  const router = useRouter();
 
   const {
     register,
@@ -26,29 +25,34 @@ function LoginForm() {
     handleSubmit,
   } = useForm<LoginBodyType>({ resolver: zodResolver(authSchema) });
 
+  const loginMutation = useMutation({
+    mutationFn: (data: LoginBodyType) => {
+      return authApiRequest.login(data);
+    },
+  });
+
   const onSubmit = async (data: LoginBodyType) => {
     setIsSubmitting(true);
-    try {
-      const result = await authApiRequest.login(data);
+    const result = await loginMutation.mutateAsync(data);
 
-      if (result.payload.message.includes("Passwords don't match")) {
-        toast.error("Mật khẩu không đúng");
-        return;
-      }
+    console.log(result);
 
-      if (result.payload.message.includes("User not existed")) {
-        toast.error("Email chưa được đăng ký ");
-        return;
-      }
-
-      toast.success("Đăng nhập thành công!");
-      router.push("/account");
-    } catch (error) {
-      console.error("Lỗi khi đăng nhập:", error);
-      toast.error("Có lỗi xảy ra, vui lòng thử lại sau!");
-    } finally {
+    if (result) {
+      const resultFromNext = await fetch("/api/auth/login", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify(result),
+      });
+      console.log(resultFromNext);
       setIsSubmitting(false);
+      toast.success("Đăng nhập thành công!");
+      router.push("/me");
     }
+    setIsSubmitting(false);
+
+    // router.push("/account");
   };
 
   return (
