@@ -12,12 +12,14 @@ import toast from "react-hot-toast";
 import { useMutation } from "@tanstack/react-query";
 import { Router } from "next/router";
 import { useRouter } from "next/navigation";
+import { useAppContextProvider } from "@/context/app-context";
 
 function LoginForm() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const router = useRouter();
+  const { setSessionToken } = useAppContextProvider();
 
   const {
     register,
@@ -46,9 +48,18 @@ function LoginForm() {
         body: JSON.stringify(result),
       });
       console.log(resultFromNext);
-      setIsSubmitting(false);
+      // Update client context immediately for seamless UX
+      try {
+        const token = result?.data?.access_token as string | undefined;
+        if (token) setSessionToken(token);
+      } catch {}
+      // Immediately navigate and refresh to ensure server components read the latest cookie
       toast.success("Đăng nhập thành công!");
       router.push("/me");
+      // Give the push a tick, then refresh to re-run server components and layout reading cookies
+      setTimeout(() => {
+        router.refresh();
+      }, 0);
     }
     setIsSubmitting(false);
 

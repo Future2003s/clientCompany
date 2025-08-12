@@ -1,9 +1,20 @@
 "use client";
-import { createContext, ReactNode, useContext, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
-const AppContextProvider = createContext({
+type AppContextValue = {
+  sessionToken: string;
+  setSessionToken: (token: string) => void;
+};
+
+const AppContextProvider = createContext<AppContextValue>({
   sessionToken: "",
-  setSessionToken: {},
+  setSessionToken: () => {},
 });
 
 export const useAppContextProvider = () => {
@@ -18,6 +29,11 @@ export default function AppContext({
   initialSessionToken: string;
 }) {
   const [sessionToken, setSessionToken] = useState(initialSessionToken);
+
+  // Keep client state in sync when the cookie-derived prop changes after navigation
+  useEffect(() => {
+    setSessionToken(initialSessionToken);
+  }, [initialSessionToken]);
   return (
     <AppContextProvider.Provider value={{ sessionToken, setSessionToken }}>
       {children}

@@ -5,11 +5,20 @@ export async function POST(request: NextRequest) {
 
   const sessionToken = payload.data.access_token;
 
+  const isProd = process.env.NODE_ENV === "production";
+  const cookieAttributes = [
+    `sessionToken=${sessionToken}`,
+    "Path=/",
+    "HttpOnly",
+    "SameSite=Lax",
+  ];
+  if (isProd) cookieAttributes.push("Secure");
+
   return Response.json(
     { payload },
     {
       headers: {
-        "Set-Cookie": `sessionToken=${sessionToken};path=/;httpOnly;Secure`,
+        "Set-Cookie": cookieAttributes.join("; "),
       },
     }
   );

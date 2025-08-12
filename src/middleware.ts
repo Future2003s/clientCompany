@@ -11,12 +11,17 @@ export function middleware(request: NextRequest) {
 
   // đăng nhập vào đường dẫn khi đã đăng nhập
   if (privatePath.some((path) => pathName.startsWith(path)) && !sessionId) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    const url = new URL("/login", request.url);
+    url.searchParams.set("reason", "login_required");
+    url.searchParams.set("redirect", pathName);
+    return NextResponse.redirect(url);
   }
 
   // đã đăng nhập nhưng vẫn truy cập vào trang đăng nhập
   if (publicPath.some((path) => pathName.startsWith(path)) && sessionId) {
-    return NextResponse.redirect(new URL("/me", request.url));
+    const url = new URL("/me", request.url);
+    url.searchParams.set("from", "already_logged_in");
+    return NextResponse.redirect(url);
   }
 
   return NextResponse.next();
