@@ -2,7 +2,7 @@
 import {
   RegisterRequest,
   RegisterRequestType,
-} from "@/app/shemaValidation/auth.schema";
+} from "@/shemaValidation/auth.schema";
 import { envConfig } from "@/config";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";

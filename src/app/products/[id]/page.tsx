@@ -1,14 +1,15 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { productsApi, ProductDetail } from "@/apiRequests/products";
+import { productsApi, type ProductDetail } from "@/apiRequests/products";
 import { useParams, useRouter } from "next/navigation";
+import BuyNowModal from "@/components/ui/buy-now-modal";
 
 const formatCurrency = (amount: number) =>
   new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
     amount
   );
 
-export default function ProductDetailPage() {
+export default function ProductDetail() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const id = params?.id as string;
@@ -17,6 +18,7 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(false);
   const [qty, setQty] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
+  const [buyOpen, setBuyOpen] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -139,10 +141,18 @@ export default function ProductDetailPage() {
             <button className="px-5 py-3 rounded bg-gray-900 text-white">
               Thêm vào giỏ
             </button>
-            <button className="px-5 py-3 rounded bg-pink-600 text-white">
+            <button
+              className="px-5 py-3 rounded bg-pink-600 text-white"
+              onClick={() => setBuyOpen(true)}
+            >
               Mua ngay
             </button>
           </div>
+          <BuyNowModal
+            open={buyOpen}
+            onClose={() => setBuyOpen(false)}
+            items={[{ name: item.name, price, quantity: qty }]}
+          />
         </div>
       </div>
     </div>

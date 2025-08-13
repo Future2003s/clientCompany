@@ -1,5 +1,7 @@
 "use client";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import BuyNowModal from "@/components/ui/buy-now-modal";
 import ProductBig from "../../../../public/products/IMG_0404.png";
 import ProductSmall from "../../../../public/products/IMG_0405.png";
 import Image, { StaticImageData } from "next/image";
@@ -43,6 +45,11 @@ interface ProductDetailViewProps {
 export default function ProductList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const router = useRouter();
+  const [buyOpen, setBuyOpen] = useState(false);
+  const [buyItems, setBuyItems] = useState<
+    { name: string; price: number; quantity: number }[]
+  >([]);
 
   // Lọc sản phẩm dựa trên từ khóa tìm kiếm
   const filteredProducts = sampleProducts.filter(
@@ -150,8 +157,14 @@ export default function ProductList() {
                     className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg text-lg font-bold hover:bg-blue-700 transition-colors shadow-md transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-blue-300"
                     onClick={(e) => {
                       e.stopPropagation(); // Ngăn chặn sự kiện click của thẻ cha
-                      console.log(`Đã thêm ${product.name} vào giỏ hàng`);
-                      // Trong một ứng dụng thực tế, bạn sẽ thêm vào giỏ hàng ở đây
+                      setBuyItems([
+                        {
+                          name: product.name,
+                          price: product.price,
+                          quantity: 1,
+                        },
+                      ]);
+                      setBuyOpen(true);
                     }}
                     aria-label={`Thêm ${product.name} vào giỏ hàng`}
                   >
@@ -163,6 +176,11 @@ export default function ProductList() {
           ))}
         </div>
       </div>
+      <BuyNowModal
+        open={buyOpen}
+        onClose={() => setBuyOpen(false)}
+        items={buyItems}
+      />
     </div>
   );
 }

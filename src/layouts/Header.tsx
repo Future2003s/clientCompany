@@ -14,9 +14,9 @@ const navLinks = [
     label: "Sản Phẩm",
     href: "/shop",
     subItems: [
-      { href: "/shop", label: "Tất Cả Sản Phẩm" },
-      { href: "/shop?q=m%E1%BA%ADt+ong", label: "Mật Ong" },
-      { href: "/shop?q=v%E1%BA%A3i", label: "Sản phẩm Vải" },
+      { href: "/products", label: "Tất Cả Sản Phẩm" },
+      { href: "/product?q=m%E1%BA%ADt+ong", label: "Mật Ong" },
+      { href: "/product?q=v%E1%BA%A3i", label: "Sản phẩm Vải" },
     ],
   },
   { href: "/story", label: "Câu Chuyện" },

@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeSlashIcon } from "@/icons/icons.global";
 import { EyeIcon } from "lucide-react";
-import { authSchema, LoginBodyType } from "@/app/shemaValidation/auth.schema";
+import { authSchema, LoginBodyType } from "@/shemaValidation/auth.schema";
 import { envConfig } from "@/config";
 import { authApiRequest } from "@/apiRequests/auth";
 import toast from "react-hot-toast";

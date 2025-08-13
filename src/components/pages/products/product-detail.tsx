@@ -1,6 +1,6 @@
 "use client";
 import Image, { StaticImageData } from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import ProductBig from "../../../../public/products/IMG_0404.png";
 import ProductSmall from "../../../../public/products/IMG_0405.png";
 
@@ -12,6 +12,8 @@ interface Product {
   imageUrl: StaticImageData | string;
   imageThumbUrl?: string;
   galleryImages?: string | any[];
+  rating?: number;
+  reviewCount?: number;
 }
 
 interface ProductDetailViewProps {
@@ -48,14 +50,48 @@ export default function ProductDetailView({
     product.imageUrl as string
   );
   const [quantity, setQuantity] = useState(1);
-  const [message, setMessage] = useState(""); // State để hiển thị thông báo thay vì alert
+  const [message, setMessage] = useState("");
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const images: string[] = useMemo(() => {
+    const base = typeof product.imageUrl === "string" ? product.imageUrl : "";
+    const gallery = Array.isArray(product.galleryImages)
+      ? product.galleryImages
+      : [];
+    const unique = [base, ...gallery].filter(Boolean);
+    return Array.from(new Set(unique));
+  }, [product]);
+
+  const formatCurrency = useCallback((amount: number) => {
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(amount);
+  }, []);
 
   // Đặt lại ảnh chính và số lượng khi sản phẩm thay đổi và cuộn lên đầu trang
   useEffect(() => {
     setSelectedImage(product.imageUrl as string);
     setQuantity(1);
-    window.scrollTo(0, 0); // Cuộn lên đầu trang khi component được mount
+    window.scrollTo(0, 0);
   }, [product]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (images.length === 0) return;
+      const idx = images.findIndex((i) => i === selectedImage);
+      if (e.key === "ArrowRight") {
+        const next = images[(idx + 1) % images.length];
+        setSelectedImage(next);
+      } else if (e.key === "ArrowLeft") {
+        const prev = images[(idx - 1 + images.length) % images.length];
+        setSelectedImage(prev);
+      } else if (e.key === "Escape" && lightboxOpen) {
+        setLightboxOpen(false);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [images, selectedImage, lightboxOpen]);
 
   const handleAddToCart = () => {
     console.log(`Đã thêm ${quantity} sản phẩm "${product.name}" vào giỏ hàng.`);
@@ -75,192 +111,215 @@ export default function ProductDetailView({
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 font-inter antialiased">
-      <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden md:flex relative">
-        {/* Nút quay lại */}
-        <button
-          onClick={onBack}
-          className="absolute top-4 left-4 flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium text-sm z-10"
-        >
-          <svg
-            className="w-4 h-4 mr-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M10 19l-7-7m0 0l7-7m-7 7h18"
-            ></path>
-          </svg>
-          Quay lại danh sách
-        </button>
+    <div className="min-h-screen bg-gray-50 p-4 font-inter antialiased mt-25">
+      <div className="max-w-7xl mx-auto">
+        <nav className="text-sm text-gray-500 mb-4">
+          <button onClick={onBack} className="hover:text-gray-700">
+            Sản phẩm
+          </button>
+          <span className="mx-2">/</span>
+          <span className="text-gray-700 font-medium line-clamp-1">
+            {product.name}
+          </span>
+        </nav>
 
-        {/* Phần ảnh sản phẩm */}
-        <div className="md:w-1/2 p-6 flex flex-col items-center justify-center bg-gray-50 rounded-l-lg relative">
-          <div className="relative w-full max-w-[500px] h-[400px] mb-4">
-            <img
-              src={selectedImage}
-              alt={product.name}
-              className="w-full h-full object-contain rounded-lg shadow-md"
-              onError={(e) => {
-                e.currentTarget.onerror = null;
-                e.currentTarget.src = `https://placehold.co/600x400/F0F0F0/000000?text=L%E1%BB%97i+%E1%BA%A2nh`;
-              }}
-            />
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-0">
+          <div className="p-6 bg-gray-50">
+            <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden bg-white shadow-sm">
+              <img
+                src={selectedImage}
+                alt={product.name}
+                className="w-full h-full object-contain cursor-zoom-in"
+                onClick={() => setLightboxOpen(true)}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = `https://placehold.co/800x600/F0F0F0/000000?text=No+Image`;
+                }}
+              />
+            </div>
+            <div className="mt-4 grid grid-cols-5 sm:grid-cols-6 md:grid-cols-5 gap-2">
+              {images.map((imgSrc, index) => (
+                <button
+                  key={index}
+                  className={`relative aspect-square rounded-md overflow-hidden border ${
+                    selectedImage === imgSrc
+                      ? "border-blue-500"
+                      : "border-transparent"
+                  } bg-white hover:border-blue-300 transition`}
+                  onClick={() => handleImageClick(imgSrc)}
+                  aria-label={`Ảnh ${index + 1}`}
+                >
+                  <img
+                    src={imgSrc}
+                    alt={`Thumb ${index + 1}`}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = `https://placehold.co/120x120/F0F0F0/000000?text=No+Image`;
+                    }}
+                  />
+                </button>
+              ))}
+            </div>
           </div>
-          {/* Gallery ảnh thumbnail */}
-          <div className="flex flex-wrap justify-center gap-2 mt-4">
-            {/*//@ts-ignore*/}
-            {product.galleryImages?.map((imgSrc: string, index: string) => (
-              <div
-                key={index}
-                className={`relative w-20 h-20 rounded-md cursor-pointer border-2 ${
-                  selectedImage === imgSrc
-                    ? "border-blue-500"
-                    : "border-transparent"
-                } hover:border-blue-500 transition-all duration-200 overflow-hidden`}
-                onClick={() => handleImageClick(imgSrc)}
-              >
-                <img
-                  src={imgSrc}
-                  alt={`${product.name} - Ảnh ${index + 1}`}
-                  className="w-full h-full object-cover rounded-md"
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = `https://placehold.co/100x100/F0F0F0/000000?text=L%E1%BB%97i`;
-                  }}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Phần chi tiết sản phẩm */}
-        <div className="md:w-1/2 p-8 flex flex-col justify-between">
-          <div>
-            <h1 className="text-4xl font-extrabold text-gray-900 mb-4 leading-tight">
+          <div className="p-8 md:p-10 flex flex-col">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-snug">
               {product.name}
             </h1>
-            <p className="text-xl text-gray-700 mb-6 font-semibold">
-              {product.price.toLocaleString("vi-VN")} VNĐ
-            </p>
-            <p className="text-gray-600 leading-relaxed mb-8">
+            <div className="mt-2 flex items-center gap-3 text-sm text-gray-600">
+              <div className="flex items-center text-yellow-500">
+                {[...Array(5)].map((_, i) => (
+                  <svg
+                    key={i}
+                    viewBox="0 0 24 24"
+                    className={`w-4 h-4 ${i < 5 ? "fill-current" : ""}`}
+                  >
+                    <path d="M12 .587l3.668 7.425 8.2 1.192-5.934 5.786 1.401 8.167L12 18.896l-7.335 3.861 1.401-8.167L.132 9.204l8.2-1.192L12 .587z" />
+                  </svg>
+                ))}
+              </div>
+              <span>5.0 (200+ đánh giá)</span>
+            </div>
+
+            <div className="mt-4 text-3xl font-extrabold text-blue-700">
+              {formatCurrency(product.price)}
+            </div>
+            <p className="mt-4 text-gray-700 leading-relaxed">
               {product.description}
             </p>
 
-            {/* Điều chỉnh số lượng */}
-            <div className="flex items-center mb-6">
-              <label
-                htmlFor="quantity"
-                className="text-gray-700 font-medium mr-4"
-              >
-                Số lượng:
+            <div className="mt-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Số lượng
               </label>
-              <div className="flex items-center border border-gray-300 rounded-md">
+              <div className="inline-flex items-center border border-gray-300 rounded-lg overflow-hidden">
                 <button
-                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-l-md hover:bg-gray-300 transition-colors"
-                  onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                  className="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  aria-label="Giảm số lượng"
                 >
                   -
                 </button>
                 <input
                   type="number"
-                  id="quantity"
                   value={quantity}
                   onChange={(e) =>
                     setQuantity(Math.max(1, parseInt(e.target.value) || 1))
                   }
-                  className="w-16 text-center border-l border-r border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  min="1"
+                  className="w-16 text-center py-2 focus:outline-none"
+                  min={1}
                 />
                 <button
-                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-r-md hover:bg-gray-300 transition-colors"
-                  onClick={() => setQuantity((prev) => prev + 1)}
+                  className="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  onClick={() => setQuantity((q) => q + 1)}
+                  aria-label="Tăng số lượng"
                 >
                   +
                 </button>
               </div>
             </div>
-          </div>
 
-          {/* Nút thêm vào giỏ hàng và Mua ngay */}
-          <div className="flex flex-col sm:flex-row gap-4 mt-6 md:mt-0">
-            <button
-              onClick={handleAddToCart}
-              className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg text-lg font-bold hover:bg-blue-700 transition-colors shadow-lg transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-blue-300"
-            >
-              Thêm vào giỏ hàng
-            </button>
-            <button
-              onClick={handleBuyNow}
-              className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg text-lg font-bold hover:bg-green-700 transition-colors shadow-lg transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-green-300"
-            >
-              Mua ngay
-            </button>
-          </div>
-
-          {/* Message box */}
-          {message && (
-            <div className="mt-4 p-3 bg-green-100 text-green-800 rounded-md text-center">
-              {message}
+            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <button
+                onClick={handleAddToCart}
+                className="w-full bg-white border border-blue-600 text-blue-700 font-semibold py-3 rounded-lg hover:bg-blue-50 transition shadow-sm"
+              >
+                Thêm vào giỏ
+              </button>
+              <button
+                onClick={handleBuyNow}
+                className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition shadow"
+              >
+                Mua ngay
+              </button>
             </div>
-          )}
-        </div>
-      </div>
 
-      {/* Phần sản phẩm liên quan (ví dụ) */}
-      <div className="max-w-7xl mx-auto mt-12 p-6 bg-white rounded-lg shadow-xl">
-        <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">
-          Sản phẩm liên quan
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {sampleProducts.slice(0, 4).map(
-            (relatedProduct) =>
-              relatedProduct.id !== product.id && ( // Không hiển thị sản phẩm hiện tại trong danh sách liên quan
-                <div
-                  key={relatedProduct.id}
-                  className="bg-gray-50 rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition-transform duration-300 cursor-pointer"
-                  onClick={() => onBack()} // Quay lại danh sách và chọn sản phẩm mới
-                >
-                  <div className="relative w-full h-48">
-                    {" "}
-                    {/* Container cho ảnh */}
-                    <Image // Sử dụng <img> thay vì <Image>
-                      src={relatedProduct.imageUrl}
-                      alt={relatedProduct.name}
-                      className="w-full h-full object-cover rounded-t-lg"
-                      onError={(e) => {
-                        e.currentTarget.onerror = null;
-                        e.currentTarget.src = `https://placehold.co/400x300/F0F0F0/000000?text=L%E1%BB%97i+%E1%BA%A2nh`;
-                      }}
-                    />
+            {message && (
+              <div className="mt-4 p-3 bg-green-50 text-green-700 border border-green-200 rounded-md text-sm">
+                {message}
+              </div>
+            )}
+
+            <div className="mt-8 divide-y divide-gray-100 rounded-lg border border-gray-100">
+              <details className="p-4 group" open>
+                <summary className="font-semibold text-gray-900 cursor-pointer list-none flex items-center justify-between">
+                  Mô tả chi tiết
+                  <span className="text-gray-400 group-open:rotate-180 transition">
+                    ⌄
+                  </span>
+                </summary>
+                <div className="mt-3 text-gray-700 text-sm leading-relaxed">
+                  {product.description}
+                </div>
+              </details>
+              <details className="p-4 group">
+                <summary className="font-semibold text-gray-900 cursor-pointer list-none flex items-center justify-between">
+                  Hướng dẫn sử dụng
+                  <span className="text-gray-400 group-open:rotate-180 transition">
+                    ⌄
+                  </span>
+                </summary>
+                <div className="mt-3 text-gray-700 text-sm leading-relaxed">
+                  Pha với nước ấm, dùng làm bánh hoặc ăn trực tiếp tùy khẩu vị.
+                </div>
+              </details>
+              <details className="p-4 group">
+                <summary className="font-semibold text-gray-900 cursor-pointer list-none flex items-center justify-between">
+                  Bảo quản
+                  <span className="text-gray-400 group-open:rotate-180 transition">
+                    ⌄
+                  </span>
+                </summary>
+                <div className="mt-3 text-gray-700 text-sm leading-relaxed">
+                  Để nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp.
+                </div>
+              </details>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-10 bg-white rounded-xl shadow-sm p-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">
+            Sản phẩm liên quan
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {sampleProducts.slice(0, 4).map((related) => (
+              <div
+                key={related.id}
+                className="bg-gray-50 rounded-lg overflow-hidden border border-gray-100"
+              >
+                <Image
+                  src={related.imageUrl}
+                  alt={related.name}
+                  className="w-full h-40 object-cover"
+                />
+                <div className="p-3">
+                  <div className="text-sm font-semibold text-gray-900 line-clamp-1">
+                    {related.name}
                   </div>
-                  <div className="p-4">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-1 line-clamp-1">
-                      {relatedProduct.name}
-                    </h3>
-                    <p className="text-gray-600 text-sm mb-2">
-                      {relatedProduct.price.toLocaleString("vi-VN")} VNĐ
-                    </p>
-                    <button
-                      className="w-full bg-green-500 text-white py-2 rounded-md text-sm hover:bg-green-600 transition-colors"
-                      onClick={(e) => {
-                        e.stopPropagation(); // Ngăn chặn sự kiện click của thẻ cha
-                        onBack(); // Quay lại danh sách và mô phỏng click vào sản phẩm liên quan
-                      }}
-                    >
-                      Xem chi tiết
-                    </button>
+                  <div className="text-sm text-blue-700 font-bold mt-1">
+                    {formatCurrency(related.price)}
                   </div>
                 </div>
-              )
-          )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
+
+      {lightboxOpen && (
+        <div
+          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+          onClick={() => setLightboxOpen(false)}
+        >
+          <img
+            src={selectedImage}
+            alt="Preview"
+            className="max-w-[90vw] max-h-[85vh] object-contain"
+          />
+        </div>
+      )}
     </div>
   );
 }

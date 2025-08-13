@@ -1,7 +1,7 @@
 import {
   LoginBodyType,
   RegisterRequestType,
-} from "@/app/shemaValidation/auth.schema";
+} from "@/shemaValidation/auth.schema";
 import { http } from "@/lib/http";
 import { LoginResType } from "@/types/types";
 

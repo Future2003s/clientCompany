@@ -23,6 +23,7 @@ import {
   Menu,
   ClipboardList, // New Icon for Orders
 } from "lucide-react";
+import { envConfig } from "@/config";
 
 // --- Type Definitions ---
 interface Product {
@@ -1335,7 +1336,7 @@ const AdminDashboardPage: NextPage = () => {
     }
   };
 
-  const navItems = [
+  const navItems: { id: string; label: string; icon: React.ReactNode }[] = [
     {
       id: "dashboard",
       label: "Tổng Quan",
@@ -1353,7 +1354,7 @@ const AdminDashboardPage: NextPage = () => {
       <aside className="hidden lg:flex lg:flex-col w-64 bg-white shadow-lg">
         <div className="flex items-center justify-center h-20 border-b">
           <img
-            src={"https://d3enplyig2yenj.cloudfront.net/logo"}
+            src={envConfig.NEXT_PUBLIC_URL_LOGO}
             height={"50px"}
             width={"50px"}
           />

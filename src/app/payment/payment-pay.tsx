@@ -8,6 +8,11 @@ import ProductBig from "../../../public/products/IMG_0405.png";
 function PaymentPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>();
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [note, setNote] = useState("");
 
   const productInfo = {
     small: {
@@ -39,6 +44,11 @@ function PaymentPage() {
       setError("Vui lòng chọn ít nhất một sản phẩm.");
       return;
     }
+    // Validate customer info
+    if (!fullName.trim() || !phone.trim() || !address.trim()) {
+      setError("Vui lòng nhập họ tên, số điện thoại và địa chỉ nhận hàng.");
+      return;
+    }
     setLoading(true);
     setError(null);
 
@@ -60,8 +70,15 @@ function PaymentPage() {
 
     const orderPayload = {
       amount: totalPrice,
-      description: `${totalQuantity} sản phẩm`,
+      description: `${totalQuantity} sản phẩm - Người mua: ${fullName} - ĐT: ${phone}`,
       items: orderItems,
+      customer: {
+        fullName,
+        phone,
+        email,
+        address,
+        note,
+      },
     };
 
     try {
@@ -115,6 +132,75 @@ function PaymentPage() {
           quantity={bigProductQuantity}
           onQuantityChange={setBigProductQuantity}
         />
+      </div>
+
+      {/* Customer information form */}
+      <div className="container mx-auto mt-10 bg-white p-6 rounded-lg shadow-lg max-w-2xl">
+        <h2 className="text-2xl font-bold text-gray-800 mb-2 text-center">
+          Thông tin khách hàng
+        </h2>
+        <p className="text-sm text-gray-600 text-center mb-5 border-b pb-3">
+          (お客様情報)
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="col-span-1 sm:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Họ và tên
+            </label>
+            <input
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder="Nguyễn Văn A"
+              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Số điện thoại
+            </label>
+            <input
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="09xxxxxxxx"
+              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email (tuỳ chọn)
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
+          <div className="col-span-1 sm:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Địa chỉ nhận hàng
+            </label>
+            <input
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành"
+              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
+          <div className="col-span-1 sm:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Ghi chú (tuỳ chọn)
+            </label>
+            <textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              rows={3}
+              placeholder="Ghi chú thêm cho đơn hàng..."
+              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
+        </div>
       </div>
 
       <div className="container mx-auto mt-10 bg-white p-6 rounded-lg shadow-lg max-w-2xl">
