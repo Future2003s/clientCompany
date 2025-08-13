@@ -1,6 +1,9 @@
 "use client";
 import type { NextPage } from "next";
 import { useState, useEffect } from "react";
+import { useAppContextProvider } from "@/context/app-context";
+import { productsApi } from "@/apiRequests/products";
+import toast from "react-hot-toast";
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -548,100 +551,499 @@ const ProductsView = ({
 }) => {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const { products } = useProducts();
+  const { sessionToken } = useAppContextProvider();
+  const [items, setItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [detail, setDetail] = useState<any | null>(null);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [form, setForm] = useState({
+    product_name: "",
+    product_price: "",
+    category_id: "",
+    brand_id: "",
+    image_urls: "",
+    tag_ids: "",
+  });
+  const [meta, setMeta] = useState<{
+    categories: any[];
+    brands: any[];
+    tags: any[];
+  }>({ categories: [], brands: [], tags: [] });
+  const [newCategory, setNewCategory] = useState({
+    categoryName: "",
+    slug: "",
+  });
+  const [newBrand, setNewBrand] = useState({ name: "", slug: "" });
+  const [newTag, setNewTag] = useState({ name: "", slug: "" });
+
+  useEffect(() => {
+    const loadMeta = async () => {
+      try {
+        const [cats, brs, tgs]: any = await Promise.all([
+          (await import("@/apiRequests/meta")).metaApi.categories(),
+          (await import("@/apiRequests/meta")).metaApi.brands(),
+          (await import("@/apiRequests/meta")).metaApi.tags(),
+        ]);
+        setMeta({
+          categories: cats?.data ?? [],
+          brands: brs?.data ?? [],
+          tags: tgs?.data ?? [],
+        });
+      } catch {}
+    };
+    if (isCreateOpen) loadMeta();
+  }, [isCreateOpen]);
+
+  const loadList = async () => {
+    setLoading(true);
+    try {
+      const res: any = await productsApi.list();
+      setItems(res?.data ?? []);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadList();
+  }, []);
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!sessionToken) {
+      toast.error("Cần đăng nhập");
+      return;
+    }
+    setCreating(true);
+    try {
+      const payload: any = {
+        product_name: form.product_name,
+        product_price: Number(form.product_price) || 0,
+        category_id: form.category_id ? Number(form.category_id) : undefined,
+        brand_id: form.brand_id || undefined,
+        image_urls: form.image_urls
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean),
+        tag_ids: form.tag_ids
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean),
+      };
+      await productsApi.create(sessionToken, payload);
+      toast.success("Tạo sản phẩm thành công");
+      setIsCreateOpen(false);
+      await loadList();
+    } catch (err) {
+      toast.error("Tạo sản phẩm thất bại");
+    } finally {
+      setCreating(false);
+    }
+  };
 
   return (
     <div>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <h2 className="text-2xl font-bold text-gray-800">Sản Phẩm</h2>
-        <button className="bg-pink-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-pink-700 transition w-full md:w-auto justify-center">
+        <button
+          onClick={() => setIsCreateOpen(true)}
+          className="bg-pink-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-pink-700 transition w-full md:w-auto justify-center"
+        >
           <PlusCircle size={20} />
           <span>Thêm Sản Phẩm</span>
         </button>
       </div>
+      {isCreateOpen && (
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <h3 className="text-lg font-semibold mb-4">Tạo sản phẩm mới</h3>
+          <form
+            onSubmit={handleCreate}
+            className="grid grid-cols-1 md:grid-cols-2 gap-4"
+          >
+            <div>
+              <label className="block text-sm text-gray-600">
+                Tên sản phẩm
+              </label>
+              <input
+                value={form.product_name}
+                onChange={(e) =>
+                  setForm({ ...form, product_name: e.target.value })
+                }
+                className="mt-1 w-full border rounded px-3 py-2"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-600">Giá</label>
+              <input
+                value={form.product_price}
+                onChange={(e) =>
+                  setForm({ ...form, product_price: e.target.value })
+                }
+                className="mt-1 w-full border rounded px-3 py-2"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-600">Danh mục</label>
+              <select
+                value={form.category_id}
+                onChange={(e) =>
+                  setForm({ ...form, category_id: e.target.value })
+                }
+                className="mt-1 w-full border rounded px-3 py-2"
+              >
+                <option value="">-- Chọn danh mục --</option>
+                {meta.categories.map((c: any) => (
+                  <option key={c.id} value={c.id}>
+                    {c.categoryName}
+                  </option>
+                ))}
+              </select>
+              <div className="flex gap-2 mt-2">
+                <input
+                  value={newCategory.categoryName}
+                  onChange={(e) =>
+                    setNewCategory({
+                      ...newCategory,
+                      categoryName: e.target.value,
+                    })
+                  }
+                  placeholder="Tên danh mục mới"
+                  className="border rounded px-3 py-2 w-full"
+                />
+                <button
+                  type="button"
+                  className="px-3 py-2 border rounded"
+                  onClick={async () => {
+                    if (!newCategory.categoryName.trim()) return;
+                    if (!sessionToken) {
+                      toast.error("Cần đăng nhập");
+                      return;
+                    }
+                    try {
+                      const slug =
+                        newCategory.slug ||
+                        newCategory.categoryName
+                          .toLowerCase()
+                          .replace(/\s+/g, "-");
+                      await (
+                        await import("@/apiRequests/meta")
+                      ).metaApi.createCategory(
+                        {
+                          categoryName: newCategory.categoryName,
+                          slug,
+                        },
+                        sessionToken
+                      );
+                      const cats: any = await (
+                        await import("@/apiRequests/meta")
+                      ).metaApi.categories();
+                      setMeta((m) => ({ ...m, categories: cats?.data ?? [] }));
+                      setNewCategory({ categoryName: "", slug: "" });
+                      toast.success("Đã thêm danh mục");
+                    } catch {
+                      toast.error("Thêm danh mục thất bại");
+                    }
+                  }}
+                >
+                  Thêm danh mục
+                </button>
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-600">Thương hiệu</label>
+              <select
+                value={form.brand_id}
+                onChange={(e) => setForm({ ...form, brand_id: e.target.value })}
+                className="mt-1 w-full border rounded px-3 py-2"
+              >
+                <option value="">-- Chọn thương hiệu --</option>
+                {meta.brands.map((b: any) => (
+                  <option key={b.id} value={b.id}>
+                    {b.name}
+                  </option>
+                ))}
+              </select>
+              <div className="flex gap-2 mt-2">
+                <input
+                  value={newBrand.name}
+                  onChange={(e) =>
+                    setNewBrand({ ...newBrand, name: e.target.value })
+                  }
+                  placeholder="Tên thương hiệu mới"
+                  className="border rounded px-3 py-2 w-full"
+                />
+                <button
+                  type="button"
+                  className="px-3 py-2 border rounded"
+                  onClick={async () => {
+                    if (!newBrand.name.trim()) return;
+                    if (!sessionToken) {
+                      toast.error("Cần đăng nhập");
+                      return;
+                    }
+                    try {
+                      const slug =
+                        newBrand.slug ||
+                        newBrand.name.toLowerCase().replace(/\s+/g, "-");
+                      await (
+                        await import("@/apiRequests/meta")
+                      ).metaApi.createBrand(
+                        { name: newBrand.name, slug },
+                        sessionToken
+                      );
+                      const brs: any = await (
+                        await import("@/apiRequests/meta")
+                      ).metaApi.brands();
+                      setMeta((m) => ({ ...m, brands: brs?.data ?? [] }));
+                      setNewBrand({ name: "", slug: "" });
+                      toast.success("Đã thêm thương hiệu");
+                    } catch {
+                      toast.error("Thêm thương hiệu thất bại");
+                    }
+                  }}
+                >
+                  Thêm thương hiệu
+                </button>
+              </div>
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm text-gray-600">
+                Ảnh (URL, cách nhau bởi dấu phẩy)
+              </label>
+              <input
+                value={form.image_urls}
+                onChange={(e) =>
+                  setForm({ ...form, image_urls: e.target.value })
+                }
+                className="mt-1 w-full border rounded px-3 py-2"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm text-gray-600">Tags</label>
+              <select
+                multiple
+                value={form.tag_ids.split(",").filter(Boolean)}
+                onChange={(e) => {
+                  const values = Array.from(e.target.selectedOptions).map(
+                    (o) => o.value
+                  );
+                  setForm({ ...form, tag_ids: values.join(",") });
+                }}
+                className="mt-1 w-full border rounded px-3 py-2 h-28"
+              >
+                {meta.tags.map((t: any) => (
+                  <option key={t.id} value={t.id}>
+                    {t.name}
+                  </option>
+                ))}
+              </select>
+              <div className="flex gap-2 mt-2">
+                <input
+                  value={newTag.name}
+                  onChange={(e) =>
+                    setNewTag({ ...newTag, name: e.target.value })
+                  }
+                  placeholder="Tên tag mới"
+                  className="border rounded px-3 py-2 w-full"
+                />
+                <button
+                  type="button"
+                  className="px-3 py-2 border rounded"
+                  onClick={async () => {
+                    if (!newTag.name.trim()) return;
+                    if (!sessionToken) {
+                      toast.error("Cần đăng nhập");
+                      return;
+                    }
+                    try {
+                      const slug =
+                        newTag.slug ||
+                        newTag.name.toLowerCase().replace(/\s+/g, "-");
+                      await (
+                        await import("@/apiRequests/meta")
+                      ).metaApi.createTag(
+                        { name: newTag.name, slug },
+                        sessionToken
+                      );
+                      const tgs: any = await (
+                        await import("@/apiRequests/meta")
+                      ).metaApi.tags();
+                      setMeta((m) => ({ ...m, tags: tgs?.data ?? [] }));
+                      setNewTag({ name: "", slug: "" });
+                      toast.success("Đã thêm tag");
+                    } catch {
+                      toast.error("Thêm tag thất bại");
+                    }
+                  }}
+                >
+                  Thêm tag
+                </button>
+              </div>
+            </div>
+            <div className="md:col-span-2 flex gap-2 justify-end">
+              <button
+                type="button"
+                onClick={() => setIsCreateOpen(false)}
+                className="px-4 py-2 border rounded"
+              >
+                Huỷ
+              </button>
+              <button
+                disabled={creating}
+                className="px-4 py-2 bg-pink-600 text-white rounded"
+              >
+                {creating ? "Đang tạo..." : "Tạo sản phẩm"}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
       <div className="bg-white rounded-lg shadow-sm overflow-x-auto">
         <table className="w-full text-left min-w-max">
           <thead className="bg-gray-50">
             <tr>
-              <th className="p-4 font-medium text-gray-600">Mã SP</th>
-              <th className="p-4 font-medium text-gray-600">Tên Sản Phẩm</th>
-              <th className="p-4 font-medium text-gray-600">Loại</th>
+              <th className="p-4 font-medium text-gray-600">Mã</th>
+              <th className="p-4 font-medium text-gray-600">Tên</th>
+              <th className="p-4 font-medium text-gray-600">
+                Danh mục / Thương hiệu
+              </th>
               <th className="p-4 font-medium text-gray-600">Giá</th>
-              <th className="p-4 font-medium text-gray-600">Tồn Kho</th>
-              <th className="p-4 font-medium text-gray-600">Trạng Thái</th>
               <th className="p-4 font-medium text-gray-600"></th>
             </tr>
           </thead>
           <tbody className="divide-y">
-            {products.map((p) => (
-              <tr key={p.id}>
-                <td className="p-4 text-gray-500">{p.id}</td>
-                <td className="p-4 font-medium text-gray-800">{p.name}</td>
-                <td className="p-4 text-gray-500">{p.category}</td>
-                <td className="p-4 text-gray-500">{p.price}</td>
-                <td className="p-4 text-gray-500">{p.stock}</td>
-                <td className="p-4">
-                  <span
-                    className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                      p.status === "Còn hàng"
-                        ? "bg-green-100 text-green-800"
-                        : p.status === "Hết hàng"
-                        ? "bg-red-100 text-red-800"
-                        : "bg-yellow-100 text-yellow-800"
-                    }`}
-                  >
-                    {p.status}
-                  </span>
-                </td>
-                <td className="p-4 relative">
-                  <button
-                    className="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100 transition-colors"
-                    onClick={() =>
-                      setOpenMenuId(openMenuId === p.id ? null : p.id)
-                    }
-                  >
-                    <MoreHorizontal size={20} />
-                  </button>
-                  {openMenuId === p.id && (
-                    <div className="absolute right-8 top-1/2 -translate-y-1/2 w-48 bg-white rounded-md shadow-xl z-10 border border-gray-100">
-                      <a
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          onViewProduct(p);
-                          setOpenMenuId(null);
-                        }}
-                        className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                      >
-                        <Eye size={16} />
-                        <span>Xem chi tiết</span>
-                      </a>
-                      <a
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          onEditProduct(p);
-                          setOpenMenuId(null);
-                        }}
-                        className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                      >
-                        <Pencil size={16} />
-                        <span>Chỉnh sửa</span>
-                      </a>
-                      <a
-                        href="#"
-                        className="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-gray-50"
-                      >
-                        <Trash2 size={16} />
-                        <span>Xoá</span>
-                      </a>
-                    </div>
-                  )}
+            {loading ? (
+              <tr>
+                <td colSpan={5} className="p-6 text-center text-gray-500">
+                  Đang tải...
                 </td>
               </tr>
-            ))}
+            ) : (
+              items.map((p) => (
+                <tr key={p.id}>
+                  <td className="p-4 text-gray-500 font-mono text-xs">
+                    {p.id}
+                  </td>
+                  <td className="p-4 font-medium text-gray-800">{p.name}</td>
+                  <td className="p-4 text-gray-500">
+                    {p.categoryName || p.brandName || "-"}
+                  </td>
+                  <td className="p-4 text-gray-600">
+                    {new Intl.NumberFormat("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    }).format(Number(p.price))}
+                  </td>
+                  <td className="p-4">
+                    <button
+                      className="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100 transition-colors"
+                      onClick={async () => {
+                        try {
+                          const res: any = await productsApi.detail(p.id);
+                          setDetail(res?.data ?? null);
+                        } catch {
+                          toast.error("Không tải được chi tiết");
+                        }
+                      }}
+                    >
+                      <Eye size={18} />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
+      {detail && (
+        <div
+          className="fixed inset-0 bg-black/60 z-50 flex justify-center items-center p-4"
+          onClick={() => setDetail(null)}
+        >
+          <div
+            className="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-6">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">
+                    {detail?.name}
+                  </h2>
+                  <p className="text-gray-500 text-sm">
+                    {detail?.brandName}
+                    {detail?.categoryName ? ` • ${detail.categoryName}` : ""}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setDetail(null)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X size={22} />
+                </button>
+              </div>
+              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="aspect-square bg-gray-100 rounded overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={
+                      detail?.imageUrls?.[0] || "https://placehold.co/800x800"
+                    }
+                    alt={detail?.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div>
+                  <div className="text-pink-600 font-semibold text-xl">
+                    {new Intl.NumberFormat("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    }).format(Number(detail?.price))}
+                  </div>
+                  {Array.isArray(detail?.tags) && detail.tags.length > 0 && (
+                    <div className="mt-3">
+                      <div className="text-xs text-gray-500">Tags</div>
+                      <div className="flex flex-wrap gap-2 mt-1">
+                        {detail.tags.map((t: string, i: number) => (
+                          <span
+                            key={i}
+                            className="px-2 py-1 text-xs rounded-full bg-gray-100 border"
+                          >
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {Array.isArray(detail?.variants) &&
+                    detail.variants.length > 0 && (
+                      <div className="mt-4">
+                        <div className="text-sm font-medium">Biến thể</div>
+                        <div className="mt-2 space-y-2">
+                          {detail.variants.map((v: any) => (
+                            <div
+                              key={v.id}
+                              className="flex items-center justify-between text-sm border rounded p-2"
+                            >
+                              <div>
+                                {v.name}{" "}
+                                <span className="text-gray-400">({v.sku})</span>
+                              </div>
+                              <div className="text-gray-600">
+                                SL: {v.stockQuantity ?? 0}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

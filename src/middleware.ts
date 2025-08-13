@@ -1,13 +1,11 @@
 import { NextResponse, NextRequest } from "next/server";
 
-const privatePath: string[] = ["/me"];
+const privatePath: string[] = ["/me", "/quantri"];
 const publicPath: string[] = ["/login", "/register"];
 
 export function middleware(request: NextRequest) {
   const pathName = request.nextUrl.pathname;
   const sessionId = request.cookies.get("sessionToken")?.value;
-
-  console.log("pathName >>>>", pathName);
 
   // đăng nhập vào đường dẫn khi đã đăng nhập
   if (privatePath.some((path) => pathName.startsWith(path)) && !sessionId) {
@@ -28,5 +26,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/login", "/me", "/register"],
+  matcher: ["/login", "/me", "/register", "/quantri"],
 };

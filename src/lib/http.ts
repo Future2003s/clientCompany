@@ -80,8 +80,8 @@ const request = async (
 };
 
 export const http = {
-  get(url: string, options: Omit<CustomRequestsInit, "body">) {
-    return request("GET", url);
+  get(url: string, options?: Omit<CustomRequestsInit, "body">) {
+    return request("GET", url, options);
   },
   post<TypeRequestBody>(
     url: string,
@@ -89,5 +89,8 @@ export const http = {
     options?: Omit<CustomRequestsInit, "body">
   ) {
     return request("POST", url, { ...options, body });
+  },
+  put(url: string, body: any, options?: Omit<CustomRequestsInit, "body">) {
+    return request("PUT", url, { ...options, body });
   },
 };

@@ -57,9 +57,6 @@ function LoginForm() {
       toast.success("Đăng nhập thành công!");
       router.push("/me");
       // Give the push a tick, then refresh to re-run server components and layout reading cookies
-      setTimeout(() => {
-        router.refresh();
-      }, 0);
     }
     setIsSubmitting(false);
 

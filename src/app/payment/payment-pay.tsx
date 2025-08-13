@@ -99,7 +99,7 @@ function PaymentPage() {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen p-4 sm:p-6 lg:p-8">
+    <div className="bg-gray-100 min-h-screen p-4 sm:p-6 lg:p-8 mt-25">
       <div className="container mx-auto flex flex-col md:flex-row justify-center items-center md:items-start gap-8">
         <ProductItem
           {...productInfo.small}

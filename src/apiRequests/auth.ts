@@ -22,4 +22,7 @@ export const authApiRequest = {
       baseUrl: "",
     });
   },
+  logout: () => {
+    return http.post("/api/auth/logout", {}, { baseUrl: "" });
+  },
 };

@@ -1,18 +1,22 @@
 "use client";
 import { envConfig } from "@/config";
 import Link from "next/link";
+import { useAppContextProvider } from "@/context/app-context";
+import { useRouter } from "next/navigation";
+import { authApiRequest } from "@/apiRequests/auth";
+import accountApiRequest from "@/apiRequests/account";
+import toast from "react-hot-toast";
 import { useEffect, useRef, useState } from "react";
 
 const navLinks = [
   { href: "/", label: "Trang Chủ" },
   {
     label: "Sản Phẩm",
-    href: "/products",
+    href: "/shop",
     subItems: [
-      { href: "/products", label: "Vải Tươi Thanh Hà" },
-      { href: "/products", label: "Nước Cốt Vải" },
-      { href: "/products", label: "Mật Ong Hoa Vải" },
-      { href: "/products", label: "Tất Cả Sản Phẩm" },
+      { href: "/shop", label: "Tất Cả Sản Phẩm" },
+      { href: "/shop?q=m%E1%BA%ADt+ong", label: "Mật Ong" },
+      { href: "/shop?q=v%E1%BA%A3i", label: "Sản phẩm Vải" },
     ],
   },
   { href: "/story", label: "Câu Chuyện" },
@@ -178,9 +182,11 @@ const DecorativeDivider = () => (
 const MobileNav = ({
   isOpen,
   onClose,
+  isAdmin,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  isAdmin?: boolean;
 }) => {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
@@ -249,6 +255,17 @@ const MobileNav = ({
                 )}
               </li>
             ))}
+            {isAdmin && (
+              <li>
+                <Link
+                  href="/quantri"
+                  className="block py-3 text-base font-semibold text-rose-700"
+                  onClick={onClose}
+                >
+                  Quản Trị
+                </Link>
+              </li>
+            )}
           </ul>
         </nav>
       </div>
@@ -261,6 +278,10 @@ const Header = () => {
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [isAtTop, setIsAtTop] = useState(true);
   const lastScrollY = useRef(0);
+  const router = useRouter();
+  const { sessionToken, setSessionToken } = useAppContextProvider();
+  const [isAccountOpen, setIsAccountOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -280,6 +301,23 @@ const Header = () => {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isMobileMenuOpen]);
+
+  useEffect(() => {
+    const fetchMe = async () => {
+      if (!sessionToken) {
+        setIsAdmin(false);
+        return;
+      }
+      try {
+        const res: any = await accountApiRequest.me(sessionToken);
+        const roles: string[] = res?.data?.roles || [];
+        setIsAdmin(roles.includes("ADMIN") || roles.includes("ROLE_ADMIN"));
+      } catch {
+        setIsAdmin(false);
+      }
+    };
+    fetchMe();
+  }, [sessionToken]);
 
   return (
     <>
@@ -337,19 +375,69 @@ const Header = () => {
                   <span className="absolute bottom-0 left-0 block h-[1.5px] w-full bg-rose-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"></span>
                 </div>
               ))}
+              {isAdmin && (
+                <Link
+                  href="/quantri"
+                  className="py-3 text-base font-semibold text-rose-700"
+                >
+                  Quản Trị
+                </Link>
+              )}
             </nav>
 
             {/* Icons & Mobile Menu Trigger */}
             <div className="flex items-center gap-3">
+              {sessionToken ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setIsAccountOpen((v) => !v)}
+                    aria-label="Tài khoản"
+                    className="flex items-center gap-2 px-3 py-2 text-slate-600 hover:text-rose-700 hover:bg-rose-50 rounded-full transition-all duration-300"
+                  >
+                    <UserIcon />
+                    <span className="hidden sm:block">Tài khoản</span>
+                    <ChevronDownIcon className="hidden sm:block" />
+                  </button>
+                  {isAccountOpen && (
+                    <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-100 rounded-lg shadow-lg z-50">
+                      <Link
+                        href="/me"
+                        className="block px-4 py-2 text-sm text-slate-700 hover:bg-rose-50 hover:text-rose-700"
+                        onClick={() => setIsAccountOpen(false)}
+                      >
+                        Trang cá nhân
+                      </Link>
+                      <button
+                        className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-rose-50 hover:text-rose-700"
+                        onClick={async () => {
+                          try {
+                            await authApiRequest.logout();
+                            setSessionToken("");
+                            setIsAccountOpen(false);
+                            toast.success("Đã đăng xuất");
+                            router.push("/login");
+                            router.refresh();
+                          } catch {
+                            toast.error("Đăng xuất thất bại");
+                          }
+                        }}
+                      >
+                        Đăng xuất
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  aria-label="Đăng nhập"
+                  className="p-2 text-slate-600 hover:text-rose-700 hover:bg-rose-50 rounded-full transition-all duration-300"
+                >
+                  <UserIcon />
+                </Link>
+              )}
               <Link
-                href="/account"
-                aria-label="Tài khoản"
-                className="p-2 text-slate-600 hover:text-rose-700 hover:bg-rose-50 rounded-full transition-all duration-300"
-              >
-                <UserIcon />
-              </Link>
-              <Link
-                href="/cart"
+                href="/shop"
                 aria-label="Giỏ hàng"
                 className="relative p-2 text-slate-600 hover:text-rose-700 hover:bg-rose-50 rounded-full transition-all duration-300"
               >
@@ -373,6 +461,7 @@ const Header = () => {
       <MobileNav
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}
+        isAdmin={isAdmin}
       />
     </>
   );

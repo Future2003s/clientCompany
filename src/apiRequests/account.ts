@@ -6,6 +6,15 @@ const accountApiRequest = {
       headers: {
         Authorization: `Bearer ${sessionToken}`,
       },
+      baseUrl: "",
+    });
+  },
+  updateMe: (sessionToken: string, body: any) => {
+    return http.put("/api/account/me", body, {
+      headers: {
+        Authorization: `Bearer ${sessionToken}`,
+      },
+      baseUrl: "",
     });
   },
 };

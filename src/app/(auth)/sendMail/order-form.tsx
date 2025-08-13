@@ -881,7 +881,7 @@ const OrderForm: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 p-4 ">
       <Loader isLoading={isLoading} />
       <div className="w-full max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 md:p-12">
         <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-2">

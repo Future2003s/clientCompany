@@ -6,5 +6,6 @@ export async function POST(request: Request) {
 
   return new Response(JSON.stringify({ message: "Logged out" }), {
     status: 200,
+    headers: { "Content-Type": "application/json" },
   });
 }
