@@ -2,6 +2,7 @@
 import { envConfig } from "@/config";
 import Link from "next/link";
 import { useAppContextProvider } from "@/context/app-context";
+import { useCartStore } from "@/store/cart";
 import { useRouter } from "next/navigation";
 import { authApiRequest } from "@/apiRequests/auth";
 import accountApiRequest from "@/apiRequests/account";
@@ -15,8 +16,8 @@ const navLinks = [
     href: "/shop",
     subItems: [
       { href: "/products", label: "Tất Cả Sản Phẩm" },
-      { href: "/product?q=m%E1%BA%ADt+ong", label: "Mật Ong" },
-      { href: "/product?q=v%E1%BA%A3i", label: "Sản phẩm Vải" },
+      { href: "/products?q=m%E1%BA%ADt+ong", label: "Mật Ong" },
+      { href: "/products?q=v%E1%BA%A3i", label: "Sản phẩm Vải" },
     ],
   },
   { href: "/story", label: "Câu Chuyện" },
@@ -26,7 +27,7 @@ const navLinks = [
       { href: "/payment", label: "Thanh Toán" },
       { href: "/login", label: "Đăng Nhập" },
       { href: "/register", label: "Đăng Ký" },
-      { href: "/admin", label: "Quản Trị" },
+      { href: "/dashboard", label: "Quản Trị" },
     ],
   },
 ];
@@ -258,7 +259,7 @@ const MobileNav = ({
             {isAdmin && (
               <li>
                 <Link
-                  href="/quantri"
+                  href="/d"
                   className="block py-3 text-base font-semibold text-rose-700"
                   onClick={onClose}
                 >
@@ -282,6 +283,9 @@ const Header = () => {
   const { sessionToken, setSessionToken } = useAppContextProvider();
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const totalQuantity = useCartStore((s) =>
+    s.items.reduce((sum, it) => sum + it.quantity, 0)
+  );
 
   useEffect(() => {
     const handleScroll = () => {
@@ -377,10 +381,10 @@ const Header = () => {
               ))}
               {isAdmin && (
                 <Link
-                  href="/quantri"
+                  href="/dashboard"
                   className="py-3 text-base font-semibold text-rose-700"
                 >
-                  Quản Trị
+                  Trang Quản Trị
                 </Link>
               )}
             </nav>
@@ -437,15 +441,16 @@ const Header = () => {
                 </Link>
               )}
               <Link
-                href="/shop"
+                href="/cart"
                 aria-label="Giỏ hàng"
                 className="relative p-2 text-slate-600 hover:text-rose-700 hover:bg-rose-50 rounded-full transition-all duration-300"
               >
                 <ShoppingCartIcon />
-                <span className="absolute top-1 right-1 flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
-                </span>
+                {totalQuantity > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-rose-600 text-white text-[10px] leading-none px-1.5 py-1 rounded-full">
+                    {totalQuantity}
+                  </span>
+                )}
               </Link>
               <button
                 onClick={() => setIsMobileMenuOpen(true)}

@@ -93,4 +93,7 @@ export const http = {
   put(url: string, body: any, options?: Omit<CustomRequestsInit, "body">) {
     return request("PUT", url, { ...options, body });
   },
+  delete(url: string, options?: Omit<CustomRequestsInit, "body">) {
+    return request("DELETE", url, options);
+  },
 };

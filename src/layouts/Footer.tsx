@@ -33,22 +33,7 @@ function Footer() {
                 <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
               </svg>
             </a>
-            <a
-              href="#"
-              className="text-blue-200 hover:text-white transition duration-200 transform hover:scale-110"
-            >
-              {/* Twitter Icon */}
-              <svg
-                fill="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="w-7 h-7"
-                viewBox="0 0 24 24"
-              >
-                <path d="M23 3a10.9 10.09 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"></path>
-              </svg>
-            </a>
+
             <a
               href="#"
               className="text-blue-200 hover:text-white transition duration-200 transform hover:scale-110"
@@ -65,23 +50,6 @@ function Footer() {
               >
                 <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
                 <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01"></path>
-              </svg>
-            </a>
-            <a
-              href="#"
-              className="text-blue-200 hover:text-white transition duration-200 transform hover:scale-110"
-            >
-              {/* YouTube Icon */}
-              <svg
-                fill="currentColor"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="0"
-                className="w-7 h-7"
-                viewBox="0 0 24 24"
-              >
-                <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm6.657 8.875c-.328-.158-.702-.27-1.127-.333-.925-.133-1.895-.192-2.88-.201-.013-.001-.027-.001-.04-.002h-.002c-.013 0-.027 0-.04 0-1.025 0-2.025.045-3.003.132-.328.016-.622.062-.876.126-.407.113-.717.29-.906.505-.189.215-.283.486-.283.818v6.786c0 .332.094.603.283.818.189.215.499.392.906.505.254.064.548.11.876.126.978.087 1.978.132 3.003.132.013 0 .027 0 .04 0h.002c.013 0 .027 0 .04-.002.985-.009 1.955-.068 2.88-.201.425-.063.799-.175 1.127-.333.328-.158.599-.387.818-.687.219-.3.328-.667.328-1.1v-6.786c0-.433-.109-.8-.328-1.1-.219-.3-.49-.529-.818-.687zM10.875 16.5v-9l5.25 4.5-5.25 4.5z"></path>
               </svg>
             </a>
           </div>

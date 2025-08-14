@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { productsApi, type ProductDetail } from "@/apiRequests/products";
 import { useParams, useRouter } from "next/navigation";
 import BuyNowModal from "@/components/ui/buy-now-modal";
+import { useAppContextProvider } from "@/context/app-context";
+import { useCartStore } from "@/store/cart";
 
 const formatCurrency = (amount: number) =>
   new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
@@ -13,12 +15,15 @@ export default function ProductDetail() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const id = params?.id as string;
+  const { sessionToken } = useAppContextProvider();
 
   const [item, setItem] = useState<ProductDetail | null>(null);
   const [loading, setLoading] = useState(false);
   const [qty, setQty] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
   const [buyOpen, setBuyOpen] = useState(false);
+  const [loginPromptOpen, setLoginPromptOpen] = useState(false);
+  const addItem = useCartStore((s) => s.addItem);
 
   useEffect(() => {
     if (!id) return;
@@ -138,12 +143,34 @@ export default function ProductDetail() {
           </div>
 
           <div className="flex gap-3 mt-6">
-            <button className="px-5 py-3 rounded bg-gray-900 text-white">
+            <button
+              className="px-5 py-3 rounded bg-gray-900 text-white"
+              onClick={() => {
+                const variant =
+                  item.variants?.find((x) => x.id === selectedVariant) || null;
+                addItem({
+                  id: item.id,
+                  productId: item.id,
+                  variantId: variant?.id || null,
+                  variantName: variant?.name || null,
+                  name: variant ? `${item.name} - ${variant.name}` : item.name,
+                  price: Number(variant?.price ?? item.price) || 0,
+                  quantity: qty,
+                  imageUrl: item.imageUrls?.[0],
+                });
+              }}
+            >
               Thêm vào giỏ
             </button>
             <button
-              className="px-5 py-3 rounded bg-pink-600 text-white"
-              onClick={() => setBuyOpen(true)}
+              className="px-5 py-3 rounded bg-pink-600 text-white cursor-pointer"
+              onClick={() => {
+                if (!sessionToken) {
+                  setLoginPromptOpen(true);
+                  return;
+                }
+                setBuyOpen(true);
+              }}
             >
               Mua ngay
             </button>
@@ -153,6 +180,44 @@ export default function ProductDetail() {
             onClose={() => setBuyOpen(false)}
             items={[{ name: item.name, price, quantity: qty }]}
           />
+          {loginPromptOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <div
+                className="absolute inset-0 bg-black/50"
+                onClick={() => setLoginPromptOpen(false)}
+              />
+              <div className="relative bg-white w-full max-w-md rounded-xl shadow-xl overflow-hidden">
+                <div className="px-5 py-4 border-b flex items-center justify-between">
+                  <h3 className="text-lg font-semibold">Yêu cầu đăng nhập</h3>
+                  <button
+                    onClick={() => setLoginPromptOpen(false)}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div className="p-5 space-y-2">
+                  <p className="text-gray-700">
+                    Để tiếp tục mua hàng, vui lòng đăng nhập tài khoản.
+                  </p>
+                </div>
+                <div className="px-5 py-4 border-t flex gap-3 justify-end">
+                  <button
+                    onClick={() => setLoginPromptOpen(false)}
+                    className="px-4 py-2 rounded-md border text-gray-700 hover:bg-gray-50"
+                  >
+                    Để sau
+                  </button>
+                  <button
+                    onClick={() => router.push("/login")}
+                    className="px-4 py-2 rounded-md bg-pink-600 text-white hover:bg-pink-700"
+                  >
+                    Đăng nhập
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

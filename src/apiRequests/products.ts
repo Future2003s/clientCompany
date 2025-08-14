@@ -48,10 +48,14 @@ export const productsApi = {
   detail: (id: string) => {
     return http.get(`/api/products/public/${id}`, { baseUrl: "" });
   },
-  create: (token: string, body: any) => {
-    return http.post(`/api/products/create`, body, {
-      baseUrl: "",
-      headers: { Authorization: `Bearer ${token}` },
-    });
+  create: (_token: string, body: any) => {
+    // token no longer needed here; Next API route handles auth + refresh
+    return http.post(`/api/products/create`, body, { baseUrl: "" });
+  },
+  update: (_token: string, id: string, body: any) => {
+    return http.put(`/api/products/${id}`, body, { baseUrl: "" });
+  },
+  remove: (_token: string, id: string) => {
+    return http.delete(`/api/products/${id}`, { baseUrl: "" });
   },
 };

@@ -1,28 +1,19 @@
 import { NextRequest } from "next/server";
+import { proxyJson } from "@/lib/next-api-auth";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const authHeader = request.headers.get("authorization") ?? "";
-
-    const res = await fetch(
+    return proxyJson(
       `${process.env.NEXT_PUBLIC_API_END_POINT}/v1/api/products/createProduct`,
+      request,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(authHeader ? { Authorization: authHeader } : {}),
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
-        cache: "no-store",
+        requireAuth: true,
       }
     );
-
-    const data = await res.json();
-    return new Response(JSON.stringify(data), {
-      status: res.status,
-      headers: { "Content-Type": "application/json" },
-    });
   } catch (e) {
     return new Response(JSON.stringify({ message: "Internal Error" }), {
       status: 500,

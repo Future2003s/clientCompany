@@ -423,7 +423,7 @@ const Header: React.FC = () => {
           </nav>
           <div className="flex items-center space-x-4">
             <button
-              className={`hidden md:block rounded-full transition-all duration-300 transform shadow-lg hover:shadow-xl hover:scale-105 font-semibold text-base ${
+              className={`hidden md:block rounded-full transition-all duration-300 transform shadow-lg hover:shadow-xl hover:scale-105 font-semibold text-base cursor-pointer ${
                 isScrolled
                   ? "bg-gradient-to-r from-rose-500 to-red-500 text-white px-6 py-3"
                   : "bg-white/20 backdrop-blur-sm border border-white/50 text-white px-6 py-3"
@@ -475,7 +475,7 @@ const Header: React.FC = () => {
                 </a>
               ))}
             </nav>
-            <button className="w-full mt-8 bg-gradient-to-r from-rose-500 to-red-500 text-white px-4 py-4 rounded-full text-lg font-bold hover:shadow-xl transition-all duration-300">
+            <button className="w-full mt-8 bg-gradient-to-r from-rose-500 to-red-500 text-white px-4 py-4 rounded-full text-lg font-bold hover:shadow-xl transition-all duration-300 cursor-pointer">
               Mua Ngay
             </button>
           </div>

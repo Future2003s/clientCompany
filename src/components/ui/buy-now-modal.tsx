@@ -1,5 +1,6 @@
 "use client";
 import React, { useMemo, useState } from "react";
+import { useAppContextProvider } from "@/context/app-context";
 
 export interface BuyNowItem {
   name: string;
@@ -23,6 +24,7 @@ export default function BuyNowModal({
   onClose,
   items,
 }: BuyNowModalProps) {
+  const { sessionToken } = useAppContextProvider();
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -30,6 +32,8 @@ export default function BuyNowModal({
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<"cod" | "bank">("cod");
 
   const { totalQty, totalPrice } = useMemo(() => {
     const totalQty = items.reduce((s, it) => s + (Number(it.quantity) || 0), 0);
@@ -49,8 +53,14 @@ export default function BuyNowModal({
       setError("Vui lòng nhập họ tên, số điện thoại và địa chỉ nhận hàng.");
       return;
     }
+    // Require login
+    if (!sessionToken) {
+      setError("Vui lòng đăng nhập trước khi đặt hàng.");
+      return;
+    }
     setLoading(true);
     setError(null);
+    setSuccess(null);
 
     const orderItems = items
       .filter((it) => it.quantity > 0)
@@ -61,35 +71,56 @@ export default function BuyNowModal({
       description: `${totalQty} sản phẩm - Người mua: ${fullName} - ĐT: ${phone}`,
       items: orderItems,
       customer: { fullName, phone, email, address, note },
+      paymentMethod,
     };
 
     try {
-      const response = await fetch(
-        "https://api.lalalycheee.vn/create-payment-link",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(orderPayload),
+      if (paymentMethod === "bank") {
+        const response = await fetch(
+          "https://api.lalalycheee.vn/create-payment-link",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(orderPayload),
+          }
+        );
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || "Tạo link thanh toán thất bại!");
         }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Tạo link thanh toán thất bại!");
-      }
-
-      const result = await response.json();
-      if (result && result.checkoutUrl) {
-        window.location.href = result.checkoutUrl;
+        const result = await response.json();
+        if (result && result.checkoutUrl) {
+          window.location.href = result.checkoutUrl;
+        } else {
+          throw new Error(
+            "Không nhận được checkoutUrl từ phản hồi của server."
+          );
+        }
       } else {
-        throw new Error("Không nhận được checkoutUrl từ phản hồi của server.");
+        const response = await fetch("/api/orders/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${sessionToken}`,
+          },
+          body: JSON.stringify(orderPayload),
+        });
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || "Đặt hàng COD thất bại!");
+        }
+        setSuccess(
+          "Đã nhận đơn hàng COD. Chúng tôi sẽ liên hệ để xác nhận và giao hàng."
+        );
       }
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Đã có lỗi không xác định."
       );
       setLoading(false);
+      return;
     }
+    setLoading(false);
   };
 
   if (!open) return null;
@@ -201,7 +232,60 @@ export default function BuyNowModal({
             </div>
           </div>
 
+          <div>
+            <h4 className="font-medium text-gray-900 mb-2">
+              Hình thức thanh toán
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <label
+                className={`border rounded-md p-3 cursor-pointer flex items-start gap-3 ${
+                  paymentMethod === "cod"
+                    ? "border-pink-500 ring-1 ring-pink-200"
+                    : "border-gray-200"
+                }`}
+              >
+                <input
+                  type="radio"
+                  className="mt-1"
+                  checked={paymentMethod === "cod"}
+                  onChange={() => setPaymentMethod("cod")}
+                />
+                <div>
+                  <div className="font-medium">
+                    Thanh toán khi nhận hàng (COD)
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    Thanh toán tiền mặt khi đơn hàng được giao.
+                  </div>
+                </div>
+              </label>
+              <label
+                className={`border rounded-md p-3 cursor-pointer flex items-start gap-3 ${
+                  paymentMethod === "bank"
+                    ? "border-pink-500 ring-1 ring-pink-200"
+                    : "border-gray-200"
+                }`}
+              >
+                <input
+                  type="radio"
+                  className="mt-1"
+                  checked={paymentMethod === "bank"}
+                  onChange={() => setPaymentMethod("bank")}
+                />
+                <div>
+                  <div className="font-medium">
+                    Chuyển khoản/Thanh toán online
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    Tạo link thanh toán và thanh toán qua ngân hàng.
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+
           {error && <div className="text-sm text-red-600">{error}</div>}
+          {success && <div className="text-sm text-green-600">{success}</div>}
         </div>
 
         <div className="px-5 py-4 border-t flex gap-3">
@@ -217,7 +301,11 @@ export default function BuyNowModal({
             disabled={loading}
             className="ml-auto px-4 py-2 rounded-md bg-pink-600 text-white hover:bg-pink-700 disabled:bg-gray-400"
           >
-            {loading ? "Đang xử lý..." : "Tiến hành Thanh toán"}
+            {loading
+              ? "Đang xử lý..."
+              : paymentMethod === "bank"
+              ? "Tiến hành Thanh toán"
+              : "Đặt hàng COD"}
           </button>
         </div>
       </div>

@@ -24,34 +24,12 @@ import {
   ClipboardList, // New Icon for Orders
 } from "lucide-react";
 import { envConfig } from "@/config";
+import type { Product, Order } from "./types";
+import { OrdersView, OrderEditModal, OrderViewModal } from "./components";
+// Orders hook inlined below for now
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
-// --- Type Definitions ---
-interface Product {
-  id: string;
-  name: string;
-  category: string;
-  price: string;
-  stock: number;
-  status: "Còn hàng" | "Sắp hết" | "Hết hàng";
-  imageUrl: string;
-  description: string;
-}
-
-interface OrderItem {
-  id: string;
-  name: string;
-  quantity: number;
-  price: string;
-}
-
-interface Order {
-  id: string;
-  customerName: string;
-  date: string;
-  total: string;
-  status: "Đang xử lý" | "Đã giao" | "Đã huỷ";
-  items: OrderItem[];
-}
+// --- Type Definitions moved to ./types ---
 
 // --- Reusable UI Components ---
 
@@ -319,186 +297,9 @@ const ProductEditModal = ({
   );
 };
 
-// Order View Modal
-const OrderViewModal = ({
-  order,
-  onClose,
-}: {
-  order: Order;
-  onClose: () => void;
-}) => {
-  if (!order) return null;
+// Order View Modal moved to components
 
-  const getStatusClass = (status: string) => {
-    switch (status) {
-      case "Đã giao":
-        return "bg-green-100 text-green-800";
-      case "Đã huỷ":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-blue-100 text-blue-800";
-    }
-  };
-
-  return (
-    <div
-      className="fixed inset-0 bg-black/60 z-50 flex justify-center items-center p-4"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="p-8">
-          <div className="flex justify-between items-start">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800">
-                Chi tiết Đơn hàng
-              </h2>
-              <p className="text-gray-500">Mã ĐH: {order.id}</p>
-            </div>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
-            >
-              <X size={24} />
-            </button>
-          </div>
-
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h3 className="font-semibold text-gray-700">
-                Thông tin khách hàng
-              </h3>
-              <p className="text-gray-600">{order.customerName}</p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-700">Ngày đặt</h3>
-              <p className="text-gray-600">{order.date}</p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-700">Trạng thái</h3>
-              <span
-                className={`px-3 py-1 text-sm font-semibold rounded-full ${getStatusClass(
-                  order.status
-                )}`}
-              >
-                {order.status}
-              </span>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-700">Tổng tiền</h3>
-              <p className="text-gray-800 font-bold">{order.total}</p>
-            </div>
-          </div>
-
-          <div className="mt-8 border-t pt-6">
-            <h3 className="font-semibold text-gray-700 mb-4">Các sản phẩm</h3>
-            <ul className="space-y-4">
-              {order.items.map((item) => (
-                <li key={item.id} className="flex justify-between items-center">
-                  <div>
-                    <p className="font-medium text-gray-800">{item.name}</p>
-                    <p className="text-sm text-gray-500">
-                      Số lượng: {item.quantity}
-                    </p>
-                  </div>
-                  <p className="font-medium text-gray-600">{item.price}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Order Edit Modal (New)
-const OrderEditModal = ({
-  order,
-  onSave,
-  onClose,
-}: {
-  order: Order;
-  onSave: (updatedOrder: Order) => void;
-  onClose: () => void;
-}) => {
-  const [status, setStatus] = useState(order.status);
-
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave({ ...order, status });
-  };
-
-  return (
-    <div
-      className="fixed inset-0 bg-black/60 z-50 flex justify-center items-center p-4"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white rounded-lg shadow-xl w-full max-w-md"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <form onSubmit={handleSave}>
-          <div className="p-8">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-gray-800">
-                Cập nhật đơn hàng
-              </h2>
-              <button
-                type="button"
-                onClick={onClose}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X size={24} />
-              </button>
-            </div>
-            <p className="text-gray-500 mt-2">Mã ĐH: {order.id}</p>
-            <div className="mt-6">
-              <label
-                htmlFor="status"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Trạng thái đơn hàng
-              </label>
-              <select
-                id="status"
-                name="status"
-                value={status}
-                onChange={(e) =>
-                  setStatus(
-                    e.target.value as "Đang xử lý" | "Đã giao" | "Đã huỷ"
-                  )
-                }
-                className="w-full border-gray-300 rounded-lg shadow-sm focus:border-pink-500 focus:ring-pink-500"
-              >
-                <option>Đang xử lý</option>
-                <option>Đã giao</option>
-                <option>Đã huỷ</option>
-              </select>
-            </div>
-          </div>
-          <div className="bg-gray-50 px-8 py-4 text-right rounded-b-lg">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 mr-3"
-            >
-              Huỷ
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 text-sm font-medium text-white bg-pink-600 border border-transparent rounded-lg hover:bg-pink-700"
-            >
-              Cập nhật
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-};
+// Order Edit Modal moved to components
 
 // --- Page Components ---
 
@@ -566,6 +367,20 @@ const ProductsView = ({
     image_urls: "",
     tag_ids: "",
   });
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({
+    product_name: "",
+    product_price: "",
+    image_urls: "",
+  });
+  const [updating, setUpdating] = useState(false);
+  const [contextMenu, setContextMenu] = useState<{
+    open: boolean;
+    x: number;
+    y: number;
+    product: any | null;
+  }>({ open: false, x: 0, y: 0, product: null });
   const [meta, setMeta] = useState<{
     categories: any[];
     brands: any[];
@@ -922,7 +737,19 @@ const ProductsView = ({
               </tr>
             ) : (
               items.map((p) => (
-                <tr key={p.id}>
+                <tr
+                  key={p.id}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    setOpenMenuId(null);
+                    setContextMenu({
+                      open: true,
+                      x: e.clientX,
+                      y: e.clientY,
+                      product: p,
+                    });
+                  }}
+                >
                   <td className="p-4 text-gray-500 font-mono text-xs">
                     {p.id}
                   </td>
@@ -936,20 +763,91 @@ const ProductsView = ({
                       currency: "VND",
                     }).format(Number(p.price))}
                   </td>
-                  <td className="p-4">
+                  <td className="p-4 relative">
                     <button
                       className="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100 transition-colors"
-                      onClick={async () => {
-                        try {
-                          const res: any = await productsApi.detail(p.id);
-                          setDetail(res?.data ?? null);
-                        } catch {
-                          toast.error("Không tải được chi tiết");
-                        }
-                      }}
+                      onClick={() =>
+                        setOpenMenuId(openMenuId === p.id ? null : p.id)
+                      }
                     >
-                      <Eye size={18} />
+                      <MoreHorizontal size={18} />
                     </button>
+                    {openMenuId === p.id && (
+                      <div className="absolute right-8 w-56 bg-white rounded-md shadow-xl z-10 border border-gray-100">
+                        <a
+                          href="#"
+                          onClick={async (e) => {
+                            e.preventDefault();
+                            try {
+                              const res: any = await productsApi.detail(p.id);
+                              setDetail(res?.data ?? null);
+                            } catch {
+                              toast.error("Không tải được chi tiết");
+                            } finally {
+                              setOpenMenuId(null);
+                            }
+                          }}
+                          className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        >
+                          <Eye size={16} />
+                          <span>Xem chi tiết</span>
+                        </a>
+                        <a
+                          href="#"
+                          onClick={async (e) => {
+                            e.preventDefault();
+                            try {
+                              const res: any = await productsApi.detail(p.id);
+                              const d = res?.data;
+                              setEditingId(p.id);
+                              setEditForm({
+                                product_name: d?.name ?? p.name ?? "",
+                                product_price: String(
+                                  d?.price ?? p.price ?? ""
+                                ),
+                                image_urls: Array.isArray(d?.imageUrls)
+                                  ? d.imageUrls.join(", ")
+                                  : Array.isArray(p?.imageUrls)
+                                  ? p.imageUrls.join(", ")
+                                  : "",
+                              });
+                              setIsEditOpen(true);
+                            } catch {
+                              toast.error("Không tải được dữ liệu sửa");
+                            } finally {
+                              setOpenMenuId(null);
+                            }
+                          }}
+                          className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        >
+                          <Pencil size={16} />
+                          <span>Sửa</span>
+                        </a>
+                        <a
+                          href="#"
+                          onClick={async (e) => {
+                            e.preventDefault();
+                            setOpenMenuId(null);
+                            if (!sessionToken) {
+                              toast.error("Cần đăng nhập");
+                              return;
+                            }
+                            if (!confirm("Xoá sản phẩm này?")) return;
+                            try {
+                              await productsApi.remove(sessionToken, p.id);
+                              toast.success("Đã xoá sản phẩm");
+                              await loadList();
+                            } catch {
+                              toast.error("Xoá sản phẩm thất bại");
+                            }
+                          }}
+                          className="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                        >
+                          <Trash2 size={16} />
+                          <span>Xoá</span>
+                        </a>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))
@@ -957,6 +855,205 @@ const ProductsView = ({
           </tbody>
         </table>
       </div>
+      {contextMenu.open && (
+        <>
+          <div
+            className="fixed inset-0 z-40"
+            onClick={() =>
+              setContextMenu({ open: false, x: 0, y: 0, product: null })
+            }
+          />
+          <div
+            className="fixed z-50 w-56 bg-white rounded-md shadow-xl border border-gray-100"
+            style={{ top: contextMenu.y, left: contextMenu.x }}
+          >
+            <a
+              href="#"
+              onClick={async (e) => {
+                e.preventDefault();
+                try {
+                  const res: any = await productsApi.detail(
+                    contextMenu.product.id
+                  );
+                  setDetail(res?.data ?? null);
+                } catch {
+                  toast.error("Không tải được chi tiết");
+                } finally {
+                  setContextMenu({ open: false, x: 0, y: 0, product: null });
+                }
+              }}
+              className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+            >
+              <Eye size={16} />
+              <span>Xem chi tiết</span>
+            </a>
+            <a
+              href="#"
+              onClick={async (e) => {
+                e.preventDefault();
+                try {
+                  const p = contextMenu.product;
+                  const res: any = await productsApi.detail(p.id);
+                  const d = res?.data;
+                  setEditingId(p.id);
+                  setEditForm({
+                    product_name: d?.name ?? p.name ?? "",
+                    product_price: String(d?.price ?? p.price ?? ""),
+                    image_urls: Array.isArray(d?.imageUrls)
+                      ? d.imageUrls.join(", ")
+                      : Array.isArray(p?.imageUrls)
+                      ? p.imageUrls.join(", ")
+                      : "",
+                  });
+                  setIsEditOpen(true);
+                } catch {
+                  toast.error("Không tải được dữ liệu sửa");
+                } finally {
+                  setContextMenu({ open: false, x: 0, y: 0, product: null });
+                }
+              }}
+              className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+            >
+              <Pencil size={16} />
+              <span>Sửa</span>
+            </a>
+            <a
+              href="#"
+              onClick={async (e) => {
+                e.preventDefault();
+                const p = contextMenu.product;
+                setContextMenu({ open: false, x: 0, y: 0, product: null });
+                if (!sessionToken) {
+                  toast.error("Cần đăng nhập");
+                  return;
+                }
+                if (!confirm("Xoá sản phẩm này?")) return;
+                try {
+                  await productsApi.remove(sessionToken, p.id);
+                  toast.success("Đã xoá sản phẩm");
+                  await loadList();
+                } catch {
+                  toast.error("Xoá sản phẩm thất bại");
+                }
+              }}
+              className="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+            >
+              <Trash2 size={16} />
+              <span>Xoá</span>
+            </a>
+          </div>
+        </>
+      )}
+      {isEditOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-50 flex justify-center items-center p-4"
+          onClick={() => setIsEditOpen(false)}
+        >
+          <div
+            className="bg-white rounded-lg shadow-xl w-full max-w-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                if (!sessionToken || !editingId) {
+                  toast.error("Cần đăng nhập");
+                  return;
+                }
+                setUpdating(true);
+                try {
+                  const payload: any = {
+                    product_name: editForm.product_name,
+                    product_price: Number(editForm.product_price) || 0,
+                    image_urls: editForm.image_urls
+                      .split(",")
+                      .map((s) => s.trim())
+                      .filter(Boolean),
+                  };
+                  await productsApi.update(sessionToken, editingId, payload);
+                  toast.success("Đã cập nhật sản phẩm");
+                  setIsEditOpen(false);
+                  await loadList();
+                } catch (err) {
+                  toast.error("Cập nhật thất bại");
+                } finally {
+                  setUpdating(false);
+                }
+              }}
+            >
+              <div className="p-6">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold">Sửa sản phẩm</h3>
+                  <button
+                    type="button"
+                    onClick={() => setIsEditOpen(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <X size={22} />
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 gap-4 mt-4">
+                  <div>
+                    <label className="block text-sm text-gray-600">
+                      Tên sản phẩm
+                    </label>
+                    <input
+                      value={editForm.product_name}
+                      onChange={(e) =>
+                        setEditForm({
+                          ...editForm,
+                          product_name: e.target.value,
+                        })
+                      }
+                      className="mt-1 w-full border rounded px-3 py-2"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-600">Giá</label>
+                    <input
+                      value={editForm.product_price}
+                      onChange={(e) =>
+                        setEditForm({
+                          ...editForm,
+                          product_price: e.target.value,
+                        })
+                      }
+                      className="mt-1 w-full border rounded px-3 py-2"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-600">
+                      Ảnh (URL, cách nhau bởi dấu phẩy)
+                    </label>
+                    <input
+                      value={editForm.image_urls}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, image_urls: e.target.value })
+                      }
+                      className="mt-1 w-full border rounded px-3 py-2"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-50 px-6 py-4 flex justify-end gap-2 rounded-b-lg">
+                <button
+                  type="button"
+                  onClick={() => setIsEditOpen(false)}
+                  className="px-4 py-2 border rounded"
+                >
+                  Huỷ
+                </button>
+                <button
+                  disabled={updating}
+                  className="px-4 py-2 bg-pink-600 text-white rounded"
+                >
+                  {updating ? "Đang lưu..." : "Lưu thay đổi"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
       {detail && (
         <div
           className="fixed inset-0 bg-black/60 z-50 flex justify-center items-center p-4"
@@ -1049,109 +1146,7 @@ const ProductsView = ({
   );
 };
 
-// Orders View
-const OrdersView = ({
-  onViewOrder,
-  onEditOrder,
-}: {
-  onViewOrder: (order: Order) => void;
-  onEditOrder: (order: Order) => void;
-}) => {
-  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
-  const { orders } = useOrders();
-
-  const getStatusClass = (status: string) => {
-    switch (status) {
-      case "Đã giao":
-        return "bg-green-100 text-green-800";
-      case "Đã huỷ":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-blue-100 text-blue-800";
-    }
-  };
-
-  return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Quản lý Đơn hàng</h2>
-      </div>
-      <div className="bg-white rounded-lg shadow-sm overflow-x-auto">
-        <table className="w-full text-left min-w-max">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="p-4 font-medium text-gray-600">Mã ĐH</th>
-              <th className="p-4 font-medium text-gray-600">Khách Hàng</th>
-              <th className="p-4 font-medium text-gray-600">Ngày Đặt</th>
-              <th className="p-4 font-medium text-gray-600">Tổng Tiền</th>
-              <th className="p-4 font-medium text-gray-600">Trạng Thái</th>
-              <th className="p-4 font-medium text-gray-600"></th>
-            </tr>
-          </thead>
-          <tbody className="divide-y">
-            {orders.map((o) => (
-              <tr key={o.id}>
-                <td className="p-4 text-gray-500 font-mono">{o.id}</td>
-                <td className="p-4 font-medium text-gray-800">
-                  {o.customerName}
-                </td>
-                <td className="p-4 text-gray-500">{o.date}</td>
-                <td className="p-4 text-gray-800 font-semibold">{o.total}</td>
-                <td className="p-4">
-                  <span
-                    className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusClass(
-                      o.status
-                    )}`}
-                  >
-                    {o.status}
-                  </span>
-                </td>
-                <td className="p-4 relative">
-                  <button
-                    className="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100 transition-colors"
-                    onClick={() =>
-                      setOpenMenuId(openMenuId === o.id ? null : o.id)
-                    }
-                  >
-                    <MoreHorizontal size={20} />
-                  </button>
-                  {openMenuId === o.id && (
-                    <div className="absolute right-8 top-1/2 -translate-y-1/2 w-52 bg-white rounded-md shadow-xl z-10 border border-gray-100">
-                      <a
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          onViewOrder(o);
-                          setOpenMenuId(null);
-                        }}
-                        className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                      >
-                        <Eye size={16} />
-                        <span>Xem chi tiết</span>
-                      </a>
-                      <a
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          onEditOrder(o);
-                          setOpenMenuId(null);
-                        }}
-                        className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                      >
-                        <Pencil size={16} />
-                        <span>Cập nhật trạng thái</span>
-                      </a>
-                    </div>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-};
+// Orders View moved to components
 
 // Accounts View
 const AccountsView = () => (
@@ -1222,72 +1217,217 @@ const useProducts = () => {
   return { products, updateProduct };
 };
 
-const useOrders = () => {
-  const initialOrders: Order[] = [
-    {
-      id: "#12567",
-      customerName: "Trần Văn An",
-      date: "18/06/2025",
-      total: "87.000₫",
-      status: "Đã giao",
-      items: [
-        { id: "P001", name: "Trà Vải Lài", quantity: 1, price: "45.000₫" },
-        { id: "P002", name: "Hồng Trà Vải", quantity: 1, price: "42.000₫" },
-      ],
-    },
-    {
-      id: "#12568",
-      customerName: "Nguyễn Thị Bình",
-      date: "18/06/2025",
-      total: "55.000₫",
-      status: "Đang xử lý",
-      items: [
-        { id: "P003", name: "Matcha Vải", quantity: 1, price: "55.000₫" },
-      ],
-    },
-    {
-      id: "#12569",
-      customerName: "Lê Hoàng Cường",
-      date: "17/06/2025",
-      total: "100.000₫",
-      status: "Đang xử lý",
-      items: [
-        { id: "P004", name: "Latte Vải", quantity: 2, price: "100.000₫" },
-      ],
-    },
-    {
-      id: "#12570",
-      customerName: "Phạm Mai Duyên",
-      date: "16/06/2025",
-      total: "42.000₫",
-      status: "Đã huỷ",
-      items: [
-        { id: "P002", name: "Hồng Trà Vải", quantity: 1, price: "42.000₫" },
-      ],
-    },
-  ];
-  const [orders, setOrders] = useState(initialOrders);
+// Orders hook moved to hooks/useOrders
 
-  const updateOrder = (updatedOrder: Order) => {
-    setOrders((prevOrders) =>
-      prevOrders.map((o) => (o.id === updatedOrder.id ? updatedOrder : o))
-    );
-  };
+// Order History Modal
+const LocalOrderHistoryModal = ({
+  orderId,
+  onClose,
+}: {
+  orderId: string;
+  onClose: () => void;
+}) => {
+  const [items, setItems] = useState<
+    {
+      id: string;
+      oldStatus: "Đang xử lý" | "Đã giao" | "Đã huỷ";
+      newStatus: "Đang xử lý" | "Đã giao" | "Đã huỷ";
+      changedBy?: string;
+      note?: string;
+      createdAt: string;
+    }[]
+  >([]);
+  const [loading, setLoading] = useState(false);
+  const { sessionToken } = useAppContextProvider();
 
-  return { orders, updateOrder };
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/orders/${orderId}/history`, {
+          cache: "no-store",
+        });
+        if (!res.ok) {
+          setItems([]);
+          return;
+        }
+        const payload = await res.json();
+        const list = payload?.data ?? payload ?? [];
+        const mapStatus = (s: string) =>
+          s === "DELIVERED"
+            ? "Đã giao"
+            : s === "CANCELLED"
+            ? "Đã huỷ"
+            : "Đang xử lý";
+        setItems(
+          list.map((h: any) => ({
+            id: h.id,
+            oldStatus: mapStatus(h.oldStatus) as any,
+            newStatus: mapStatus(h.newStatus) as any,
+            changedBy: h.changedBy,
+            note: h.note,
+            createdAt: h.createdAt,
+          }))
+        );
+      } catch {
+        setItems([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [orderId, sessionToken]);
+
+  return (
+    <div
+      className="fixed inset-0 bg-black/60 z-50 flex justify-center items-center p-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-gray-800">
+              Lịch sử chỉnh sửa
+            </h2>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <X size={22} />
+            </button>
+          </div>
+          <div className="mt-4">
+            {loading ? (
+              <div className="text-gray-500">Đang tải...</div>
+            ) : items.length === 0 ? (
+              <div className="text-gray-500">Chưa có lịch sử</div>
+            ) : (
+              <ul className="space-y-3">
+                {items.map((h) => (
+                  <li key={h.id} className="border rounded p-3">
+                    <div className="text-sm text-gray-500">
+                      {new Date(h.createdAt).toLocaleString("vi-VN")}
+                    </div>
+                    <div className="mt-1 text-gray-800">
+                      Trạng thái:{" "}
+                      <span className="font-semibold">{h.oldStatus}</span> →{" "}
+                      <span className="font-semibold">{h.newStatus}</span>
+                    </div>
+                    {h.changedBy && (
+                      <div className="text-sm text-gray-600 mt-1">
+                        Bởi: {h.changedBy}
+                      </div>
+                    )}
+                    {h.note && (
+                      <div className="text-sm text-gray-600 mt-1">
+                        Ghi chú: {h.note}
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 // --- Main Admin Dashboard Component ---
 const AdminDashboardPage: NextPage = () => {
   const [activeView, setActiveView] = useState("dashboard");
   const [isSidebarOpen, setSidebarOpen] = useState(false); // Sidebar hidden by default on mobile
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // Sync activeView with URL (?section=...)
+  useEffect(() => {
+    const section = searchParams?.get("section") || "dashboard";
+    setActiveView(section);
+  }, [searchParams]);
+
   const [viewingProduct, setViewingProduct] = useState<Product | null>(null);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [viewingOrder, setViewingOrder] = useState<Order | null>(null);
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
+  const [historyOrderId, setHistoryOrderId] = useState<string | null>(null);
 
   const { updateProduct } = useProducts();
-  const { updateOrder } = useOrders();
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [ordersPage, setOrdersPage] = useState(0);
+  const [ordersSize, setOrdersSize] = useState(10);
+  const [ordersTotalPages, setOrdersTotalPages] = useState(1);
+  const { sessionToken } = useAppContextProvider();
+
+  const fetchOrders = async (page = 0, size = ordersSize) => {
+    try {
+      const params = new URLSearchParams();
+      params.set("page", String(page));
+      params.set("size", String(size));
+      const res = await fetch(`/api/orders?${params.toString()}`, {
+        cache: "no-store",
+      });
+      if (!res.ok) return;
+      const payload = await res.json();
+      const data = payload?.data ?? payload ?? {};
+      const list: any[] = data?.content ?? payload?.content ?? [];
+      const mapped: Order[] = list.map((o: any) => ({
+        id: o.id,
+        customerName: o.customerFullName || o.customerName || "",
+        date: o.createdAt || "",
+        total: new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        }).format(Number(o.amount || 0)),
+        status:
+          o.status === "DELIVERED"
+            ? "Đã giao"
+            : o.status === "CANCELLED"
+            ? "Đã huỷ"
+            : "Đang xử lý",
+        items: Array.isArray(o.items)
+          ? o.items.map((it: any) => ({
+              id: it.id,
+              name: it.productName,
+              quantity: it.quantity,
+              price: new Intl.NumberFormat("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              }).format(Number(it.price || 0)),
+            }))
+          : [],
+      }));
+      setOrders(mapped);
+      const totalPages =
+        Number(data?.totalPages ?? payload?.totalPages ?? 1) || 1;
+      setOrdersTotalPages(totalPages);
+      setOrdersPage(Number(data?.page ?? payload?.page ?? page) || 0);
+      setOrdersSize(Number(data?.size ?? payload?.size ?? size) || size);
+    } catch {}
+  };
+
+  useEffect(() => {
+    fetchOrders(ordersPage, ordersSize);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionToken]);
+
+  // Ensure orders are (re)fetched when switching to Orders tab or changing page/size
+  useEffect(() => {
+    if (activeView === "orders") {
+      fetchOrders(ordersPage, ordersSize);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeView, ordersPage, ordersSize]);
+
+  const updateOrder = (updated: Order) => {
+    setOrders((prev) => prev.map((o) => (o.id === updated.id ? updated : o)));
+    fetchOrders(ordersPage, ordersSize);
+  };
 
   const handleViewProduct = (product: Product) => setViewingProduct(product);
   const handleCloseViewModal = () => setViewingProduct(null);
@@ -1310,6 +1450,8 @@ const AdminDashboardPage: NextPage = () => {
     updateOrder(updatedOrder);
     setEditingOrder(null);
   };
+  const handleViewOrderHistory = (order: Order) => setHistoryOrderId(order.id);
+  const handleCloseOrderHistoryModal = () => setHistoryOrderId(null);
 
   const renderView = () => {
     switch (activeView) {
@@ -1325,8 +1467,14 @@ const AdminDashboardPage: NextPage = () => {
       case "orders":
         return (
           <OrdersView
+            orders={orders}
+            page={ordersPage}
+            size={ordersSize}
+            totalPages={ordersTotalPages}
+            onChangePage={(p) => setOrdersPage(p)}
             onViewOrder={handleViewOrder}
             onEditOrder={handleEditOrder}
+            onViewHistory={handleViewOrderHistory}
           />
         );
       case "accounts":
@@ -1349,7 +1497,7 @@ const AdminDashboardPage: NextPage = () => {
   ];
 
   return (
-    <div className="flex h-screen bg-gray-100 text-gray-800">
+    <div className="flex h-screen bg-gray-100 text-gray-800 mt-25">
       {/* Sidebar for Desktop */}
       <aside className="hidden lg:flex lg:flex-col w-64 bg-white shadow-lg">
         <div className="flex items-center justify-center h-20 border-b">
@@ -1368,6 +1516,11 @@ const AdminDashboardPage: NextPage = () => {
               onClick={(e) => {
                 e.preventDefault();
                 setActiveView(item.id);
+                const params = new URLSearchParams(
+                  Array.from(searchParams?.entries?.() || [])
+                );
+                params.set("section", item.id);
+                router.push(`${pathname}?${params.toString()}`);
               }}
               className={`flex items-center py-3 px-6 my-1 transition-colors duration-200 ${
                 activeView === item.id
@@ -1425,6 +1578,11 @@ const AdminDashboardPage: NextPage = () => {
                 onClick={(e) => {
                   e.preventDefault();
                   setActiveView(item.id);
+                  const params = new URLSearchParams(
+                    Array.from(searchParams?.entries?.() || [])
+                  );
+                  params.set("section", item.id);
+                  router.push(`${pathname}?${params.toString()}`);
                   setSidebarOpen(false);
                 }}
                 className={`flex items-center py-3 px-6 my-1 transition-colors duration-200 ${
@@ -1511,6 +1669,12 @@ const AdminDashboardPage: NextPage = () => {
           order={editingOrder}
           onSave={handleSaveOrder}
           onClose={handleCloseEditOrderModal}
+        />
+      )}
+      {historyOrderId && (
+        <LocalOrderHistoryModal
+          orderId={historyOrderId}
+          onClose={handleCloseOrderHistoryModal}
         />
       )}
     </div>

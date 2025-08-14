@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 
-const privatePath: string[] = ["/me", "/quantri"];
+const privatePath: string[] = ["/me", "/dashboard"];
 const publicPath: string[] = ["/login", "/register"];
 
 export function middleware(request: NextRequest) {
@@ -26,5 +26,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/login", "/me", "/register", "/quantri"],
+  matcher: ["/login", "/me", "/register", "/dashboard"],
 };

@@ -185,10 +185,10 @@ export default function HeroSection() {
             </ul>
           </div>
           <div className="mt-10 flex flex-col sm:flex-row justify-center lg:justify-start gap-6">
-            <button className="px-8 py-4 bg-pink-600 text-white text-lg font-semibold rounded-full shadow-lg hover:bg-pink-700 hover:shadow-xl transition duration-300 transform hover:scale-105">
+            <button className="px-8 py-4 bg-pink-600 text-white text-lg font-semibold rounded-full shadow-lg hover:bg-pink-700 hover:shadow-xl transition duration-300 transform hover:scale-105 cursor-pointer">
               Mua Ngay
             </button>
-            <button className="px-8 py-4 bg-transparent border-2 border-pink-600 text-pink-600 text-lg font-semibold rounded-full shadow-lg hover:bg-pink-600 hover:text-white transition duration-300 transform hover:scale-105">
+            <button className="px-8 py-4 bg-transparent border-2 border-pink-600 text-pink-600 text-lg font-semibold rounded-full shadow-lg hover:bg-pink-600 hover:text-white transition duration-300 transform hover:scale-105 cursor-pointer">
               Tìm Hiểu Thêm
             </button>
           </div>

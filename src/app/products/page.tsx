@@ -54,7 +54,7 @@ export default function ShopPage() {
           {filtered.map((p) => (
             <Link
               key={p.id}
-              href={`/product/${p.id}`}
+              href={`/products/${p.id}`}
               className="group border rounded-xl overflow-hidden bg-white hover:shadow-md"
             >
               <div className="aspect-square bg-gray-100 overflow-hidden">

@@ -7,6 +7,8 @@ import LayoutMain from "@/layouts/layout-main";
 import { Toaster } from "react-hot-toast";
 import { cookies } from "next/headers";
 import AppContext from "@/context/app-context";
+import { CartProvider } from "@/context/cart-context";
+import { QueryProvider } from "@/providers/query-provider";
 
 const fontSans: NextFont = Quicksand({
   subsets: ["latin"],
@@ -30,7 +32,11 @@ export default async function RootLayout({
       <body className={`${fontSans.className}`} suppressHydrationWarning>
         <AppProvider>
           <AppContext initialSessionToken={sessionToken?.value as string}>
-            <LayoutMain>{children}</LayoutMain>
+            <QueryProvider>
+              <CartProvider>
+                <LayoutMain>{children}</LayoutMain>
+              </CartProvider>
+            </QueryProvider>
           </AppContext>
           <Toaster />
         </AppProvider>
