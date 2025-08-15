@@ -2,6 +2,17 @@
 import { useState } from "react";
 import { Eye, Pencil, MoreHorizontal, ClipboardList } from "lucide-react";
 import type { Order } from "../types";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableHeader,
+  TableHead,
+  TableRow,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export const OrdersView = ({
   orders,
@@ -30,37 +41,37 @@ export const OrdersView = ({
     order: Order | null;
   }>({ open: false, x: 0, y: 0, order: null });
 
-  const getStatusClass = (status: string) => {
+  const getStatusVariant = (status: string) => {
     switch (status) {
       case "Đã giao":
-        return "bg-green-100 text-green-800";
+        return "success" as const;
       case "Đã huỷ":
-        return "bg-red-100 text-red-800";
+        return "destructive" as const;
       default:
-        return "bg-blue-100 text-blue-800";
+        return "secondary" as const;
     }
   };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Quản lý Đơn hàng</h2>
-      </div>
-      <div className="bg-white rounded-lg shadow-sm overflow-x-auto">
-        <table className="w-full text-left min-w-max">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="p-4 font-medium text-gray-600">Mã ĐH</th>
-              <th className="p-4 font-medium text-gray-600">Khách Hàng</th>
-              <th className="p-4 font-medium text-gray-600">Ngày Đặt</th>
-              <th className="p-4 font-medium text-gray-600">Tổng Tiền</th>
-              <th className="p-4 font-medium text-gray-600">Trạng Thái</th>
-              <th className="p-4 font-medium text-gray-600"></th>
-            </tr>
-          </thead>
-          <tbody className="divide-y">
+    <Card>
+      <CardHeader>
+        <CardTitle>Quản lý Đơn hàng</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Mã ĐH</TableHead>
+              <TableHead>Khách Hàng</TableHead>
+              <TableHead>Ngày Đặt</TableHead>
+              <TableHead>Tổng Tiền</TableHead>
+              <TableHead>Trạng Thái</TableHead>
+              <TableHead></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {orders.map((o) => (
-              <tr
+              <TableRow
                 key={o.id}
                 onContextMenu={(e) => {
                   e.preventDefault();
@@ -73,22 +84,16 @@ export const OrdersView = ({
                   });
                 }}
               >
-                <td className="p-4 text-gray-500 font-mono">{o.id}</td>
-                <td className="p-4 font-medium text-gray-800">
-                  {o.customerName}
-                </td>
-                <td className="p-4 text-gray-500">{o.date}</td>
-                <td className="p-4 text-gray-800 font-semibold">{o.total}</td>
-                <td className="p-4">
-                  <span
-                    className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusClass(
-                      o.status
-                    )}`}
-                  >
-                    {o.status}
-                  </span>
-                </td>
-                <td className="p-4 relative">
+                <TableCell className="text-muted-foreground font-mono">
+                  {o.id}
+                </TableCell>
+                <TableCell className="font-medium">{o.customerName}</TableCell>
+                <TableCell className="text-muted-foreground">{o.date}</TableCell>
+                <TableCell className="font-semibold">{o.total}</TableCell>
+                <TableCell>
+                  <Badge variant={getStatusVariant(o.status)}>{o.status}</Badge>
+                </TableCell>
+                <TableCell className="relative text-right">
                   <button
                     className="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100 transition-colors"
                     onClick={() =>
@@ -137,85 +142,36 @@ export const OrdersView = ({
                       </a>
                     </div>
                   )}
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
-      </div>
-      {/* Pagination Controls */}
-      <div className="flex items-center justify-between mt-4">
-        <div className="text-sm text-gray-600">
-          Trang {page + 1} / {Math.max(totalPages, 1)}
-        </div>
-        <div className="flex gap-2">
-          <button
-            disabled={page <= 0}
-            onClick={() => onChangePage(Math.max(page - 1, 0))}
-            className="px-3 py-1 border rounded disabled:opacity-50"
-          >
-            Trước
-          </button>
-          <button
-            disabled={page + 1 >= totalPages}
-            onClick={() => onChangePage(Math.min(page + 1, totalPages - 1))}
-            className="px-3 py-1 border rounded disabled:opacity-50"
-          >
-            Sau
-          </button>
-        </div>
-      </div>
-      {contextMenu.open && (
-        <>
-          <div
-            className="fixed inset-0 z-40"
-            onClick={() =>
-              setContextMenu({ open: false, x: 0, y: 0, order: null })
-            }
-          />
-          <div
-            className="fixed z-50 w-56 bg-white rounded-md shadow-xl border border-gray-100"
-            style={{ top: contextMenu.y, left: contextMenu.x }}
-          >
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                if (contextMenu.order) onViewOrder(contextMenu.order);
-                setContextMenu({ open: false, x: 0, y: 0, order: null });
-              }}
-              className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-            >
-              <Eye size={16} />
-              <span>Xem chi tiết</span>
-            </a>
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                if (contextMenu.order) onEditOrder(contextMenu.order);
-                setContextMenu({ open: false, x: 0, y: 0, order: null });
-              }}
-              className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-            >
-              <Pencil size={16} />
-              <span>Cập nhật trạng thái</span>
-            </a>
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                if (contextMenu.order) onViewHistory(contextMenu.order);
-                setContextMenu({ open: false, x: 0, y: 0, order: null });
-              }}
-              className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-            >
-              <ClipboardList size={16} />
-              <span>Lịch sử chỉnh sửa</span>
-            </a>
+          </TableBody>
+        </Table>
+        {/* Pagination Controls */}
+        <div className="flex items-center justify-between mt-4">
+          <div className="text-sm text-muted-foreground">
+            Trang {page + 1} / {Math.max(totalPages, 1)}
           </div>
-        </>
-      )}
-    </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page <= 0}
+              onClick={() => onChangePage(Math.max(page - 1, 0))}
+            >
+              Trước
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page + 1 >= totalPages}
+              onClick={() => onChangePage(Math.min(page + 1, totalPages - 1))}
+            >
+              Sau
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
