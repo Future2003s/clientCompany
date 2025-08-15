@@ -3,7 +3,7 @@ import { proxyJson } from "@/lib/next-api-auth";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { orderId: string } }
+  { params }: any
 ) {
   try {
     return proxyJson(
