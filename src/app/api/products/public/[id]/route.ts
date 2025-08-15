@@ -3,9 +3,9 @@ import { envConfig } from "@/config";
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  context: any
 ) {
-  const id = params.id;
+  const id = context?.params?.id as string;
   try {
     const res = await fetch(
       `${envConfig.NEXT_PUBLIC_API_END_POINT}/v1/api/products/public/${id}`,
