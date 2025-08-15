@@ -3,7 +3,7 @@ import { envConfig } from "@/config";
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: any
 ) {
   const id = params.id;
   try {

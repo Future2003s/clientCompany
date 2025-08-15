@@ -4,7 +4,7 @@ import { proxyJson } from "@/lib/next-api-auth";
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: any
 ) {
   const id = params.id;
   try {
@@ -60,7 +60,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: any
 ) {
   const id = params.id;
   try {
@@ -109,7 +109,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: any
 ) {
   const id = params.id;
   try {

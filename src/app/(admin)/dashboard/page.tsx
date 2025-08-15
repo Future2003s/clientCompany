@@ -1484,167 +1484,10 @@ const AdminDashboardPage: NextPage = () => {
     }
   };
 
-  const navItems: { id: string; label: string; icon: React.ReactNode }[] = [
-    {
-      id: "dashboard",
-      label: "Tổng Quan",
-      icon: <LayoutDashboard size={20} />,
-    },
-    { id: "orders", label: "Đơn Hàng", icon: <ClipboardList size={20} /> },
-    { id: "products", label: "Sản Phẩm", icon: <ShoppingBag size={20} /> },
-    { id: "accounts", label: "Tài Khoản", icon: <Users size={20} /> },
-    { id: "settings", label: "Cài Đặt", icon: <Settings size={20} /> },
-  ];
-
   return (
-    <div className="flex h-screen bg-gray-100 text-gray-800 mt-25">
-      {/* Sidebar for Desktop */}
-      <aside className="hidden lg:flex lg:flex-col w-64 bg-white shadow-lg">
-        <div className="flex items-center justify-center h-20 border-b">
-          <img
-            src={envConfig.NEXT_PUBLIC_URL_LOGO}
-            height={"50px"}
-            width={"50px"}
-          />
-          <h1 className="text-xl font-bold text-pink-600 ml-2">LALA-LYCHEEE</h1>
-        </div>
-        <nav className="flex-1 mt-4">
-          {navItems.map((item) => (
-            <a
-              key={item.id}
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                setActiveView(item.id);
-                const params = new URLSearchParams(
-                  Array.from(searchParams?.entries?.() || [])
-                );
-                params.set("section", item.id);
-                router.push(`${pathname}?${params.toString()}`);
-              }}
-              className={`flex items-center py-3 px-6 my-1 transition-colors duration-200 ${
-                activeView === item.id
-                  ? "bg-pink-100 text-pink-600 border-r-4 border-pink-600"
-                  : "text-gray-600 hover:bg-gray-100"
-              }`}
-            >
-              {item.icon}
-              <span className="ml-4 font-medium">{item.label}</span>
-            </a>
-          ))}
-        </nav>
-      </aside>
+    <>
+      <div className="w-full">{renderView()}</div>
 
-      {/* Mobile Sidebar (Drawer) */}
-      <div
-        className={`fixed inset-0 z-40 lg:hidden transition-transform duration-300 ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <div
-          className="absolute inset-0 bg-black/50"
-          onClick={() => setSidebarOpen(false)}
-        ></div>
-        <aside className="relative z-10 w-64 h-full bg-white shadow-lg flex flex-col">
-          <div className="flex items-center justify-center h-20 border-b">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-8 w-8 text-pink-600"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M10 20.5a.5.5 0 00.5.5h3a.5.5 0 00.5-.5v-1.28a1 1 0 01.3-.7l5.2-5.2a5.5 5.5 0 00-7.78-7.78l-5.2 5.2a1 1 0 01-.7.3v1.28a.5.5 0 00.5.5h3v-1a.5.5 0 01.5-.5h2a.5.5 0 01.5.5v1z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15.5 5.5a2 2 0 100-4 2 2 0 000 4z"
-              />
-            </svg>
-            <h1 className="text-xl font-bold text-pink-600 ml-2">
-              LALA-LYCHEE
-            </h1>
-          </div>
-          <nav className="flex-1 mt-4">
-            {navItems.map((item) => (
-              <a
-                key={item.id}
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setActiveView(item.id);
-                  const params = new URLSearchParams(
-                    Array.from(searchParams?.entries?.() || [])
-                  );
-                  params.set("section", item.id);
-                  router.push(`${pathname}?${params.toString()}`);
-                  setSidebarOpen(false);
-                }}
-                className={`flex items-center py-3 px-6 my-1 transition-colors duration-200 ${
-                  activeView === item.id
-                    ? "bg-pink-100 text-pink-600"
-                    : "text-gray-600 hover:bg-gray-100"
-                }`}
-              >
-                {item.icon}
-                <span className="ml-4 font-medium">{item.label}</span>
-              </a>
-            ))}
-          </nav>
-        </aside>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
-        <header className="bg-white shadow-sm h-20 flex items-center justify-between px-4 lg:px-8">
-          <div className="flex items-center gap-4">
-            <button
-              className="lg:hidden text-gray-500"
-              onClick={() => setSidebarOpen(true)}
-            >
-              <Menu size={24} />
-            </button>
-            <div className="hidden md:flex items-center bg-gray-100 px-4 py-2 rounded-lg">
-              <Search className="text-gray-500" size={20} />
-              <input
-                type="text"
-                placeholder="Tìm kiếm..."
-                className="bg-transparent ml-2 outline-none w-full"
-              />
-            </div>
-          </div>
-          <div className="flex items-center gap-4 md:gap-6">
-            <button className="md:hidden text-gray-500">
-              <Search size={24} />
-            </button>
-            <Bell className="text-gray-500 cursor-pointer" size={24} />
-            <div className="flex items-center gap-3 cursor-pointer">
-              <img
-                src="https://placehold.co/40x40/fecdd3/be185d?text=A"
-                alt="Admin Avatar"
-                className="w-10 h-10 rounded-full"
-              />
-              <div className="hidden md:block">
-                <p className="font-semibold text-sm">Admin</p>
-                <p className="text-xs text-gray-500">Quản trị viên</p>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Content Area */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-4 md:p-8">
-          {renderView()}
-        </main>
-      </div>
-
-      {/* Modals */}
       {viewingProduct && (
         <ProductViewModal
           product={viewingProduct}
@@ -1677,7 +1520,7 @@ const AdminDashboardPage: NextPage = () => {
           onClose={handleCloseOrderHistoryModal}
         />
       )}
-    </div>
+    </>
   );
 };
 
