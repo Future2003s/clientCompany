@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { useAppContextProvider } from "@/context/app-context";
+import { Badge } from "@/components/ui/badge";
 
 export const OrderHistoryModal = ({
   orderId,
@@ -61,6 +62,9 @@ export const OrderHistoryModal = ({
     load();
   }, [orderId, sessionToken]);
 
+  const getVariant = (s: string) =>
+    s === "Đã giao" ? "success" : s === "Đã huỷ" ? "destructive" : "secondary";
+
   return (
     <div
       className="fixed inset-0 bg-black/60 z-50 flex justify-center items-center p-4"
@@ -72,13 +76,8 @@ export const OrderHistoryModal = ({
       >
         <div className="p-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-800">
-              Lịch sử chỉnh sửa
-            </h2>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
-            >
+            <h2 className="text-2xl font-bold text-gray-800">Lịch sử chỉnh sửa</h2>
+            <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
               <X size={22} />
             </button>
           </div>
@@ -90,24 +89,21 @@ export const OrderHistoryModal = ({
             ) : (
               <ul className="space-y-3">
                 {items.map((h) => (
-                  <li key={h.id} className="border rounded p-3">
-                    <div className="text-sm text-gray-500">
+                  <li key={h.id} className="border rounded-md p-3">
+                    <div className="text-xs text-muted-foreground">
                       {new Date(h.createdAt).toLocaleString("vi-VN")}
                     </div>
-                    <div className="mt-1 text-gray-800">
-                      Trạng thái:{" "}
-                      <span className="font-semibold">{h.oldStatus}</span> →{" "}
-                      <span className="font-semibold">{h.newStatus}</span>
+                    <div className="mt-2 flex items-center gap-2">
+                      <span className="text-sm">Trạng thái:</span>
+                      <Badge variant={getVariant(h.oldStatus)}>{h.oldStatus}</Badge>
+                      <span className="text-muted-foreground">→</span>
+                      <Badge variant={getVariant(h.newStatus)}>{h.newStatus}</Badge>
                     </div>
                     {h.changedBy && (
-                      <div className="text-sm text-gray-600 mt-1">
-                        Bởi: {h.changedBy}
-                      </div>
+                      <div className="text-sm text-gray-600 mt-1">Bởi: {h.changedBy}</div>
                     )}
                     {h.note && (
-                      <div className="text-sm text-gray-600 mt-1">
-                        Ghi chú: {h.note}
-                      </div>
+                      <div className="text-sm text-gray-600 mt-1">Ghi chú: {h.note}</div>
                     )}
                   </li>
                 ))}

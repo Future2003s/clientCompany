@@ -1,6 +1,7 @@
 "use client";
 import type { Order } from "../types";
 import { X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 export const OrderViewModal = ({
   order,
@@ -11,14 +12,14 @@ export const OrderViewModal = ({
 }) => {
   if (!order) return null;
 
-  const getStatusClass = (status: string) => {
+  const getStatusVariant = (status: string) => {
     switch (status) {
       case "Đã giao":
-        return "bg-green-100 text-green-800";
+        return "success" as const;
       case "Đã huỷ":
-        return "bg-red-100 text-red-800";
+        return "destructive" as const;
       default:
-        return "bg-blue-100 text-blue-800";
+        return "secondary" as const;
     }
   };
 
@@ -39,19 +40,14 @@ export const OrderViewModal = ({
               </h2>
               <p className="text-gray-500">Mã ĐH: {order.id}</p>
             </div>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
-            >
+            <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
               <X size={24} />
             </button>
           </div>
 
           <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 className="font-semibold text-gray-700">
-                Thông tin khách hàng
-              </h3>
+              <h3 className="font-semibold text-gray-700">Thông tin khách hàng</h3>
               <p className="text-gray-600">{order.customerName}</p>
             </div>
             <div>
@@ -60,13 +56,7 @@ export const OrderViewModal = ({
             </div>
             <div>
               <h3 className="font-semibold text-gray-700">Trạng thái</h3>
-              <span
-                className={`px-3 py-1 text-sm font-semibold rounded-full ${getStatusClass(
-                  order.status
-                )}`}
-              >
-                {order.status}
-              </span>
+              <Badge variant={getStatusVariant(order.status)}>{order.status}</Badge>
             </div>
             <div>
               <h3 className="font-semibold text-gray-700">Tổng tiền</h3>
@@ -81,9 +71,7 @@ export const OrderViewModal = ({
                 <li key={item.id} className="flex justify-between items-center">
                   <div>
                     <p className="font-medium text-gray-800">{item.name}</p>
-                    <p className="text-sm text-gray-500">
-                      Số lượng: {item.quantity}
-                    </p>
+                    <p className="text-sm text-gray-500">Số lượng: {item.quantity}</p>
                   </div>
                   <p className="font-medium text-gray-600">{item.price}</p>
                 </li>

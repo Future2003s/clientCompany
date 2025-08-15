@@ -4,6 +4,9 @@ import toast from "react-hot-toast";
 import { X } from "lucide-react";
 import type { Order } from "../types";
 import { useAppContextProvider } from "@/context/app-context";
+import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 export const OrderEditModal = ({
   order,
@@ -83,40 +86,28 @@ export const OrderEditModal = ({
             </div>
             <p className="text-gray-500 mt-2">Mã ĐH: {order.id}</p>
             <div className="mt-6">
-              <label
-                htmlFor="status"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <Label htmlFor="status" className="mb-1 block">
                 Trạng thái đơn hàng
-              </label>
-              <select
+              </Label>
+              <Select
                 id="status"
                 name="status"
                 value={status}
                 onChange={(e) => setStatus(e.target.value as any)}
-                className="w-full border-gray-300 rounded-lg shadow-sm focus:border-pink-500 focus:ring-pink-500"
               >
                 <option>Đang xử lý</option>
                 <option>Đã giao</option>
                 <option>Đã huỷ</option>
-              </select>
+              </Select>
             </div>
           </div>
           <div className="bg-gray-50 px-8 py-4 text-right rounded-b-lg">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 mr-3"
-            >
+            <Button type="button" variant="outline" onClick={onClose} className="mr-3">
               Huỷ
-            </button>
-            <button
-              type="submit"
-              disabled={updating}
-              className="px-4 py-2 text-sm font-medium text-white bg-pink-600 border border-transparent rounded-lg hover:bg-pink-700 disabled:opacity-50"
-            >
+            </Button>
+            <Button type="submit" disabled={updating}>
               {updating ? "Đang cập nhật..." : "Cập nhật"}
-            </button>
+            </Button>
           </div>
         </form>
       </div>
