@@ -1,13 +1,11 @@
 import { NextRequest } from "next/server";
 import { proxyJson } from "@/lib/next-api-auth";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { orderId: string } }
-) {
+export async function GET(request: NextRequest, ctx: any) {
   try {
+    const orderId: string = ctx?.params?.orderId;
     return proxyJson(
-      `${process.env.NEXT_PUBLIC_API_END_POINT}/v1/api/orders/${params.orderId}/history`,
+      `${process.env.NEXT_PUBLIC_API_END_POINT}/v1/api/orders/${orderId}/history`,
       request,
       { method: "GET", requireAuth: true }
     );
