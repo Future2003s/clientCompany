@@ -379,7 +379,7 @@ const ProductsView = ({
       return;
     }
     try {
-      await productsApi.delete(sessionToken, id);
+      await productsApi.remove(sessionToken, id);
       toast.success("Đã xoá sản phẩm");
       await loadList();
     } catch {

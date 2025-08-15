@@ -11,6 +11,8 @@ import {
   Menu,
   Bell,
   Search as SearchIcon,
+  ChevronsLeft,
+  ChevronsRight,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -27,6 +29,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const baseHref = useMemo(() => {
     // assume dashboard is the base page for admin
@@ -38,12 +41,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="flex min-h-screen bg-gray-100 text-gray-800">
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex lg:flex-col w-64 bg-white shadow-lg">
+      <aside className={`hidden lg:flex lg:flex-col ${sidebarCollapsed ? "w-20" : "w-64"} bg-white shadow-lg transition-all duration-300 overflow-hidden`}>
         <div className="h-20 border-b flex items-center px-6">
           <div className="h-10 w-10 rounded-md bg-pink-100 text-pink-600 flex items-center justify-center font-bold">
             L
           </div>
-          <div className="ml-3">
+          <div className={`ml-3 ${sidebarCollapsed ? "hidden" : "block"}`}>
             <div className="font-bold">LALA-LYCHEE</div>
             <div className="text-xs text-muted-foreground">Admin</div>
           </div>
@@ -56,14 +59,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Link
                 key={item.id}
                 href={href}
-                className={`flex items-center gap-3 py-3 px-6 my-1 transition-colors ${
+                title={item.label}
+                className={`flex items-center gap-3 py-3 ${sidebarCollapsed ? "justify-center px-0" : "px-6"} my-1 transition-colors ${
                   isActive
                     ? "bg-pink-100 text-pink-600 border-r-4 border-pink-600"
                     : "text-gray-600 hover:bg-gray-100"
                 }`}
               >
                 {item.icon}
-                <span className="font-medium">{item.label}</span>
+                {!sidebarCollapsed && <span className="font-medium">{item.label}</span>}
               </Link>
             );
           })}
@@ -110,6 +114,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setSidebarOpen(true)}>
               <Menu size={20} />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hidden lg:inline-flex"
+              onClick={() => setSidebarCollapsed((v) => !v)}
+              aria-label="Toggle sidebar"
+              title="Thu gọn/Mở rộng thanh điều hướng"
+            >
+              {sidebarCollapsed ? <ChevronsRight size={20} /> : <ChevronsLeft size={20} />}
             </Button>
             <div className="hidden md:flex items-center bg-gray-100 px-3 py-2 rounded-lg">
               <SearchIcon className="text-gray-500" size={18} />
