@@ -72,7 +72,7 @@ export default function ProductDetail() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div>
           <div className="aspect-square overflow-hidden rounded bg-gray-100">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
+            
             <img
               src={item.imageUrls?.[0] || "https://placehold.co/800x800"}
               alt={item.name}
@@ -82,7 +82,7 @@ export default function ProductDetail() {
           {item.imageUrls?.length > 1 && (
             <div className="flex gap-2 mt-2">
               {item.imageUrls.map((u, i) => (
-                // eslint-disable-next-line @next/next/no-img-element
+  
                 <img
                   key={i}
                   src={u}

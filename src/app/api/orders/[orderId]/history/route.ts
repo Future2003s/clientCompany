@@ -3,11 +3,11 @@ import { proxyJson } from "@/lib/next-api-auth";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { orderId: string } }
+  { params }: { params: Promise<{ orderId: string }> }
 ) {
   try {
     return proxyJson(
-      `${process.env.NEXT_PUBLIC_API_END_POINT}/v1/api/orders/${params.orderId}/history`,
+      `${process.env.NEXT_PUBLIC_API_END_POINT}/v1/api/orders/${(await params).orderId}/history`,
       request,
       { method: "GET", requireAuth: true }
     );
