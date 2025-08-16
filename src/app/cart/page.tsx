@@ -49,7 +49,7 @@ export default function CartPage() {
                     <td className="p-3">
                       <div className="flex items-center gap-3">
                         {it.imageUrl && (
-                          // eslint-disable-next-line @next/next/no-img-element
+                  
                           <img
                             src={it.imageUrl}
                             alt={it.name}

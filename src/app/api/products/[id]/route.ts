@@ -4,9 +4,9 @@ import { proxyJson } from "@/lib/next-api-auth";
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const id = params.id;
+  const id = (await params).id;
   try {
     const base = envConfig.NEXT_PUBLIC_API_END_POINT;
     const template = process.env.API_PRODUCTS_GET_URL_TEMPLATE; // e.g., /v1/api/products/public/{id}
@@ -60,9 +60,9 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const id = params.id;
+  const id = (await params).id;
   try {
     const body = await request.json();
     const base = envConfig.NEXT_PUBLIC_API_END_POINT;
@@ -109,9 +109,9 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const id = params.id;
+  const id = (await params).id;
   try {
     const base = envConfig.NEXT_PUBLIC_API_END_POINT;
     const template = process.env.API_PRODUCTS_DELETE_URL_TEMPLATE; // e.g., /v1/api/products/{id}

@@ -58,7 +58,7 @@ export default function ShopPage() {
               className="group border rounded-xl overflow-hidden bg-white hover:shadow-md"
             >
               <div className="aspect-square bg-gray-100 overflow-hidden">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
+                
                 <img
                   src={p.imageUrls?.[0] || "https://placehold.co/600x600"}
                   alt={p.name}

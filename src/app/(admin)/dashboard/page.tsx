@@ -379,7 +379,7 @@ const ProductsView = ({
       return;
     }
     try {
-      await productsApi.delete(sessionToken, id);
+      await productsApi.remove(sessionToken, id);
       toast.success("Đã xoá sản phẩm");
       await loadList();
     } catch {
@@ -892,7 +892,6 @@ const AdminDashboardPage: NextPage = () => {
 
   useEffect(() => {
     fetchOrders(ordersPage, ordersSize);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionToken]);
 
   // Ensure orders are (re)fetched when switching to Orders tab or changing page/size
@@ -900,7 +899,6 @@ const AdminDashboardPage: NextPage = () => {
     if (activeView === "orders") {
       fetchOrders(ordersPage, ordersSize);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeView, ordersPage, ordersSize]);
 
   const updateOrder = (updated: Order) => {
